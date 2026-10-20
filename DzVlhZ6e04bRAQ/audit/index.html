@@ -165,4 +165,35 @@
 <ul>
 <li>사용자 선택 색감 D(v9/palettes.json) 반영: 따뜻한 회색 토큰 → 무채색. 기획서에 색 토큰이 적혀 있다면 갱신 필요(v5 미색 기준 문구는 확인 필요).</li>
 <li>그대로: 등급 빨강 B 단계, 고기 색(반품 고기 지방 #F3EFE8 포함), 유기농 #12843A, 노란 강조, #D93A44, 태그 색, 성격 이모지 원본.</li>
+</ul>
+<h2>r9 (2026-10-20 · 90화면 · 사람 상세에서 줄마다 시트로 고치기)</h2>
+<ul>
+<li>97행 대조: "다음 토요일 오전 9시 갱신부터 판정서에서 빠져요. 이미 열린 지난 판정서에는 남을 수 있어요." 지시 문장과 글자까지 같음. 확인 창 제목 "이 평가를 지울까요?"·본문 "지운 평가는 다음 토요일 오전 9시 갱신부터 빠져요. 이미 열린 지난 판정서에는 남을 수 있어요."도 같음(build_final.py가 기획서 파일 97행을 직접 읽어 대조).</li>
+<li><strong>R9-1 기획서와 어긋남</strong>: 97행은 아직 "새 평가와 평가 수정을 같은 화면에서 한다", "수정일 때는 맨 아래에 '이 평가 지우기'"로 적혀 있음. 96행(사람 상세)에도 줄마다 시트·'지금도 맞아요'·'+ 추가'가 없음. 기획서 갱신 필요.</li>
+<li><strong>R9-2 보류 '이 기록 지우기' 확인 창</strong>: 기획서에 문구가 없어 준비 중인 화면으로 연결(지어내지 않음).</li>
+<li><strong>R9-3 보류 시트 '저장' 뒤</strong>: 성격·등급을 매긴 김민준 상세는 그리지 않음(준비 중인 화면).</li>
+<li><strong>R9-4 메모 태그 '+ 추가'</strong>: 사람 한 명에게 메모 태그를 붙이는 기존 화면이 없어(tags-add는 태그 탭 + 메뉴) 평가 쓰기 메모 상자를 시트로 옮긴 <code>person-detail-sheet-memo</code>를 새로 만듦. 시트 안 그룹별 '+ 추가'(새 태그 입력)는 준비 중. 보류 사람의 메모 '+ 추가'는 준비 중.</li>
+<li><strong>R9-5 평판 태그 길게 누름(지우기 메뉴)</strong>: 평가 쓰기 수정 화면과 함께 빠짐. 사람 상세 평판 상자에서 길게 누르기는 연결하지 않음 — 정해야 함.</li>
+<li><strong>R9-6 평가 쓰기 남은 화면</strong>: write-new·write-hold(새 평가에서 보류 누름)·write-info-sheet·write-rep-picker·write-birth-none/decade/switch를 새 평가 기준(지난 평가 날짜·지우기 없음, 저장 흐림)으로 다시 그림. 생년 3화면을 새 평가에 둘지, 메모 시트로 옮길지 확인 필요.</li>
+<li><strong>R9-7 보류 90일 카드</strong>: '지금도 맞아요'는 보통 사람 90일 카드에만 넣음. 보류 카드('이제 등급을 매겨 볼까요?')에도 둘지 확인 필요.</li>
+<li>지운 화면(→ final/_work/removed_r9/, mockup/_removed_r9/): write, write-private-on, write-delete-confirm, write-rep-menu, write-rep-removed.</li>
+</ul>
+<h2>r9a (2026-10-20 · 97화면)</h2>
+<ul>
+<li>133행 확인: "메모 태그 하나는 최대 20자다." → 입력 칸 '0/20'. 52행 확인: 보류는 "연락 주기와 메모 태그만 저장" → 보류도 같은 메모 시트(<code>person-detail-hold-sheet-memo</code>).</li>
+<li>R9-2 해결: <code>person-detail-hold-delete-confirm</code> (제목·본문·버튼은 기획/개발 bot 지정, 기획서에는 아직 없음 → 기획서 97행에 추가 필요).</li>
+<li>R9-3 해결: <code>person-detail-graded</code> (김민준 · 믿을만한 · 무난한 1등급). 다시 맡기기·관계 줄은 보류 시트에서 고르지 않아 값 비움.</li>
+<li>R9-4 해결: 메모 시트 그룹 '+ 추가' → <code>person-detail-sheet-memo-add</code> / <code>person-detail-hold-sheet-memo-add</code>.</li>
+<li>R9-5 해결: <code>person-detail-rep-menu</code>(지우기만), <code>person-detail-rep-removed</code>('태그를 뺐어요.' + '되돌리기'). 기획서에 이 안내 문구 없음 → 갱신 필요.</li>
+<li>R9-6 확정: write-birth-* 새 평가 쪽에 그대로.</li>
+<li>R9-7 해결: 보류 90일 카드 '아직 보류할게요' → person-detail-hold.</li>
+<li>남음: 평가 쓰기(write-new 계열)·태그 탭의 메모 '+ 추가'는 아직 준비 중 화면(이번 범위 밖). 시트 '저장' 뒤 지운 뒤 가는 곳은 준비 중.</li>
+</ul>
+<h2>r9b (2026-10-20)</h2>
+<ul>
+<li>이름 칸 입력 상태: person-detail-sheet-memo-typed / -added, person-detail-hold-sheet-memo-typed / -added. 예시 '골프 모임', '5/20', '추가' 켜짐. '추가'를 누르면 취미·관심사 끝에 붙고 고른 상태가 돼요.</li>
+<li>새 평가: write-new-memo-add / -typed / -added. 'cs:메모 태그 추가 입력'으로 가던 경로를 없앴어요.</li>
+<li>태그 탭: tags-add의 '태그 추가' → tags-tag-add / -typed / -added (시트 제목은 '태그 추가'를 그대로 써요. 그룹마다 '+ 추가'. 생년 그룹은 뺐어요). 추가된 태그는 사람에게 붙이는 게 아니라서 고른 상태로 그리지 않았어요. '그룹 추가'는 그대로 준비 중이에요. 쓸 문구가 없어서 [빈칸]으로 보고해요.</li>
+<li>시트 '저장' = <code>ret:</code> 동작: 시트를 닫고 시트를 연 화면으로 돌아가요(graded → graded, reeval → person-detail, 보류 → person-detail-hold). 시트 배경은 그대로 박철호(기존 화면)이고, 새 화면은 만들지 않았어요.</li>
+<li>graded의 빈 줄은 그대로 뒀어요.</li>
 </ul></main></body></html>
