@@ -1,6 +1,6 @@
 @font-face{font-family:P;src:url(fonts/Pretendard-Regular.woff2) format('woff2');font-weight:400 500;font-display:swap}
 @font-face{font-family:P;src:url(fonts/Pretendard-Bold.woff2) format('woff2');font-weight:600 800;font-display:swap}
-:root{--red:#D93A44;--red-t:#C02F39;--ink:#1A1A1A;--sub:#525252;--ph:#6B6B6B;--blank:#595959;--line:#E5E5E5;--bg2:#F4F4F4;--org:#12843A;--sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom)}
+:root{--red:#D93A44;--red-t:#C8333D;--ink:#1A1A1A;--sub:#525252;--ph:#6B6B6B;--blank:#595959;--line:#E5E5E5;--bg2:#F4F4F4;--org:#12843A;--sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font:-apple-system-body;font-size:17px}@supports (font:-apple-system-body){html{font:-apple-system-body}}
 html,body{margin:0;background:#fff;color:var(--ink);font-family:P,-apple-system,sans-serif;font-size:0.8824rem;-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
