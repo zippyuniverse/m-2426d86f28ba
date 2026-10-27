@@ -114,7 +114,7 @@ function tags(){const m=allMemo();const used=t=>S.people.some(p=>!p.hidden&&(p.m
  h+=`<div class="grp"><div class="gn"><span class="gdot" style="background:#7F7CF6"></span>평판 <span class="badge">익명 공개</span></div><div class="chips">${[...REP_POS,...REP_NEG].filter(used).map(t=>`<button class="chip sm" data-a="tagp" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>`;
  return h+'</div>'}
 function tagPeople(v){const L=visible().filter(p=>p.memo.includes(v.t)||p.rep.includes(v.t));const isRep=REP_POS.includes(v.t)||REP_NEG.includes(v.t);
- return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:20px">${esc(v.t)}</h1></div>${isRep?`<div class="small">내 연락처 ${L.length}명</div>`:''}<div class="card" style="margin-top:10px">${L.map(p=>`<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)}</div></div></div>`).join('')||'<div class="empty">아직 없어요</div>'}</div></div>`}
+ return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">${esc(v.t)}</h1></div>${isRep?`<div class="small">내 연락처 ${L.length}명</div>`:''}<div class="card" style="margin-top:10px">${L.map(p=>`<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)}</div></div></div>`).join('')||'<div class="empty">아직 없어요</div>'}</div></div>`}
 
 /* 판정서 (테스트용 예시) */
 function fakeRaters(n){const out=[];const g=[5,4,4,5,3,4,5,4,2,4];const pe=[2,2,5,1,2,0,2,5,2,3];const reps=[['숫자에 강함','답장 냉동 보관'],['숫자에 강함'],['약속 칼같음','답장 냉동 보관'],['숫자에 강함','인맥왕'],['답장 냉동 보관','뒷심 부족'],['약속 칼같음'],['인맥왕','뒷심 부족'],['약속 칼같음'],[],['디테일 장인']];
@@ -123,18 +123,18 @@ function mode(a){const c={};a.forEach(x=>c[x]=(c[x]||0)+1);return +Object.entrie
 function verdictBody(n,pub){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe=mode(R.map(r=>r.p));const c={};R.forEach(r=>new Set(r.r).forEach(t=>c[t]=(c[t]||0)+1));
  let tg=Object.keys(c).filter(t=>c[t]>=3);if(pub)tg=tg.filter(t=>!REP_NEG.includes(t));
  const sat=S.day-((dateOf(S.day).getDay()+1)%7);
- return `<div class="vcard"><div class="testbar">테스트용 예시</div><div class="small">${mdw(sat)} 기준 · 평가 5명 이상 · 익명 종합</div><div style="margin:14px 0 6px">${stamp(g,true)}</div><div style="font-weight:800;font-size:20px">${GR[g][0]} ${GR[g][1]}</div>
+ return `<div class="vcard"><div class="testbar">테스트용 예시</div><div class="small">${mdw(sat)} 기준 · 평가 5명 이상 · 익명 종합</div><div style="margin:14px 0 6px">${stamp(g,true)}</div><div style="font-weight:800;font-size:1.1765rem">${GR[g][0]} ${GR[g][1]}</div>
  <div style="margin-top:16px"><img class="em-big" src="emoji/p${pe}.svg"></div><div style="margin-top:6px">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div>
  <div class="chips" style="justify-content:center;margin-top:14px">${tg.map(t=>`<span class="chip sm ${REP_NEG.includes(t)?'neg':''}">${esc(t)}</span>`).join('')}</div>
  <div class="small" style="margin-top:12px">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
 function verdict(){let h=`<div class="scr"><div class="hd"><h1>내 판정서</h1>${info('verdict')}</div><div class="testbar">테스트용 예시 · 휴대폰 번호 인증은 건너뛰어요</div>`;
- if(!S.accepted)return h+`<h2 style="margin-top:20px">내 판정서 받기</h2><p class="note" style="font-size:15px;color:var(--ink)">평가가 5명 이상 모이면 익명 종합 결과만 볼 수 있어요. 누가 평가했는지는 알 수 없어요.</p>${S.reopen?'<p class="note">평가자들이 남긴 예전 평가까지 모두 다시 모여요.</p>':''}
+ if(!S.accepted)return h+`<h2 style="margin-top:20px">내 판정서 받기</h2><p class="note" style="font-size:0.8824rem;color:var(--ink)">평가가 5명 이상 모이면 익명 종합 결과만 볼 수 있어요. 누가 평가했는지는 알 수 없어요.</p>${S.reopen?'<p class="note">평가자들이 남긴 예전 평가까지 모두 다시 모여요.</p>':''}
   <label class="inp">이 번호를 언제부터 쓰셨나요?<input value="2019년 3월" readonly></label><div class="small" style="margin-top:6px">이 날짜 전에 쌓인 평가는 판정서에 넣지 않아요.</div><div style="height:20px"></div><button class="btn-r" data-a="accept">판정서 받기 시작</button></div>`;
  if(S.verdictN<5)h+=`<div class="vcard" style="margin-top:12px"><p style="line-height:1.6;margin:0 0 14px">판정 대기 중이에요. 등급 평가가 5명 미만이라 아직 보여드릴 수 없어요. 여의도 정육점을 주변에 알려주면 더 빨리 판정돼요!</p><button class="btn-r" data-a="invite">초대 링크 보내기</button><div class="small" style="margin-top:8px">링크에는 내 번호·계정 정보가 담기지 않아요.</div><div class="small" style="margin-top:12px">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>
   <div class="sw" style="margin-top:16px"><div class="grow"><b>판정서 공개</b><span>판정서가 열리면 공개할 수 있어요.</span></div><span class="tog" style="opacity:.4"></span></div>`;
  else h+=`<div style="margin-top:12px">${verdictBody(S.verdictN,false)}</div><div class="sw" style="margin-top:16px"><div class="grow"><b>판정서 공개</b><span>${S.pub?'내 번호를 아는 앱 사용자에게 보여지고 있어요. 누가 봤는지는 알려드리지 않아요.':'켜면 내 번호를 아는 앱 사용자가 이 판정서를 볼 수 있어요.'}</span></div><button class="tog ${S.pub?'on':''}" data-a="pubtog"></button></div>`;
  return h+`<button class="link-red" data-a="closev">판정서 닫기</button></div>`}
-function pubVerdict(v){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:20px">공개된 판정서</h1></div>${verdictBody(7,true)}<p class="note">부정 태그는 공개된 판정서에 보이지 않아요.</p></div>`}
+function pubVerdict(v){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">공개된 판정서</h1></div>${verdictBody(7,true)}<p class="note">부정 태그는 공개된 판정서에 보이지 않아요.</p></div>`}
 
 /* 사람 상세 */
 function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const hold=p.hold;
@@ -157,7 +157,7 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const 
 
 /* 평가 쓰기 */
 function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||(w.grade!=null&&w.persona!=null);
- let h=`<div class="scr nonav"><div class="hd"><button class="back" data-a="back">‹</button><div style="flex:1"><div style="font-weight:800;font-size:20px">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
+ let h=`<div class="scr nonav"><div class="hd"><button class="back" data-a="back">‹</button><div style="flex:1"><div style="font-weight:800;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
  <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img src="emoji/p${i}.svg">${n}</button>`).join('')}</div>
  <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판단 보류 · 성격·등급 없이 저장</button>
@@ -170,15 +170,15 @@ function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||
 function memoBox(sel){const m=allMemo();return `<div class="box"><div class="boxh">메모 태그 <span class="badge me">나만 보기</span></div>${GROUPS.map(g=>{let ts=m[g[0]];if(g[0]=='생년')ts=g[2];const bsel=sel.find(t=>groupOf(t)=='생년');return `<div class="grp"><div class="gn"><span class="gdot" style="background:${g[1]}"></span>${g[0]}${g[0]=='생년'&&bsel?` <span class="chip sm on" data-a="memo" data-t="${bsel}" style="margin-left:auto">${bsel}</span>`:''}</div><div class="chips">${ts.map(t=>`<button class="chip sm ${sel.includes(t)?'on':''}" data-a="memo" data-t="${esc(t)}">${esc(t)}</button>`).join('')}${g[0]=='생년'?`<button class="chip sm dash" data-a="year">연도</button>`:`<button class="chip sm dash" data-a="memoadd" data-g="${g[0]}">+ 추가</button>`}</div></div>`}).join('')}</div>`}
 
 function notifs(){S.readBell=true;save();const g={};S.notifs.forEach(n=>(g[n.day]=g[n.day]||[]).push(n));
- let h=`<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:20px">알림</h1><span class="sp"></span><button class="chip sm" data-a="readall" ${S.notifs.length?'':'disabled'}>모두 읽음</button><button class="ib" data-a="settings">⚙️</button></div>`;
+ let h=`<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">알림</h1><span class="sp"></span><button class="chip sm" data-a="readall" ${S.notifs.length?'':'disabled'}>모두 읽음</button><button class="ib" data-a="settings">⚙️</button></div>`;
  if(!S.notifs.length)return h+'<div class="empty">아직 알림이 없어요.</div></div>';
- Object.keys(g).sort((a,b)=>b-a).forEach(d=>{d=+d;h+=`<h2 style="font-size:15px">${d==S.day?'오늘':d==S.day-1?'어제':mdw(d)}</h2>`+g[d].map((n,i)=>`<div class="ntf row tap" data-a="ntf" data-i="${S.notifs.indexOf(n)}"><span class="d ${n.read?'off':''}"></span><div class="grow"><div class="t">${n.kind} · ${d==S.day?'방금':'오전 9:00'} ${n.test?'<span class="badge test">테스트용 예시</span>':''}</div><div>${esc(n.text)}</div></div></div>`).join('')});
+ Object.keys(g).sort((a,b)=>b-a).forEach(d=>{d=+d;h+=`<h2 style="font-size:0.8824rem">${d==S.day?'오늘':d==S.day-1?'어제':mdw(d)}</h2>`+g[d].map((n,i)=>`<div class="ntf row tap" data-a="ntf" data-i="${S.notifs.indexOf(n)}"><span class="d ${n.read?'off':''}"></span><div class="grow"><div class="t">${n.kind} · ${d==S.day?'방금':'오전 9:00'} ${n.test?'<span class="badge test">테스트용 예시</span>':''}</div><div>${esc(n.text)}</div></div></div>`).join('')});
  return h+'</div>'}
-function settings(){const hid=S.people.filter(p=>p.hidden);return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:20px">설정</h1></div>
+function settings(){const hid=S.people.filter(p=>p.hidden);return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">설정</h1></div>
  <div class="testbar">테스트용 예시 · 알림 스위치는 실제로 보내지 않아요</div>
  ${[['아침 장보기 알림','오전 9:00',1],['주간 조회 알림','',1],['월간 조회 권유 알림','',0],['판정서 변화 알림','토요일 갱신 때 내 판정서가 바뀌면 알려드려요.',1],['쓰다듬기 알림','누군가 쓰담쓰담 하면 토요일에 모아서 알려드려요.',1],['이벤트 알림','',0]].map((x,i)=>{const on=(S.sets||{})[i]??x[2];return `<div class="sw srow"><div class="grow"><b>${x[0]}</b><span>${x[1]}</span></div><button class="tog ${on?'on':''}" data-a="settog" data-i="${i}"></button></div>`}).join('')}
  <h2>숨긴 연락처</h2><div class="card">${hid.map(p=>`<div class="row"><div class="grow nm">${esc(p.name)}</div><button class="chip sm" data-a="unhide" data-id="${p.id}">다시 보이기</button></div>`).join('')||'<div class="empty">숨긴 연락처가 없어요.</div>'}</div></div>`}
-function addContact(){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:20px">새 연락처</h1></div><div class="testbar">테스트용: 실제 앱은 폰 연락처를 읽어요</div>
+function addContact(){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">새 연락처</h1></div><div class="testbar">테스트용: 실제 앱은 폰 연락처를 읽어요</div>
  <label class="inp">이름<input id="cn" maxlength="20" value="${esc(ui.q||'')}"></label><label class="inp">번호<input id="cp" inputmode="numeric" placeholder="010-0000-0000" maxlength="13"></label><div style="height:20px"></div><button class="btn-r" data-a="addsave">저장</button></div>`}
 
 /* sheets */
