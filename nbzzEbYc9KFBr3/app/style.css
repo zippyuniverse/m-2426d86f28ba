@@ -164,7 +164,7 @@ button[disabled]{cursor:default;pointer-events:none}
 .ph-head .av .stampbtn .stamp{position:static}
 .plabel{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;padding:0 14px;border:0;border-radius:22px;background:#F2F2F2;color:#525252;font-size:13px;font-weight:600}
 
-.gz{position:relative;width:136px;height:136px;margin:0 auto;display:flex;align-items:center;justify-content:center;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.gz{position:relative;width:136px;height:136px;margin:0 auto;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none}
 .gz .av .face{display:block;position:relative;width:96px;height:96px;transform-origin:50% 100%}
 .gz .face img{-webkit-user-drag:none;pointer-events:none}
 .gz .fx{position:absolute;inset:0;pointer-events:none;font-style:normal}

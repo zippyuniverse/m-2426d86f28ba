@@ -301,11 +301,14 @@ function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.que
  const t=S.day,arr=k=='pat'?(p.pats=p.pats||[]):(p.kkul=p.kkul||[]);let ok=!arr.includes(t);if(k=='kkul'&&arr.filter(d=>t-d<7&&d<=t).length>=3)ok=false;
  if(ok){arr.push(t);toast(k=='pat'?'쓰담쓰담이 오늘 한 번 기록되었어요':'꿀밤 콩콩이 오늘 한 번 기록되었어요')}save()}
 (function(){let st=null,lastTap=0,lastId=null;
- document.addEventListener('pointerdown',e=>{const z=e.target.closest('.gz[data-gid]');if(!z||e.target.closest('.stampbtn,.sr'))return;st={z,id:z.dataset.gid,x0:e.clientX,y0:e.clientY,lx:e.clientX,dir:0,ch:0,tr:0,t0:Date.now(),mode:null,moved:false}},{passive:true});
+ document.addEventListener('pointerdown',e=>{const z=e.target.closest('.gz[data-gid]');if(!z||e.target.closest('.stampbtn,.sr'))return;st={z,id:z.dataset.gid,x0:e.clientX,y0:e.clientY,lx:e.clientX,ly:e.clientY,dx:0,dy:0,vx:null,vy:null,ch:0,tr:0,t0:Date.now(),mode:null,moved:false}},{passive:true});
  document.addEventListener('pointermove',e=>{if(!st)return;const dx=e.clientX-st.x0,dy=e.clientY-st.y0;
-  if(!st.mode&&Math.hypot(dx,dy)>=10){st.mode=Math.abs(dy)>Math.abs(dx)?'scroll':'rub'}
-  if(Math.hypot(dx,dy)>6)st.moved=true;if(st.mode!='rub')return;
-  const d=e.clientX-st.lx;if(Math.abs(d)<2)return;const sg=Math.sign(d);if(st.dir&&sg!=st.dir)st.ch++;st.dir=sg;st.tr+=Math.abs(d);st.lx=e.clientX;
+  if(Math.hypot(dx,dy)>6)st.moved=true;
+  const mx=e.clientX-st.lx,my=e.clientY-st.ly,seg=Math.hypot(mx,my);if(seg<3)return;st.tr+=seg;st.lx=e.clientX;st.ly=e.clientY;
+  const sx=Math.abs(mx)>=2?Math.sign(mx):0,sy=Math.abs(my)>=2?Math.sign(my):0;let rev=false;
+  if(sx&&st.dx&&sx!=st.dx)rev=true;if(sy&&st.dy&&sy!=st.dy)rev=true;
+  if(st.vx!=null){const c=(mx*st.vx+my*st.vy)/(seg*Math.hypot(st.vx,st.vy));if(c<-0.5)rev=true}
+  if(rev)st.ch++;if(sx)st.dx=sx;if(sy)st.dy=sy;st.vx=mx;st.vy=my;
   if(st.ch>=2&&st.tr>=80&&Date.now()-st.t0<=1200&&!st.done){st.done=1;doGesture(st.id,'pat')}},{passive:true});
  document.addEventListener('pointerup',e=>{if(!st)return;const s=st;st=null;if(s.moved)return;const n=Date.now();
   if(lastId==s.id&&n-lastTap<=300){lastTap=0;doGesture(s.id,'kkul')}else{lastTap=n;lastId=s.id}});
