@@ -159,3 +159,7 @@ button[disabled]{cursor:default;pointer-events:none}
 .num{display:inline-block}.num.bump{animation:bump .4s ease}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.45);color:var(--red)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+.stampbtn{position:absolute;right:-8px;bottom:-4px;padding:0;border:0;background:none;min-width:44px;min-height:44px}
+.ph-head .av .stampbtn .stamp{position:static}
+.plabel{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;padding:0 14px;border:0;border-radius:22px;background:#F2F2F2;color:#525252;font-size:13px;font-weight:600}
