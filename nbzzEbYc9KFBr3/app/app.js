@@ -140,12 +140,10 @@ function pubVerdict(v){return `<div class="scr"><div class="hd"><button class="b
 
 /* 사람 상세 */
 function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const hold=p.hold;
- const today=S.day;const kd=p.kkul.filter(d=>d==today).length,kw=p.kkul.filter(d=>today-d<7).length;const kOff=kd>=1||kw>=3;
  let h=`<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><span class="sp"></span></div>
- <div class="ph-head"><div class="av">${emo(p,'')}${hold?'':`<button class="stampbtn" data-a="pgsheet" data-id="${p.id}" aria-label="성격·등급 고르기">${stamp(p.grade,true)}</button>`}</div><button class="plabel" data-a="pgsheet" data-id="${p.id}">${hold?'판단 보류':PERS[p.persona]+' · '+GR[p.grade][0]+'등급'} ›</button><h1>${esc(p.name)} ${organic(p)?'<span class="org" data-a="orgtip">유기농</span>':''}</h1><div class="small">${p.phone}</div></div>`;
+ <div class="ph-head">${!hold&&!S.gintro?'<div class="gintro">캐릭터를 쓰다듬거나,<br>두 번 톡톡 꿀밤을 줘 보세요</div>':''}<div class="gz${hold?' nog':''}" ${hold?'':`data-gid="${p.id}"`}>${!hold&&!S.gintro?'<span class="gh gh-l" aria-hidden="true">👆<br>⟷</span><span class="gh gh-r" aria-hidden="true">((👆</span>':''}<div class="av"><span class="face">${emo(p,'')}<i class="fx"></i></span>${hold?'':`<button class="stampbtn" data-a="pgsheet" data-id="${p.id}" aria-label="성격·등급 고르기">${stamp(p.grade,true)}</button>`}</div>${hold?'':`<button class="sr" data-a="gpat" data-id="${p.id}">쓰담쓰담</button><button class="sr" data-a="gkkul" data-id="${p.id}">꿀밤 콩콩</button>`}</div><button class="plabel" data-a="pgsheet" data-id="${p.id}">${hold?'판단 보류':PERS[p.persona]+' · '+GR[p.grade][0]+'등급'} ›</button><h1>${esc(p.name)} ${organic(p)?'<span class="org" data-a="orgtip">유기농</span>':''}</h1><div class="small">${p.phone}</div></div>`;
  if(p.ratedDay!=null&&S.day-p.ratedDay>=90)h+=`<div class="recard"><span class="grow">${hold?'이제 등급을 매겨 볼까요?':'지금도 '+GR[p.grade][0]+'인가요? 다시 평가해 보세요.'}</span><button class="chip sm" data-a="stillok" data-id="${p.id}">${hold?'아직 보류할게요':'지금도 맞아요'}</button></div>`;
  h+=`<div class="three"><button class="bigb" data-a="call" data-t="전화" data-id="${p.id}">📞 전화</button><button class="bigb red" data-a="call" data-t="연락했어요" data-id="${p.id}">✓ 연락했어요</button></div>`;
- if(!hold)h+=`<div class="three"><button class="bigb" data-a="pat" data-id="${p.id}">🤲 쓰담쓰담</button><button class="bigb" data-a="kkul" data-id="${p.id}" ${kOff?'disabled':''}>👊 꿀밤 콩콩</button></div>${kOff?'<div class="note" style="text-align:center">오늘은 여기까지. 내일 다시 콩콩 할 수 있어요.</div>':''}${kw?`<div class="note" style="text-align:center">최근 꿀밤 ${kw}번</div>`:''}`;
  h+=`<h2>내 평가</h2><div class="card">`;
  if(!hold)h+=`<div class="kv" data-a="edit" data-f="again" data-id="${p.id}"><span class="k">다시 맡기기</span><span class="v">${p.again??'<span class="blank">빈칸</span>'}</span></div><div class="kv" data-a="edit" data-f="rel" data-id="${p.id}"><span class="k">관계</span><span class="v">${p.rel??'<span class="blank">빈칸</span>'}</span></div>`;
  h+=`<div class="kv" data-a="edit" data-f="memo" data-id="${p.id}"><span class="k">메모 태그 <span class="badge me">나만 보기</span></span><span class="v">${p.memo.map(esc).join(', ')||'<span class="blank">빈칸</span>'}</span></div>`;
@@ -255,8 +253,8 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
  case 'call':{const t=el.dataset.t;const row=document.getElementById('r'+id);
   const doit=()=>{p.contacts.push({day:S.day,t});const got=t=='전화'&&earnPt(p.id);save();render('same');toast(t=='연락했어요'?'연락을 기록했어요':t+' 기록을 남겼어요'+(got?' · 포인트 +1':''))};
   if(row&&nav[nav.length-1].v=='shelf'){row.classList.add('out');setTimeout(doit,matchMedia('(prefers-reduced-motion:reduce)').matches?0:280)}else doit();break}
- case 'pat':p.pats.push(S.day);save();render('same');toast('쓰담쓰담 했어요');break;
- case 'kkul':p.kkul.push(S.day);save();render('same');toast('꿀밤 콩콩');break;
+ case 'gpat':doGesture(id,'pat');break;
+ case 'gkkul':doGesture(id,'kkul');break;
  case 'orgtip':toast('2주 연속 쓰담쓰담한 사람이에요. 4주 동안 안 하면 떼요.');break;
  case 'stillok':p.ratedDay=S.day;save();render('same');break;
  case 'hide':p.hidden=true;save();back();toast('냉장고에서 숨겼어요');break;
@@ -296,6 +294,22 @@ function filterSheet(keep){if(!keep)ui.ff2=JSON.parse(JSON.stringify(ui.ff||{st:
  <div style="font-weight:700;margin:14px 0 6px">태그</div><div class="chips">${tagsUsed.map(t=>c('tg',t,t)).join('')||'<span class="small">아직 없어요</span>'}</div>
  <div class="dbtn" style="margin-top:18px"><button data-a="ffreset">초기화</button><button class="r" data-a="ffok" ${L.length?'':'disabled style="opacity:.5"'}>${L.length?L.length+'명 보기':'맞는 사람이 없어요'}</button></div>`)}
 
+/* v7 제스처 */
+function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.querySelector('.gz[data-gid="'+id+'"]');
+ if(z){z.classList.remove('r-pat','r-kkul');void z.offsetWidth;z.classList.add('r-'+k);clearTimeout(z._t);z._t=setTimeout(()=>z.classList.remove('r-'+k),k=='pat'?1000:900)}
+ if(!S.gintro){S.gintro=1;document.querySelectorAll('.gintro,.gh').forEach(x=>x.remove())}
+ const t=S.day,arr=k=='pat'?(p.pats=p.pats||[]):(p.kkul=p.kkul||[]);let ok=!arr.includes(t);if(k=='kkul'&&arr.filter(d=>t-d<7&&d<=t).length>=3)ok=false;
+ if(ok){arr.push(t);toast(k=='pat'?'쓰담쓰담이 오늘 한 번 기록되었어요':'꿀밤 콩콩이 오늘 한 번 기록되었어요')}save()}
+(function(){let st=null,lastTap=0,lastId=null;
+ document.addEventListener('pointerdown',e=>{const z=e.target.closest('.gz[data-gid]');if(!z||e.target.closest('.stampbtn,.sr'))return;st={z,id:z.dataset.gid,x0:e.clientX,y0:e.clientY,lx:e.clientX,dir:0,ch:0,tr:0,t0:Date.now(),mode:null,moved:false}},{passive:true});
+ document.addEventListener('pointermove',e=>{if(!st)return;const dx=e.clientX-st.x0,dy=e.clientY-st.y0;
+  if(!st.mode&&Math.hypot(dx,dy)>=10){st.mode=Math.abs(dy)>Math.abs(dx)?'scroll':'rub'}
+  if(Math.hypot(dx,dy)>6)st.moved=true;if(st.mode!='rub')return;
+  const d=e.clientX-st.lx;if(Math.abs(d)<2)return;const sg=Math.sign(d);if(st.dir&&sg!=st.dir)st.ch++;st.dir=sg;st.tr+=Math.abs(d);st.lx=e.clientX;
+  if(st.ch>=2&&st.tr>=80&&Date.now()-st.t0<=1200&&!st.done){st.done=1;doGesture(st.id,'pat')}},{passive:true});
+ document.addEventListener('pointerup',e=>{if(!st)return;const s=st;st=null;if(s.moved)return;const n=Date.now();
+  if(lastId==s.id&&n-lastTap<=300){lastTap=0;doGesture(s.id,'kkul')}else{lastTap=n;lastId=s.id}});
+ document.addEventListener('pointercancel',()=>st=null);})();
 const had=localStorage.getItem(KEY);load();if(!had)seed();render('fade');
 if(location.hash=='#test')testMenu();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');

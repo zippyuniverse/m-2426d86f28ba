@@ -117,7 +117,7 @@ nav.tab button.on b{opacity:1;filter:none}
 .dialog .warn{color:var(--red);font-weight:600}
 .dbtn{display:flex;gap:8px}.dbtn button{flex:1;height:46px;border-radius:12px;background:var(--bg2);font-weight:600}.dbtn .r{background:var(--red);color:#fff}
 .srow{padding:14px 4px;border-top:1px solid var(--line);display:flex;align-items:center;gap:8px}
-#toast{position:fixed;left:50%;bottom:calc(var(--sab) + 96px);transform:translateX(-50%);background:#222;color:#fff;border-radius:12px;padding:12px 16px;font-size:0.8235rem;opacity:0;pointer-events:none;transition:.25s;z-index:30;max-width:90%;text-align:center}
+#toast{position:fixed;left:50%;bottom:calc(var(--sab) + 134px);transform:translateX(-50%);background:#222;color:#fff;border-radius:12px;padding:12px 16px;font-size:0.8235rem;opacity:0;pointer-events:none;transition:.25s;z-index:30;max-width:90%;text-align:center}
 #toast.on{opacity:1}
 .ntf{display:flex;gap:10px;padding:13px 4px;border-top:1px solid var(--line)}
 .ntf .d{width:7px;height:7px;border-radius:4px;background:var(--red);margin-top:7px;flex:none}
@@ -163,3 +163,25 @@ button[disabled]{cursor:default;pointer-events:none}
 .stampbtn{position:absolute;right:-8px;bottom:-4px;padding:0;border:0;background:none;min-width:44px;min-height:44px}
 .ph-head .av .stampbtn .stamp{position:static}
 .plabel{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;padding:0 14px;border:0;border-radius:22px;background:#F2F2F2;color:#525252;font-size:13px;font-weight:600}
+
+.gz{position:relative;width:136px;height:136px;margin:0 auto;display:flex;align-items:center;justify-content:center;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.gz .av .face{display:block;position:relative;width:96px;height:96px;transform-origin:50% 100%}
+.gz .face img{-webkit-user-drag:none;pointer-events:none}
+.gz .fx{position:absolute;inset:0;pointer-events:none;font-style:normal}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;padding:0;border:0}
+.gintro{position:relative;margin:8px auto 10px;font-size:0.7647rem;line-height:1.45;color:#fff;background:#222;border-radius:12px;padding:8px 14px;width:max-content;max-width:90%;text-align:center;font-weight:600}
+.gintro:after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:#222}
+.gh{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;line-height:1.1;text-align:center;filter:grayscale(1);pointer-events:none}.gh-l{left:-56px}.gh-r{right:-56px}
+#toast.on{opacity:1}#toast{width:350px;max-width:calc(100% - 24px);height:48px;padding:0 16px;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box}
+.gz.r-pat .face img{filter:saturate(1.15) brightness(1.05)}
+.gz.r-pat .fx:before{content:"◠ ◠";position:absolute;left:0;right:0;top:34%;text-align:center;font-size:20px;font-weight:700;color:#3a2a1a;letter-spacing:6px}
+.gz.r-pat .fx:after{content:"♥";position:absolute;right:-6px;top:-10px;color:#F08AA0;font-size:24px;animation:hrt 1s ease-out}
+.gz.r-pat .face{box-shadow:inset 22px 14px 0 -16px #F7B3C0, inset -22px 14px 0 -16px #F7B3C0;border-radius:50%;animation:hap 1s ease}
+.gz.r-kkul .fx:before{content:"> <";position:absolute;left:0;right:0;top:34%;text-align:center;font-size:20px;font-weight:700;color:#3a2a1a;letter-spacing:8px}
+.gz.r-kkul .fx:after{content:"✦ ✧";position:absolute;left:0;right:0;top:-18px;text-align:center;color:#E0B23C;font-size:18px;animation:hrt .9s ease-out}
+.gz.r-kkul .face{animation:sq .9s ease}
+.gz.r-kkul .face:before{content:"";position:absolute;left:50%;top:-6px;width:18px;height:12px;margin-left:-9px;border-radius:50% 50% 40% 40%;background:#E9C9A6;z-index:2}
+@keyframes hap{0%,100%{transform:none}30%{transform:translateY(-4px) scale(1.03)}}
+@keyframes sq{0%,100%{transform:none}20%{transform:scale(1.06,.9)}50%{transform:scale(.98,1.02)}}
+@keyframes hrt{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}
+@media (prefers-reduced-motion:reduce){.gz .face,.gz .fx:after{animation:none!important}.gz.r-pat .fx:after,.gz.r-kkul .fx:after,.gz.r-kkul .face:before{display:none}}
