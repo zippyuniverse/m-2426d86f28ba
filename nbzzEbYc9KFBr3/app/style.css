@@ -179,7 +179,6 @@ button[disabled]{cursor:default;pointer-events:none}
 .gz.r-pat .fx:after{content:"♥";position:absolute;right:-6px;top:-10px;color:#F08AA0;font-size:24px;animation:hrt 1s ease-out}
 .gz.r-pat .face{animation:hap 1s ease}
 .gz.r-pat .face:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 9px 6px at 25% 60%,rgba(247,140,165,.85),rgba(247,140,165,0)),radial-gradient(ellipse 9px 6px at 75% 60%,rgba(247,140,165,.85),rgba(247,140,165,0));pointer-events:none;z-index:2}
-.gz.r-kkul .fx:before{content:"> <";position:absolute;left:0;right:0;top:34%;text-align:center;font-size:20px;font-weight:700;color:#3a2a1a;letter-spacing:8px}
 .gz.r-kkul .fx:after{content:"✦ ✧";position:absolute;left:0;right:0;top:-18px;text-align:center;color:#E0B23C;font-size:18px;animation:hrt .9s ease-out}
 .gz.r-kkul .face{animation:sq .9s ease}
 .gz.r-kkul .face:before{content:"";position:absolute;left:50%;top:14px;width:18px;height:12px;margin-left:-9px;border-radius:50% 50% 40% 40%;background:#E9C9A6;z-index:2}
