@@ -185,3 +185,14 @@ button[disabled]{cursor:default;pointer-events:none}
 @keyframes sq{0%,100%{transform:none}20%{transform:scale(1.06,.9)}50%{transform:scale(.98,1.02)}}
 @keyframes hrt{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}
 @media (prefers-reduced-motion:reduce){.gz .face,.gz .fx:after{animation:none!important}.gz.r-pat .fx:after,.gz.r-kkul .fx:after,.gz.r-kkul .face:before{display:none}}
+/* v13: person detail 2x character, 1.5x stamp */
+.gz{width:216px;height:216px}
+.ph-head .av,.gz .av .face{width:192px;height:192px}
+.ph-head .av img{width:192px;height:192px}
+.stampbtn{right:-26px;bottom:-12px;min-width:66px;min-height:66px}
+.ph-head .av .stampbtn .stamp.big{width:66px;height:66px;font-size:1.2rem}
+.gh{font-size:26px}.gh-l{left:-62px}.gh-r{right:-62px}
+.gz.r-pat .face:after{background:radial-gradient(ellipse 18px 12px at 25% 60%,rgba(247,140,165,.85),rgba(247,140,165,0)),radial-gradient(ellipse 18px 12px at 75% 60%,rgba(247,140,165,.85),rgba(247,140,165,0))}
+.gz.r-pat .fx:after{right:-4px;top:-14px;font-size:40px}
+.gz.r-kkul .fx:after{top:-26px;font-size:28px}
+.gz.r-kkul .face:before{top:28px;width:36px;height:24px;margin-left:-18px}
