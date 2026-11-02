@@ -30,7 +30,7 @@ function stage(p){const c=cycleDays(p);if(!c)return {k:'none',t:'연락 안 함'
  if(diff<0)return {k:'fresh',t:'신선 D-'+(-diff),o:3,d:diff};if(diff==0)return {k:'today',t:'오늘 손질',o:2,d:0};
  if(diff<14)return {k:'aging',t:'숙성 중 D+'+diff,o:1,d:diff};return {k:'spoil',t:'상하기 직전 D+'+diff,o:0,d:diff}}
 function cycLabel(p){const c=cycleDays(p);return CYC.find(x=>x[0]===c)[1]}
-function emo(p,cls='em'){const src=p.hold||p.persona==null?'emoji/hold.svg':'emoji/p'+p.persona+'.svg';return `<img class="${cls}" src="${src}" alt="">`}
+function emo(p,cls='em'){const src=p.hold||p.persona==null?'emoji/hold.webp':'emoji/p'+p.persona+'.webp';return `<img class="${cls}" src="${src}" alt="">`}
 function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp ${g==5?'fill':''} ${big?'big':''}">${GR[g][0]}</span>`}
 function organic(p){const wk=d=>Math.floor((d-S.day%7+70000)/7);if(!p.pats||!p.pats.length)return false;const w=new Set(p.pats.map(d=>Math.floor(d/7)));const cw=Math.floor(S.day/7);return (w.has(cw)&&w.has(cw-1))||(w.has(cw-1)&&w.has(cw-2))}
 function visible(){return S.people.filter(p=>!p.hidden)}
@@ -126,7 +126,7 @@ function verdictBody(n,pub){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe
  let tg=Object.keys(c).filter(t=>c[t]>=3);if(pub)tg=tg.filter(t=>!REP_NEG.includes(t));
  const sat=S.day-((dateOf(S.day).getDay()+1)%7);
  return `<div class="vcard"><div class="testbar">테스트용 예시</div><div class="small">${mdw(sat)} 기준 · 평가 5명 이상 · 익명 종합</div><div style="margin:14px 0 6px">${stamp(g,true)}</div><div style="font-weight:800;font-size:1.1765rem">${GR[g][0]} ${GR[g][1]}</div>
- <div style="margin-top:16px"><img class="em-big" src="emoji/p${pe}.svg"></div><div style="margin-top:6px">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div>
+ <div style="margin-top:16px"><img class="em-big" src="emoji/p${pe}.webp"></div><div style="margin-top:6px">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div>
  <div class="chips" style="justify-content:center;margin-top:14px">${tg.map(t=>`<span class="chip sm ${REP_NEG.includes(t)?'neg':''}">${esc(t)}</span>`).join('')}</div>
  <div class="small" style="margin-top:12px">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
 function verdict(){let h=`<div class="scr"><div class="hd"><h1>내 판정서</h1>${info('verdict')}</div><div class="testbar">테스트용 예시 · 휴대폰 번호 인증은 건너뛰어요</div>`;
@@ -157,7 +157,7 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const 
 /* 평가 쓰기 */
 function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||(w.grade!=null&&w.persona!=null);
  let h=`<div class="scr nonav"><div class="hd"><button class="back" data-a="back">‹</button><div style="flex:1"><div style="font-weight:800;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
- <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img src="emoji/p${i}.svg">${n}</button>`).join('')}</div>
+ <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img src="emoji/p${i}.webp">${n}</button>`).join('')}</div>
  <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판단 보류 · 성격·등급 없이 저장</button>
  <h2>연락 주기</h2>${hold?'<div class="note" style="margin:-4px 0 8px">판단 보류는 자동으로 1개월 주기예요.</div>':''}<div class="chips">${CYC.map(c=>`<button class="chip ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
@@ -192,11 +192,11 @@ function infoSheet(k){const x=INFO[k];sheet(`${x[0]?`<h3>${x[0]}</h3>`:''}<ul>${
 function repSheet(){const w=ui.w;const neg=w.rep.filter(t=>REP_NEG.includes(t)).length;
  sheet(`<h3>평판 태그 고르기</h3><div class="chips">${REP_POS.map(t=>`<button class="chip sm ${w.rep.includes(t)?'on':''}" data-a="reptg" data-t="${t}">${t}</button>`).join('')}</div><div class="small" style="margin:14px 0 6px">부정 태그는 한 사람에게 3개까지</div><div class="chips">${REP_NEG.map(t=>`<button class="chip sm neg ${w.rep.includes(t)?'on':''}" data-a="reptg" data-t="${t}" ${!w.rep.includes(t)&&neg>=3?'disabled style="opacity:.35"':''}>${t}</button>`).join('')}</div><div style="height:16px"></div><button class="btn-r" data-a="sclose2">완료</button>`)}
 function holdSheet(id){const p=P(id);ui.hs=p.hold?{id,grade:null,persona:null,hold:false}:{id,grade:p.grade,persona:p.persona,hold:false};drawHold()}
-function drawHold(){const h=ui.hs,ok=h.hold||(h.grade!=null&&h.persona!=null);sheet(`<h3>성격·등급 고르기</h3><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${h.persona===i?'on':''}" data-a="hsx" data-f="persona" data-x="${i}"><img src="emoji/p${i}.svg">${n}</button>`).join('')}</div><div style="height:14px"></div><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${h.grade===g?'on':''}" data-a="hsx" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div><button class="holdbtn ${h.hold?'on':''}" data-a="hsx" data-f="hold">판단 보류</button><div style="height:16px"></div>${ok?'':'<div class="hint">성격·등급을 고르면 저장할 수 있어요</div>'}<button class="btn-r" data-a="hssave" ${ok?'':'disabled'}>저장</button>`)}
+function drawHold(){const h=ui.hs,ok=h.hold||(h.grade!=null&&h.persona!=null);sheet(`<h3>성격·등급 고르기</h3><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${h.persona===i?'on':''}" data-a="hsx" data-f="persona" data-x="${i}"><img src="emoji/p${i}.webp">${n}</button>`).join('')}</div><div style="height:14px"></div><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${h.grade===g?'on':''}" data-a="hsx" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div><button class="holdbtn ${h.hold?'on':''}" data-a="hsx" data-f="hold">판단 보류</button><div style="height:16px"></div>${ok?'':'<div class="hint">성격·등급을 고르면 저장할 수 있어요</div>'}<button class="btn-r" data-a="hssave" ${ok?'':'disabled'}>저장</button>`)}
 function editSheet(id,f){const p=P(id);ui.ed={id,f,val:JSON.parse(JSON.stringify(f=='memo'||f=='rep'?p[f]:p[f]))};drawEdit()}
 function drawEdit(){const e=ui.ed,p=P(e.id);let b='';const T={grade:'등급',persona:'성격',again:'다시 맡기기',rel:'관계',memo:'메모 태그',rep:'평판 태그',priv:'판정서 반영',cycle:'연락 주기'}[e.f];
  if(e.f=='grade')b=`<div class="grades">${[5,4,3,2,1].map(g=>`<button class="${e.val===g?'on':''}" data-a="edx" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>`;
- if(e.f=='persona')b=`<div class="grid3">${PERS.map((n,i)=>`<button class="tile ${e.val===i?'on':''}" data-a="edx" data-x="${i}"><img src="emoji/p${i}.svg">${n}</button>`).join('')}</div>`;
+ if(e.f=='persona')b=`<div class="grid3">${PERS.map((n,i)=>`<button class="tile ${e.val===i?'on':''}" data-a="edx" data-x="${i}"><img src="emoji/p${i}.webp">${n}</button>`).join('')}</div>`;
  if(e.f=='again'||e.f=='rel')b=`<div class="chips">${(e.f=='again'?AGAIN:REL).map(a=>`<button class="chip ${e.val===a?'on':''}" data-a="edx" data-x="${a}">${a}</button>`).join('')}</div>`;
  if(e.f=='cycle')b=`<div class="chips">${CYC.map(c=>`<button class="chip ${e.val===c[0]?'on':''}" data-a="edx" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
  if(e.f=='priv')b=`<div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${e.val?'on':''}" data-a="edx" data-x="t"></button></div>${e.val?'<div class="note">다음 토요일 오전 9시 갱신부터 판정서에서 빠져요. 이미 열린 지난 판정서에는 남을 수 있어요.</div>':''}`;
