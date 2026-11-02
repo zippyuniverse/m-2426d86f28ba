@@ -16,9 +16,17 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="vlayer" aria-hidden="true"></div>
+<div id="vpeek" aria-hidden="true"><svg viewBox="0 0 32 32"><defs><linearGradient id="vdg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3631"/><stop offset="1" stop-color="#161411"/></linearGradient></defs><path d="M7 3.5h12.5l5.5 5.5v19a1.5 1.5 0 0 1-1.5 1.5h-16A1.5 1.5 0 0 1 6 28V5a1.5 1.5 0 0 1 1-1.5z" fill="url(#vdg)" stroke="#C9A96E" stroke-width="1.4" stroke-linejoin="round"/><path d="M19.5 3.5V8a1 1 0 0 0 1 1H25" fill="none" stroke="#C9A96E" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 12h9M10 15.5h11M10 19h6" stroke="#9C8763" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="23.5" r="4.6" fill="#D93A44" stroke="#1a1714" stroke-width="1.2"/><circle cx="20" cy="23.5" r="2.7" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width=".9"/></svg><span class="lb">내 판정서</span></div>
 <div id="app"></div>
+<svg id="vfx" aria-hidden="true"><defs>
+<linearGradient id="vgF" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#b9b9b9"/><stop offset=".07" stop-color="#e6e6e6"/><stop offset=".22" stop-color="#fdfdfd"/><stop offset=".55" stop-color="#ffffff"/><stop offset=".85" stop-color="#f1f1f1"/><stop offset="1" stop-color="#dcdcdc"/></linearGradient>
+<linearGradient id="vgP" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#000" stop-opacity=".14"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient></defs>
+<path id="vshade" fill="url(#vgP)"/><path id="vflap" fill="url(#vgF)"/><path id="vrim" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="1"/></svg>
+<button id="vhit" data-a="vopen" aria-label="내 판정서"></button>
 <div id="sheet-root"></div>
 <div id="toast"></div>
 <script src="app.js"></script>
+<script src="curl.js"></script>
 </body>
 </html>

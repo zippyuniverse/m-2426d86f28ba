@@ -31,7 +31,7 @@ function stage(p){const c=cycleDays(p);if(!c)return {k:'none',t:'연락 안 함'
  if(diff<14)return {k:'aging',t:'숙성 중 D+'+diff,o:1,d:diff};return {k:'spoil',t:'상하기 직전 D+'+diff,o:0,d:diff}}
 function cycLabel(p){const c=cycleDays(p);return CYC.find(x=>x[0]===c)[1]}
 function emo(p,cls='em'){const src=p.hold||p.persona==null?'emoji/hold.webp':'emoji/p'+p.persona+'.webp';return `<img class="${cls}" src="${src}" alt="">`}
-function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp ${g==5?'fill':''} ${big?'big':''}">${GR[g][0]}</span>`}
+function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp ${big?'big':''}">${GR[g][0]}</span>`}
 function organic(p){const wk=d=>Math.floor((d-S.day%7+70000)/7);if(!p.pats||!p.pats.length)return false;const w=new Set(p.pats.map(d=>Math.floor(d/7)));const cw=Math.floor(S.day/7);return (w.has(cw)&&w.has(cw-1))||(w.has(cw-1)&&w.has(cw-2))}
 function visible(){return S.people.filter(p=>!p.hidden)}
 function newOnes(){return visible().filter(p=>p.isNew&&!rated(p)&&!p.hold&&S.day-p.addedDay<7)}
@@ -43,7 +43,7 @@ function countN(){return todayList().length}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2000)}
 function go(v,dir){nav.push(v);render(dir||'fwd')}
 function back(){if(nav.length>1)nav.pop();render('back')}
-function tab(v){nav=[{v}];render('fade')}
+function tab(v){if(v=='verdict'){openVerdict();return}nav=[{v}];render('fade')}
 
 /* seed */
 function mk(o){return Object.assign({id:S.seq++,name:'',phone:'',isNew:false,addedDay:S.day,grade:null,persona:null,hold:false,cycle:'auto',again:null,rel:null,memo:[],rep:[],priv:false,contacts:[],ratedDay:S.day,hidden:false,kkul:[],pats:[]},o)}
@@ -70,15 +70,16 @@ function morning(){const t=todayList(),sp=t.filter(p=>stage(p).k=='spoil').lengt
  S.notifs=S.notifs.filter(n=>S.day-n.day<=30).slice(0,100);S.readBell=false}
 
 /* render */
-function render(dir){const v=nav[nav.length-1];const app=$('#app');let h='';
+function render(dir){const v=nav[nav.length-1];if(v.v=='verdict'){$('#vlayer').innerHTML=verdict();return}const app=$('#app');let h='';
  const f={shelf,fridge,tags,verdict,person,write,notifs,settings,tagPeople,pubVerdict,addContact}[v.v];h=f(v);
  const tabs=['shelf','fridge','tags','verdict'];
  if(tabs.includes(v.v))h+=navBar(v.v);
  app.innerHTML=h;const sc=app.querySelector('.scr');if(sc&&dir){sc.classList.add('enter');if(dir=='back')sc.classList.add('back');if(dir=='fade')sc.classList.add('fade')}
  if(dir&&dir!=='same')window.scrollTo(0,0);
+ if(window.curlRest)curlRest();
  const n=countN();const ne=app.querySelector('#nnum');if(ne&&lastN!=null&&lastN!==n){ne.classList.add('bump')}lastN=n}
 function navBar(c){const t=[['shelf','진열대','🥩'],['fridge','냉장고','🧊'],['tags','태그','🏷️'],['verdict','내 판정서','📋']];
- return `<nav class="tab">${t.map(x=>`<button data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}"><b>${x[2]}</b>${x[1]}</button>`).join('')}</nav>`}
+ return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button class="vt" tabindex="-1" aria-hidden="true"><b>${x[2]}</b>${x[1]}</button>`:`<button data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}"><b>${x[2]}</b>${x[1]}</button>`).join('')}</nav>`}
 function info(k){return `<button class="info" data-a="info" data-k="${k}">i</button>`}
 
 function shelf(){const n=countN(),nw=newOnes(),td=todayList(),hd=holdList();const q=ui.q||'';
@@ -129,23 +130,26 @@ function verdictBody(n,pub){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe
  <div style="margin-top:16px"><img class="em-big" src="emoji/p${pe}.webp"></div><div style="margin-top:6px">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div>
  <div class="chips" style="justify-content:center;margin-top:14px">${tg.map(t=>`<span class="chip sm ${REP_NEG.includes(t)?'neg':''}">${esc(t)}</span>`).join('')}</div>
  <div class="small" style="margin-top:12px">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
-function verdict(){let h=`<div class="scr"><div class="hd"><h1>내 판정서</h1>${info('verdict')}</div><div class="testbar">테스트용 예시 · 휴대폰 번호 인증은 건너뛰어요</div>`;
+function verdictCert(n){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe=mode(R.map(r=>r.p));const c={};R.forEach(r=>new Set(r.r).forEach(t=>c[t]=(c[t]||0)+1));
+ const tg=Object.keys(c).filter(t=>c[t]>=3);const sat=S.day-((dateOf(S.day).getDay()+1)%7);
+ return `<div class="cert"><div class="tb2">테스트용 예시</div><div class="when">${mdw(sat)} 기준 · 평가 5명 이상 · 익명 종합</div><div class="rule"></div><div class="hero"><div class="halo"></div><img src="emoji/p${pe}.webp" alt=""><div class="vstamp">${GR[g][0]}</div></div><div class="grade">${GR[g][0]} ${GR[g][1]}</div><div class="pers">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div><div class="chips">${tg.map(t=>`<span class="chip sm ${REP_NEG.includes(t)?'neg':''}">${esc(t)}</span>`).join('')}</div><div class="upd">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
+function verdict(){let h=`<div class="vd"><div class="vtop"><button class="vback" data-a="vback" aria-label="뒤로">‹</button><h1>내 판정서</h1>${info('verdict')}</div><div class="testbar">테스트용 예시 · 휴대폰 번호 인증은 건너뛰어요</div>`;
  if(!S.accepted)return h+`<h2 style="margin-top:20px">내 판정서 받기</h2><p class="note" style="font-size:0.8824rem;color:var(--ink)">평가가 5명 이상 모이면 익명 종합 결과만 볼 수 있어요. 누가 평가했는지는 알 수 없어요.</p>${S.reopen?'<p class="note">평가자들이 남긴 예전 평가까지 모두 다시 모여요.</p>':''}
   <label class="inp">이 번호를 언제부터 쓰셨나요?<input value="2019년 3월" readonly></label><div class="small" style="margin-top:6px">이 날짜 전에 쌓인 평가는 판정서에 넣지 않아요.</div><div style="height:20px"></div><button class="btn-r" data-a="accept">판정서 받기 시작</button></div>`;
  if(S.verdictN<5)h+=`<div class="vcard" style="margin-top:12px"><p style="line-height:1.6;margin:0 0 14px">판정 대기 중이에요. 등급 평가가 5명 미만이라 아직 보여드릴 수 없어요. 여의도 정육점을 주변에 알려주면 더 빨리 판정돼요!</p><button class="btn-r" data-a="invite">초대 링크 보내기</button><div class="small" style="margin-top:8px">링크에는 내 번호·계정 정보가 담기지 않아요.</div><div class="small" style="margin-top:12px">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>
   <div class="sw" style="margin-top:16px"><div class="grow"><b>판정서 공개</b><span>판정서가 열리면 공개할 수 있어요.</span></div><span class="tog" style="opacity:.4"></span></div>`;
- else h+=`<div style="margin-top:12px">${verdictBody(S.verdictN,false)}</div><div class="sw" style="margin-top:16px"><div class="grow"><b>판정서 공개</b><span>${S.pub?'내 번호를 아는 앱 사용자에게 보여지고 있어요. 누가 봤는지는 알려드리지 않아요.':'켜면 내 번호를 아는 앱 사용자가 이 판정서를 볼 수 있어요.'}</span></div><button class="tog ${S.pub?'on':''}" data-a="pubtog"></button></div>`;
+ else h+=`<div style="margin-top:12px">${verdictCert(S.verdictN)}</div><div class="sw" style="margin-top:16px"><div class="grow"><b>판정서 공개</b><span>${S.pub?'내 번호를 아는 앱 사용자에게 보여지고 있어요. 누가 봤는지는 알려드리지 않아요.':'켜면 내 번호를 아는 앱 사용자가 이 판정서를 볼 수 있어요.'}</span></div><button class="tog ${S.pub?'on':''}" data-a="pubtog"></button></div>`;
  return h+`<button class="link-red" data-a="closev">판정서 닫기</button></div>`}
 function pubVerdict(v){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">공개된 판정서</h1></div>${verdictBody(7,true)}<p class="note">부정 태그는 공개된 판정서에 보이지 않아요.</p></div>`}
 
 /* 사람 상세 */
 function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const hold=p.hold;
  let h=`<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><span class="sp"></span></div>
- <div class="ph-head">${!hold&&!S.gintro?'<div class="gintro">캐릭터를 쓰다듬거나,<br>두 번 톡톡 꿀밤을 줘 보세요</div>':''}<div class="gz${hold?' nog':''}" ${hold?'':`data-gid="${p.id}"`}>${!hold&&!S.gintro?'<span class="gh gh-l" aria-hidden="true">👆<br>⟷</span><span class="gh gh-r" aria-hidden="true">((👆</span>':''}<div class="av"><span class="face">${emo(p,'')}<i class="fx"></i></span>${hold?'':`<button class="stampbtn" data-a="pgsheet" data-id="${p.id}" aria-label="성격·등급 고르기">${stamp(p.grade,true)}</button>`}</div>${hold?'':`<button class="sr" data-a="gpat" data-id="${p.id}">쓰담쓰담</button><button class="sr" data-a="gkkul" data-id="${p.id}">꿀밤 콩콩</button>`}</div><button class="plabel" data-a="pgsheet" data-id="${p.id}">${hold?'판단 보류':PERS[p.persona]+' · '+GR[p.grade][0]+'등급'} ›</button><h1>${esc(p.name)} ${organic(p)?'<span class="org" data-a="orgtip">유기농</span>':''}</h1><div class="small">${p.phone}</div></div>`;
+ <div class="ph-head">${!hold&&!S.gintro?'<div class="gintro">캐릭터를 쓰다듬거나,<br>두 번 톡톡 꿀밤을 줘 보세요</div>':''}<div class="gz${hold?' nog':''}" ${hold?'':`data-gid="${p.id}"`}>${!hold&&!S.gintro?'<span class="gh gh-l" aria-hidden="true">👆<br>⟷</span><span class="gh gh-r" aria-hidden="true">((👆</span>':''}<div class="av"><span class="face">${!hold&&p.persona!=null&&organic(p)?`<img class="" src="emoji/o${p.persona}.webp" alt="유기농">`:emo(p,'')}<i class="fx"></i></span>${hold?'':`<button class="stampbtn" data-a="pgsheet" data-id="${p.id}" aria-label="성격·등급 고르기">${stamp(p.grade,true)}</button>`}</div>${hold?'':`<button class="sr" data-a="gpat" data-id="${p.id}">쓰담쓰담</button><button class="sr" data-a="gkkul" data-id="${p.id}">꿀밤 콩콩</button>`}</div><button class="plabel" data-a="pgsheet" data-id="${p.id}">${hold?'판단 보류':PERS[p.persona]+' · '+GR[p.grade][0]+'등급'} ›</button><h1>${esc(p.name)} ${hold&&organic(p)?'<span class="org" data-a="orgtip">유기농</span>':''}</h1><div class="small">${p.phone}</div></div>`;
  if(p.ratedDay!=null&&S.day-p.ratedDay>=90)h+=`<div class="recard"><span class="grow">${hold?'이제 등급을 매겨 볼까요?':'지금도 '+GR[p.grade][0]+'인가요? 다시 평가해 보세요.'}</span><button class="chip sm" data-a="stillok" data-id="${p.id}">${hold?'아직 보류할게요':'지금도 맞아요'}</button></div>`;
  h+=`<div class="three"><button class="bigb" data-a="call" data-t="전화" data-id="${p.id}">📞 전화</button><button class="bigb red" data-a="call" data-t="연락했어요" data-id="${p.id}">✓ 연락했어요</button></div>`;
  h+=`<h2>내 평가</h2><div class="card">`;
- if(!hold)h+=`<div class="kv" data-a="edit" data-f="again" data-id="${p.id}"><span class="k">다시 맡기기</span><span class="v">${p.again??'<span class="blank">빈칸</span>'}</span></div><div class="kv" data-a="edit" data-f="rel" data-id="${p.id}"><span class="k">관계</span><span class="v">${p.rel??'<span class="blank">빈칸</span>'}</span></div>`;
+ if(!hold)h+=[['again','다시 맡기기',AGAIN],['rel','관계',REL]].map(([f,k,L])=>`<div class="kvsec"><span class="k">${k}</span><div class="chips">${L.map(a=>`<button class="chip ${p[f]===a?'on':''}" data-a="qset" data-f="${f}" data-x="${a}" data-id="${p.id}" aria-pressed="${p[f]===a}">${a}</button>`).join('')}</div></div>`).join('');
  h+=`<div class="kv" data-a="edit" data-f="memo" data-id="${p.id}"><span class="k">메모 태그 <span class="badge me">나만 보기</span></span><span class="v">${p.memo.map(esc).join(', ')||'<span class="blank">빈칸</span>'}</span></div>`;
  if(!hold)h+=`<div class="kv" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그 <span class="badge">익명 공개</span></span><span class="v">${p.rep.map(esc).join(', ')||'<span class="blank">빈칸</span>'}</span></div><div class="kv" data-a="edit" data-f="priv" data-id="${p.id}"><span class="k">판정서 반영</span><span class="v">${p.priv?'나만 보기':'익명으로 반영'}</span></div>`;
  h+=`</div><h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${cycLabel(p)} 주기 · 마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${hold?'판단 보류':s.t}</span></div></div>
@@ -217,6 +221,9 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
  const p=id?P(id):null;
  switch(a){
  case 'tab':ui.q='';tab(el.dataset.v);break;
+ case 'qset':{const q=P(+id),f=el.dataset.f,x=el.dataset.x;q[f]=q[f]===x?null:x;save();render('same');break}
+ case 'vopen':openVerdict();break;
+ case 'vback':closeVerdict();break;
  case 'back':back();break;
  case 'info':infoSheet(el.dataset.k);break;
  case 'sclose':case 'sclose2':closeSheet();if(ui.w&&nav[nav.length-1].v=='write')render('same');break;
