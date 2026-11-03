@@ -98,13 +98,13 @@ function shelf(){const n=countN(),nw=newOnes(),td=todayList(),hd=holdList();cons
  if(hd.length)h+=`<h2>아직 등급 안 매긴 고기<small>${hd.length}</small></h2><div class="card">${hd.map(p=>`<div class="row tap" data-a="holdsheet" data-id="${p.id}">${emo(p,'stamp hold')}<div class="grow"><div class="nm">${esc(p.name)}</div><div class="meta">${S.day-p.ratedDay==0?'오늘':md(p.ratedDay)} 판단 보류 · ${cycLabel(p)} 주기</div></div><span class="go">등급 매기기 →</span></div>`).join('')}</div>`;
  return h+'</div>'}
 
-function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};let L=visible().filter(p=>rated(p)||p.hold);
+function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 태그 필터 없앰(태그 탭이 따로 있음) */let L=visible().filter(p=>rated(p)||p.hold);
  if(f.st.length)L=L.filter(p=>f.st.includes(stage(p).k));
  if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));
  if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
  L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;
  let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span></div>
- <div class="chips" style="margin:6px 0 12px"><button class="chip ${f.st.length?'on':''}" data-a="filter">상태${f.st.length?' '+f.st.length:''}</button><button class="chip ${f.gr.length?'on':''}" data-a="filter">등급${f.gr.length?' '+f.gr.length:''}</button><button class="chip ${f.tg.length?'on':''}" data-a="filter">태그${f.tg.length?' '+f.tg.length:''}</button><span class="small" style="margin-left:auto;align-self:center">연락 임박순</span></div>`;
+ <div class="chips" style="margin:6px 0 12px"><button class="chip ${f.st.length?'on':''}" data-a="filter">상태${f.st.length?' '+f.st.length:''}</button><button class="chip ${f.gr.length?'on':''}" data-a="filter">등급${f.gr.length?' '+f.gr.length:''}</button><span class="small" style="margin-left:auto;align-self:center">연락 임박순</span></div>`;
  if(!all)return h+`<div class="empty">냉장고가 비어 있어요.<br>진열대에서 연락처를 찾아 첫 평가를 써 보세요.<br><br><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`;
  if(!L.length)return h+`<div class="empty">맞는 사람이 없어요</div></div>`;
  return h+`<div class="card">${L.map(p=>{const s=p.hold?{k:'none',t:'판단 보류'}:stage(p);const mt=f.tg.filter(t=>p.memo.includes(t)||p.rep.includes(t));return `<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)} ${organic(p)?'<span class="org">유기농</span>':''}</div><div class="meta">${cycLabel(p)} 주기${mt.length?' · '+mt.map(esc).join(' · '):''}</div></div><span class="pill st-${s.k}">${s.t}</span></div>`}).join('')}</div></div>`}
@@ -292,13 +292,11 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
   if(x=='vn'){S.verdictN=S.verdictN>=5?3:7;save();testMenu();render('same')}
   if(x=='newc'){const n=['남궁민 과장','도현우 차장','변소라 대리'][S.seq%3];const np=mk({name:n,phone:'010-****-'+(2000+S.seq*53%7000),isNew:true,addedDay:S.day,ratedDay:null});S.people.push(np);save();closeSheet();ui.fresh=np.id;tab('shelf');setTimeout(()=>ui.fresh=null,500)}break}
  }});
-function filterSheet(keep){if(!keep)ui.ff2=JSON.parse(JSON.stringify(ui.ff||{st:[],gr:[],tg:[]}));const f=ui.ff2;
+function filterSheet(keep){if(!keep)ui.ff2=JSON.parse(JSON.stringify(ui.ff||{st:[],gr:[],tg:[]}));const f=ui.ff2;f.tg=[];
  const base=visible().filter(p=>rated(p)||p.hold);let L=base;if(f.st.length)L=L.filter(p=>f.st.includes(stage(p).k));if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)));
- const tagsUsed=[...new Set(base.flatMap(p=>p.memo))];
  const c=(k,x,l)=>`<button class="chip sm ${f[k].includes(x)?'on':''}" data-a="ffx" data-k="${k}" data-x="${esc(x)}">${esc(l)}</button>`;
  sheet(`<h3>골라 보기</h3><div class="gn" style="font-weight:700;margin:6px 0">상태</div><div class="chips">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>c('st',x[0],x[1])).join('')}</div>
  <div style="font-weight:700;margin:14px 0 6px">등급</div><div class="chips">${[5,4,3,2,1].map(g=>c('gr',String(g),GR[g][0])).join('')}${c('gr','hold','판단 보류')}</div>
- <div style="font-weight:700;margin:14px 0 6px">태그</div><div class="chips">${tagsUsed.map(t=>c('tg',t,t)).join('')||'<span class="small">아직 없어요</span>'}</div>
  <div class="dbtn" style="margin-top:18px"><button data-a="ffreset">초기화</button><button class="r" data-a="ffok" ${L.length?'':'disabled style="opacity:.5"'}>${L.length?L.length+'명 보기':'맞는 사람이 없어요'}</button></div>`)}
 
 /* v7 제스처 */
