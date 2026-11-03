@@ -16,6 +16,24 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="ink-s" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+ <feTurbulence type="fractalNoise" baseFrequency=".18" numOctaves="2" seed="3" result="n"/>
+ <feDisplacementMap in="SourceGraphic" in2="n" scale="0.9" xChannelSelector="R" yChannelSelector="G" result="d"/>
+ <feTurbulence type="fractalNoise" baseFrequency=".22" numOctaves="1" seed="21" result="v"/>
+ <feColorMatrix in="v" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -40 0 0 0 29.2" result="m"/>
+ <feComposite in="d" in2="m" operator="in"/></filter>
+<filter id="ink-l" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+ <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="3" seed="5" result="n"/>
+ <feDisplacementMap in="SourceGraphic" in2="n" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+ <feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="3" seed="11" result="v"/>
+ <feColorMatrix in="v" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -24 0 0 0 17.3" result="p0"/>
+ <feComponentTransfer in="p0" result="p"><feFuncA type="table" tableValues=".72 1"/></feComponentTransfer>
+ <feTurbulence type="fractalNoise" baseFrequency=".2" numOctaves="2" seed="17" result="h"/>
+ <feColorMatrix in="h" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -40 0 0 0 30.2" result="hm"/>
+ <feComposite in="d" in2="p" operator="in" result="d2"/>
+ <feComposite in="d2" in2="hm" operator="in"/></filter>
+</defs></svg>
 <div id="vlayer" aria-hidden="true"></div>
 <div id="vpeek" aria-hidden="true"><svg viewBox="0 0 32 32"><defs><linearGradient id="vdg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3631"/><stop offset="1" stop-color="#161411"/></linearGradient></defs><path d="M7 3.5h12.5l5.5 5.5v19a1.5 1.5 0 0 1-1.5 1.5h-16A1.5 1.5 0 0 1 6 28V5a1.5 1.5 0 0 1 1-1.5z" fill="url(#vdg)" stroke="#C9A96E" stroke-width="1.4" stroke-linejoin="round"/><path d="M19.5 3.5V8a1 1 0 0 0 1 1H25" fill="none" stroke="#C9A96E" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 12h9M10 15.5h11M10 19h6" stroke="#9C8763" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="23.5" r="4.6" fill="#D93A44" stroke="#1a1714" stroke-width="1.2"/><circle cx="20" cy="23.5" r="2.7" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width=".9"/></svg><span class="lb">내 판정서</span></div>
 <div id="app"></div>
