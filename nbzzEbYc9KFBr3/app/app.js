@@ -103,8 +103,9 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));
  if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
  L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;
- let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span></div>
- <div class="chips" style="margin:6px 0 12px"><button class="chip ${f.st.length?'on':''}" data-a="filter">상태${f.st.length?' '+f.st.length:''}</button><button class="chip ${f.gr.length?'on':''}" data-a="filter">등급${f.gr.length?' '+f.gr.length:''}</button><span class="small" style="margin-left:auto;align-self:center">연락 임박순</span></div>`;
+ let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span><span class="small" style="align-self:center">연락 임박순</span></div>
+ <div class="chips frow" style="margin:6px 0 8px">${[5,4,3,2,1].map(g=>[String(g),GR[g][0]]).concat([['hold','판단 보류']]).map(x=>`<button class="chip sm ${f.gr.includes(x[0])?'on':''}" data-a="fq" data-k="gr" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}</div>
+ <div class="chips frow" style="margin:0 0 12px">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}</div>`;
  if(!all)return h+`<div class="empty">냉장고가 비어 있어요.<br>진열대에서 연락처를 찾아 첫 평가를 써 보세요.<br><br><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`;
  if(!L.length)return h+`<div class="empty">맞는 사람이 없어요</div></div>`;
  return h+`<div class="card">${L.map(p=>{const s=p.hold?{k:'none',t:'판단 보류'}:stage(p);const mt=f.tg.filter(t=>p.memo.includes(t)||p.rep.includes(t));return `<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)} ${organic(p)?'<span class="org">유기농</span>':''}</div><div class="meta">${cycLabel(p)} 주기${mt.length?' · '+mt.map(esc).join(' · '):''}</div></div><span class="pill st-${s.k}">${s.t}</span></div>`}).join('')}</div></div>`}
@@ -276,6 +277,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
  case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rel:null,rep:[],priv:false,ratedDay:S.day});if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판단 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
  case 'filter':filterSheet();break;
+ case 'fq':{ui.ff=ui.ff||{st:[],gr:[],tg:[]};const f=ui.ff,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);i>=0?f[k].splice(i,1):f[k].push(x);render('same');break}
  case 'ffx':{const f=ui.ff2,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);i>=0?f[k].splice(i,1):f[k].push(x);filterSheet(true);break}
  case 'ffreset':ui.ff2={st:[],gr:[],tg:[]};filterSheet(true);break;
  case 'ffok':ui.ff=ui.ff2;closeSheet();render('same');break;

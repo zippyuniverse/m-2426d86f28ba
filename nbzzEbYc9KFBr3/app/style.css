@@ -251,3 +251,4 @@ html.vlock,html.vlock body{overflow:hidden}
 .kvsec .chips{margin:0}
 #app .scr{padding-bottom:calc(var(--sab) + 118px)}
 
+.chips.frow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.chips.frow::-webkit-scrollbar{display:none}.chips.frow .chip{flex:0 0 auto}
