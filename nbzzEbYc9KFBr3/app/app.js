@@ -31,7 +31,7 @@ function stage(p){const c=cycleDays(p);if(!c)return {k:'none',t:'연락 안 함'
  if(diff<14)return {k:'aging',t:'숙성 중 D+'+diff,o:1,d:diff};return {k:'spoil',t:'상하기 직전 D+'+diff,o:0,d:diff}}
 function cycLabel(p){const c=cycleDays(p);return CYC.find(x=>x[0]===c)[1]}
 function emo(p,cls='em'){const src=p.hold||p.persona==null?'emoji/hold.webp':'emoji/p'+p.persona+'.webp';return `<img class="${cls}" src="${src}" alt="">`}
-function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp ${big?'big':''}">${GR[g][0]}</span>`}
+function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp g${g} ${big?'big':''}">${GR[g][0]}</span>`}
 function organic(p){const wk=d=>Math.floor((d-S.day%7+70000)/7);if(!p.pats||!p.pats.length)return false;const w=new Set(p.pats.map(d=>Math.floor(d/7)));const cw=Math.floor(S.day/7);return (w.has(cw)&&w.has(cw-1))||(w.has(cw-1)&&w.has(cw-2))}
 function visible(){return S.people.filter(p=>!p.hidden)}
 function newOnes(){return visible().filter(p=>p.isNew&&!rated(p)&&!p.hold&&S.day-p.addedDay<7)}
@@ -132,7 +132,7 @@ function verdictBody(n,pub){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe
  <div class="small" style="margin-top:12px">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
 function verdictCert(n){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe=mode(R.map(r=>r.p));const c={};R.forEach(r=>new Set(r.r).forEach(t=>c[t]=(c[t]||0)+1));
  const tg=Object.keys(c).filter(t=>c[t]>=3);const sat=S.day-((dateOf(S.day).getDay()+1)%7);
- return `<div class="cert"><div class="tb2">테스트용 예시</div><div class="when">${mdw(sat)} 기준 · 평가 5명 이상 · 익명 종합</div><div class="rule"></div><div class="hero"><div class="halo"></div><img src="emoji/p${pe}.webp" alt=""><div class="vstamp">${GR[g][0]}</div></div><div class="grade">${GR[g][0]} ${GR[g][1]}</div><div class="pers">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div><div class="chips">${tg.map(t=>`<span class="chip sm ${REP_NEG.includes(t)?'neg':''}">${esc(t)}</span>`).join('')}</div><div class="upd">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
+ return `<div class="cert"><div class="tb2">테스트용 예시</div><div class="when">${mdw(sat)} 기준 · 평가 5명 이상 · 익명 종합</div><div class="rule"></div><div class="hero"><div class="halo"></div><img src="emoji/p${pe}.webp" alt=""><div class="vstamp g${g}">${GR[g][0]}</div></div><div class="grade">${GR[g][0]} ${GR[g][1]}</div><div class="pers">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div><div class="chips">${tg.map(t=>`<span class="chip sm ${REP_NEG.includes(t)?'neg':''}">${esc(t)}</span>`).join('')}</div><div class="upd">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
 function verdict(){let h=`<div class="vd"><div class="vtop"><button class="vback" data-a="vback" aria-label="뒤로">‹</button><h1>내 판정서</h1>${info('verdict')}</div><div class="testbar">테스트용 예시 · 휴대폰 번호 인증은 건너뛰어요</div>`;
  if(!S.accepted)return h+`<h2 style="margin-top:20px">내 판정서 받기</h2><p class="note" style="font-size:0.8824rem;color:var(--ink)">평가가 5명 이상 모이면 익명 종합 결과만 볼 수 있어요. 누가 평가했는지는 알 수 없어요.</p>${S.reopen?'<p class="note">평가자들이 남긴 예전 평가까지 모두 다시 모여요.</p>':''}
   <label class="inp">이 번호를 언제부터 쓰셨나요?<input value="2019년 3월" readonly></label><div class="small" style="margin-top:6px">이 날짜 전에 쌓인 평가는 판정서에 넣지 않아요.</div><div style="height:20px"></div><button class="btn-r" data-a="accept">판정서 받기 시작</button></div>`;
