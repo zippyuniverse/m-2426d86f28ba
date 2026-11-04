@@ -262,3 +262,12 @@ html.vlock,html.vlock body{overflow:hidden}
 .ghd{--sc:#9E9E9E}
 .gsb:not(.on) .stamp{--sc:#C2C2C2;box-shadow:0 0 0 2px #fff,0 1px 2px rgba(0,0,0,.08)}
 .gsb.on .stamp{transform:scale(1.06)}
+/* v20 냉장고 검색·전체 */
+.fsrch{margin:4px 0 10px;height:42px}
+.fsrch input{flex:1;border:0;outline:0;font-size:16px;background:transparent;min-width:0}
+.gsb.gall .stamp{--sc:#C2C2C2}
+.gsb.gall .stamp .ink{font-size:.72rem;filter:none;-webkit-text-stroke:0}
+.gsb.gall.on .stamp .ink{background:#4A4A4A;border-color:#4A4A4A;color:#fff}
+.chips.gst{gap:2px;padding:4px 0}
+.gst .gsb{min-width:46px}
+.fsrch input::-webkit-search-cancel-button{filter:grayscale(1);opacity:.6}
