@@ -89,7 +89,6 @@ function info(k){return `<button class="info" data-a="info" data-k="${k}">i</but
 function shelf(){const n=countN(),nw=newOnes(),td=todayList(),hd=holdList();const q=ui.q||'';
  const unread=S.notifs.some(x=>!x.read)&&!S.readBell;
  let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span><button class="ib" data-a="bell"><span class="bic">🔔</span>${unread?'<span class="dot"></span>':''}</button></div>
- <div class="lead">오늘 연락할 <b class="num" id="nnum">${n}</b>명</div>
  <div class="search"><span class="sic">🔍</span><input id="q" placeholder="이름이나 번호로 찾기" value="${esc(q)}" autocomplete="off"></div>`;
  if(q){const r=S.people.filter(p=>p.name.includes(q)||p.phone.includes(q));
   h+=`<div class="card" style="margin-top:10px">${r.map(p=>`<div class="row tap" data-a="${rated(p)||p.hold?'open':'write'}" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${esc(p.name)}</div><div class="meta">${p.phone}</div></div><span class="go">${rated(p)||p.hold?'›':'평가 쓰기 →'}</span></div>`).join('')}
