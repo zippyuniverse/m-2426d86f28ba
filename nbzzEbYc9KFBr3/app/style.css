@@ -271,3 +271,5 @@ html.vlock,html.vlock body{overflow:hidden}
 .chips.gst{gap:2px;padding:4px 0}
 .gst .gsb{min-width:46px}
 .fsrch input::-webkit-search-cancel-button{filter:grayscale(1);opacity:.6}
+.row.more{width:100%;justify-content:center;color:var(--ink2,#555);font-size:.8824rem;font-weight:600;min-height:48px;background:none;border:0}
+.row.more{border-top:1px solid var(--line)}

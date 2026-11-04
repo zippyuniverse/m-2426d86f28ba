@@ -34,7 +34,7 @@ function emo(p,cls='em'){const src=p.hold||p.persona==null?'emoji/hold.webp':'em
 function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp g${g} ${big?'big':''}"><i class="ink">${GR[g][0]}</i></span>`}
 function organic(p){const wk=d=>Math.floor((d-S.day%7+70000)/7);if(!p.pats||!p.pats.length)return false;const w=new Set(p.pats.map(d=>Math.floor(d/7)));const cw=Math.floor(S.day/7);return (w.has(cw)&&w.has(cw-1))||(w.has(cw-1)&&w.has(cw-2))}
 function visible(){return S.people.filter(p=>!p.hidden)}
-function newOnes(){return visible().filter(p=>p.isNew&&!rated(p)&&!p.hold&&S.day-p.addedDay<7)}
+/* v22: 앱 설치 후 저장한 연락처만, 7일, 최근 저장 순 */function newOnes(){const ins=S.installDay??-Infinity;return visible().filter(p=>p.isNew&&!rated(p)&&!p.hold&&p.addedDay>=ins&&S.day-p.addedDay<7).sort((a,b)=>b.addedDay-a.addedDay||b.id-a.id)}
 function todayList(){return visible().filter(p=>rated(p)&&!p.hold&&['today','aging','spoil'].includes(stage(p).k)).sort(sortFn)}
 function holdList(){return visible().filter(p=>p.hold)}
 function sortFn(a,b){const x=stage(a),y=stage(b);if(x.o!=y.o)return x.o-y.o;return x.o<=1?y.d-x.d:(x.d||0)-(y.d||0)}
@@ -61,8 +61,12 @@ function seed(){S=blank();const d=0;
  add({name:'김민준 과장',phone:'010-****-2267',hold:true,ratedDay:-3});
  add({name:'윤기석 대표',phone:'010-****-3378',isNew:true,addedDay:0,ratedDay:null});
  add({name:'강태현 차장',phone:'010-****-4489',isNew:true,addedDay:-3,ratedDay:null});
+ /* v22 예시: 설치 후 새로 저장 6명 더(총 8명) */
+ [['문지호 과장','6120',0],['배수아 대리','6231',-1],['홍재민 차장','6342',-2],['안소희 팀장','6453',-4],['류건우 부장','6564',-5],['임채원 대리','6675',-6]].forEach(x=>add({name:x[0],phone:'010-****-'+x[1],isNew:true,addedDay:x[2],ratedDay:null}));
+ /* v22 예시: 설치 전부터 있던 연락처(새로 들어온 고기 아님, 진열대 검색으로 찾음) */
+ [['송민호 상무','7011'],['장예린 과장','7122']].forEach(x=>add({name:x[0],phone:'010-****-'+x[1],isNew:false,addedDay:-400,ratedDay:null}));
  add({name:'오승민 대리',phone:'010-****-5591',grade:3,persona:0,ratedDay:-50,hidden:true});
- S.firstWrite=true;morning();save()}
+ S.installDay=-30;S.firstWrite=true;morning();save()}
 function morning(){const t=todayList(),sp=t.filter(p=>stage(p).k=='spoil').length;let s='오늘 손질할 고기 '+t.length+'개';if(sp)s+=' · 상하기 직전 '+sp+'개';const n=newOnes().length;if(n)s+=' · 새로 들어온 고기 '+n+'개';const h=holdList().length;if(h)s+=' · 판단 보류 '+h+'개';
  const re=visible().filter(p=>(rated(p)||p.hold)&&p.ratedDay!=null&&S.day-p.ratedDay>=90).length;if(re)s+=' · 다시 맛볼 고기 '+re+'개';
  S.notifs.unshift({day:S.day,kind:'아침 장보기',text:s,read:false});
@@ -92,7 +96,7 @@ function shelf(){const n=countN(),nw=newOnes(),td=todayList(),hd=holdList();cons
   <div class="row tap" data-a="add"><div class="grow"><div class="nm">＋ 새 연락처로 추가</div><div class="meta">테스트용: 폰 연락처 대신 여기서 넣어요</div></div></div></div>`;
   return h+'</div>'}
  if(!nw.length&&!td.length&&!hd.length)h+=`<div class="empty">오늘은 손질할 고기가 없어요.<br>이름이나 번호로 찾아 평가를 써 보세요.</div>`;
- if(nw.length)h+=`<h2>새로 들어온 고기<small>${nw.length}</small></h2><div class="card">${nw.map(p=>`<div class="row tap ${ui.fresh==p.id?'in':''}" data-a="write" data-id="${p.id}"><div class="grow"><div class="meta"><b>NEW</b> · ${S.day==p.addedDay?'오늘':(S.day-p.addedDay)+'일 전'}</div><div class="nm">${esc(p.name)}</div></div><span class="go">등급 매기기 →</span></div>`).join('')}</div>`;
+ if(nw.length)h+=`<h2>새로 들어온 고기<small>${nw.length}</small></h2><div class="card">${(ui.newAll?nw:nw.slice(0,5)).map(p=>`<div class="row tap ${ui.fresh==p.id?'in':''}" data-a="write" data-id="${p.id}"><div class="grow"><div class="meta"><b>NEW</b> · ${S.day==p.addedDay?'오늘':(S.day-p.addedDay)+'일 전'}</div><div class="nm">${esc(p.name)}</div></div><span class="go">등급 매기기 →</span></div>`).join('')}${!ui.newAll&&nw.length>5?`<button class="row more" data-a="newmore">${nw.length-5}명 더 보기 ▾</button>`:''}</div>`;
  if(td.length)h+=`<h2>오늘 손질할 고기<small>${td.length}</small></h2><div class="card">${td.map(p=>{const s=stage(p);return `<div class="row tap" data-a="open" data-id="${p.id}" id="r${p.id}" style="flex-wrap:wrap">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)} ${organic(p)?'<span class="org">유기농</span>':''}</div><div class="meta">${cycLabel(p)} 주기</div></div><span class="pill st-${s.k}">${s.t}</span>
    <div class="acts" style="width:100%;padding:8px 0 0"><button class="rb" data-a="call" data-t="전화" data-id="${p.id}">📞</button><button class="btn-o" data-a="call" data-t="연락했어요" data-id="${p.id}">✓ 연락했어요</button></div></div>`}).join('')}</div>`;
  if(hd.length)h+=`<h2>아직 등급 안 매긴 고기<small>${hd.length}</small></h2><div class="card">${hd.map(p=>`<div class="row tap" data-a="holdsheet" data-id="${p.id}">${emo(p,'stamp hold')}<div class="grow"><div class="nm">${esc(p.name)}</div><div class="meta">${S.day-p.ratedDay==0?'오늘':md(p.ratedDay)} 판단 보류 · ${cycLabel(p)} 주기</div></div><span class="go">등급 매기기 →</span></div>`).join('')}</div>`;
@@ -279,6 +283,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
  case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rel:null,rep:[],priv:false,ratedDay:S.day});if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판단 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
  case 'filter':filterSheet();break;
+ case 'newmore':ui.newAll=true;render('same');break;
  case 'fall':{ui.ff={st:[],gr:[],tg:[]};render('same');break}
  case 'fq':{ui.ff=ui.ff||{st:[],gr:[],tg:[]};const f=ui.ff,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);f[k]=i>=0?[]:[x];render('same');break}
  case 'ffx':{const f=ui.ff2,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);i>=0?f[k].splice(i,1):f[k].push(x);filterSheet(true);break}
