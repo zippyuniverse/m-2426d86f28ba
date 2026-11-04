@@ -104,7 +104,7 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
  L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;
  let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span><span class="small" style="align-self:center">연락 임박순</span></div>
- <div class="chips frow" style="margin:6px 0 8px">${[5,4,3,2,1].map(g=>[String(g),GR[g][0]]).concat([['hold','판단 보류']]).map(x=>`<button class="chip sm ${f.gr.includes(x[0])?'on':''}" data-a="fq" data-k="gr" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}</div>
+ <div class="chips frow gst" style="margin:6px 0 8px">${[5,4,3,2,1].map(g=>[String(g),GR[g][0],'g'+g]).concat([['hold','보류','ghd']]).map(x=>`<button class="gsb ${f.gr.includes(x[0])?'on':''}" data-a="fq" data-k="gr" data-x="${x[0]}" aria-pressed="${f.gr.includes(x[0])}" aria-label="${x[0]=='hold'?'판단 보류':x[1]+' 등급'}"><span class="stamp ${x[2]}"><i class="ink">${esc(x[1])}</i></span></button>`).join('')}</div>
  <div class="chips frow" style="margin:0 0 12px">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}</div>`;
  if(!all)return h+`<div class="empty">냉장고가 비어 있어요.<br>진열대에서 연락처를 찾아 첫 평가를 써 보세요.<br><br><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`;
  if(!L.length)return h+`<div class="empty">맞는 사람이 없어요</div></div>`;
@@ -277,7 +277,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
  case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rel:null,rep:[],priv:false,ratedDay:S.day});if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판단 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
  case 'filter':filterSheet();break;
- case 'fq':{ui.ff=ui.ff||{st:[],gr:[],tg:[]};const f=ui.ff,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);i>=0?f[k].splice(i,1):f[k].push(x);render('same');break}
+ case 'fq':{ui.ff=ui.ff||{st:[],gr:[],tg:[]};const f=ui.ff,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);f[k]=i>=0?[]:[x];render('same');break}
  case 'ffx':{const f=ui.ff2,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);i>=0?f[k].splice(i,1):f[k].push(x);filterSheet(true);break}
  case 'ffreset':ui.ff2={st:[],gr:[],tg:[]};filterSheet(true);break;
  case 'ffok':ui.ff=ui.ff2;closeSheet();render('same');break;

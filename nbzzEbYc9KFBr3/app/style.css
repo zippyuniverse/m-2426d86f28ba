@@ -252,3 +252,13 @@ html.vlock,html.vlock body{overflow:hidden}
 #app .scr{padding-bottom:calc(var(--sab) + 118px)}
 
 .chips.frow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.chips.frow::-webkit-scrollbar{display:none}.chips.frow .chip{flex:0 0 auto}
+/* v19 냉장고 등급 도장 칩: 미선택 회색, 선택 시 등급 색 */
+.chips.gst{gap:6px;padding:4px 2px}
+.gsb{flex:0 0 auto;padding:0;border:0;background:none;min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
+.gsb .stamp{width:42px;height:42px}
+.gsb .stamp .ink{font-size:.9rem}
+.gsb .stamp.g1 .ink{font-size:.72rem}
+.gsb .stamp.ghd .ink{font-size:.72rem;border-style:dashed;border-width:2.5px;-webkit-text-stroke:.4px var(--sc);filter:none}
+.ghd{--sc:#9E9E9E}
+.gsb:not(.on) .stamp{--sc:#C2C2C2;box-shadow:0 0 0 2px #fff,0 1px 2px rgba(0,0,0,.08)}
+.gsb.on .stamp{transform:scale(1.06)}
