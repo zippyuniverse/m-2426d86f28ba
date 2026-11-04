@@ -299,3 +299,10 @@ html.vlock,html.vlock body{overflow:hidden}
 .sortlbl{align-self:flex-end;position:relative;top:7px;line-height:1.2}
 .chips.frow:has(.sortlbl){padding-bottom:7px;margin-bottom:5px!important}.sortlbl{top:0;margin-bottom:-7px;padding-bottom:7px}
 .sortlbl{padding-bottom:0;margin-bottom:-6px}
+
+/* v25 얇은 선 아이콘 (A1: 탭 30px, 돋보기 25px, 종 30px) */
+.sic{display:inline-flex;align-items:center;width:25px;height:25px;color:#8A8A8A}.sic svg{width:25px;height:25px}
+nav.tab button[data-v] b{filter:none!important;opacity:1!important;width:30px;height:30px;display:block;color:#9A9A9A}
+nav.tab button[data-v] b svg{width:30px;height:30px;display:block}
+nav.tab button[data-v].on b{color:var(--ink)}
+.bic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;color:#5E5E5E}.bic svg{width:30px;height:30px}

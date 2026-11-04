@@ -83,14 +83,14 @@ function render(dir){const v=nav[nav.length-1];if(v.v=='verdict'){$('#vlayer').i
  if(window.curlRest)curlRest();
  const n=countN();const ne=app.querySelector('#nnum');if(ne&&lastN!=null&&lastN!==n){ne.classList.add('bump')}lastN=n}
 function navBar(c){const t=[['shelf','진열대','🥩'],['fridge','냉장고','🧊'],['tags','태그','🏷️'],['verdict','내 판정서','📋']];
- return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button class="vt" tabindex="-1" aria-hidden="true"><b>${x[2]}</b>${x[1]}</button>`:`<button data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}"><b>${x[2]}</b>${x[1]}</button>`).join('')}</nav>`}
+ return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button class="vt" tabindex="-1" aria-hidden="true"><b>${x[2]}</b>${x[1]}</button>`:`<button data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}"><b data-ic="${x[0]}">${x[2]}</b>${x[1]}</button>`).join('')}</nav>`}
 function info(k){return `<button class="info" data-a="info" data-k="${k}">i</button>`}
 
 function shelf(){const n=countN(),nw=newOnes(),td=todayList(),hd=holdList();const q=ui.q||'';
  const unread=S.notifs.some(x=>!x.read)&&!S.readBell;
- let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span><button class="ib" data-a="bell">🔔${unread?'<span class="dot"></span>':''}</button></div>
+ let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span><button class="ib" data-a="bell"><span class="bic">🔔</span>${unread?'<span class="dot"></span>':''}</button></div>
  <div class="lead">오늘 연락할 <b class="num" id="nnum">${n}</b>명</div>
- <div class="search">🔍<input id="q" placeholder="이름이나 번호로 찾기" value="${esc(q)}" autocomplete="off"></div>`;
+ <div class="search"><span class="sic">🔍</span><input id="q" placeholder="이름이나 번호로 찾기" value="${esc(q)}" autocomplete="off"></div>`;
  if(q){const r=S.people.filter(p=>p.name.includes(q)||p.phone.includes(q));
   h+=`<div class="card" style="margin-top:10px">${r.map(p=>`<div class="row tap" data-a="${rated(p)||p.hold?'open':'write'}" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${esc(p.name)}</div><div class="meta">${p.phone}</div></div><span class="go">${rated(p)||p.hold?'›':'평가 쓰기 →'}</span></div>`).join('')}
   <div class="row tap" data-a="add"><div class="grow"><div class="nm">＋ 새 연락처로 추가</div><div class="meta">테스트용: 폰 연락처 대신 여기서 넣어요</div></div></div></div>`;
@@ -109,7 +109,7 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
  L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;
  let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span></div>
- <div class="search fsrch">🔍<input id="fqs" type="search" placeholder="이름이나 태그로 찾기" value="${esc(ui.fs||'')}" autocomplete="off" enterkeyhint="search"></div>
+ <div class="search fsrch"><span class="sic">🔍</span><input id="fqs" type="search" placeholder="이름이나 태그로 찾기" value="${esc(ui.fs||'')}" autocomplete="off" enterkeyhint="search"></div>
  <div class="chips frow gst" style="margin:6px 0 8px"><button class="gsb gall ${f.gr.length||f.st.length?'':'on'}" data-a="fall" aria-pressed="${!(f.gr.length||f.st.length)}" aria-label="전체(등급·상태 선택 해제)"><span class="stamp"><i class="ink">전체</i></span></button>${[5,4,3,2,1].map(g=>[String(g),GR[g][0],'g'+g]).concat([['hold','보류','ghd']]).map(x=>`<button class="gsb ${f.gr.includes(x[0])?'on':''}" data-a="fq" data-k="gr" data-x="${x[0]}" aria-pressed="${f.gr.includes(x[0])}" aria-label="${x[0]=='hold'?'판단 보류':x[1]+' 등급'}"><span class="stamp ${x[2]}"><i class="ink">${esc(x[1])}</i></span></button>`).join('')}</div>
  <div class="chips frow" style="margin:0 0 12px">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}<span class="small sortlbl">연락 임박순</span></div>`;
  if(!all)return h+`<div class="empty">냉장고가 비어 있어요.<br>진열대에서 연락처를 찾아 첫 평가를 써 보세요.<br><br><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`;
