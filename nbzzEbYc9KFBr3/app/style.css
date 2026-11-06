@@ -306,3 +306,11 @@ nav.tab button[data-v] b{filter:none!important;opacity:1!important;width:30px;he
 nav.tab button[data-v] b svg{width:30px;height:30px;display:block}
 nav.tab button[data-v].on b{color:var(--ink)}
 .bic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;color:#5E5E5E}.bic svg{width:30px;height:30px}
+/* v28 사람 상세 성격·등급 고르기만: 얼굴 51px·타일 88px, 판단 보류 30% / 저장 70% 한 줄 */
+.hsheet .tile{height:88px}
+.hsheet .tile img{width:51px;height:51px}
+.hsheet .hint{margin-top:14px}
+.hsrow{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,7fr);gap:8px;align-items:stretch;margin-top:14px}
+.hsheet .hint+.hsrow{margin-top:0}
+.hsrow .holdbtn{width:100%;margin-top:0;height:50px;border-radius:25px;min-width:0;white-space:nowrap}
+.hsrow .btn-r{width:100%;min-width:0}
