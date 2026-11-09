@@ -101,20 +101,28 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
   <div class="row tap" data-a="add"><div class="grow"><div class="nm">＋ 새 연락처로 추가</div><div class="meta">테스트용: 폰 연락처 대신 여기서 넣어요</div></div></div></div>`;
   return h+'</div>'}
  if(!nw.length&&!td.length&&!hd.length&&!fr.length&&!ag.length&&!sp.length)h+=`<div class="empty">오늘은 손질할 고기가 없어요.<br>이름이나 번호로 찾아 평가를 써 보세요.</div>`;
- const face=p=>`<img src="${p.hold||p.persona==null?'emoji/hold.svg':'emoji/p'+p.persona+'.svg'}" alt="" draggable="false">`;
- const sec=(k,title,list,n,pan,inner)=>{const over=Math.max(0,list.length-n);const aria=over?`${title}, ${over}명 더 보기`:`${title}, ${list.length}명`;
-  return `<button type="button" class="sec" data-a="sec" data-k="${k}" aria-label="${esc(aria)}"><div class="pan ${pan}">${inner}</div><span class="labg"><span class="lab">${title}</span>${over?`<span class="ov">+${over}</span>`:''}</span></button>`};
- const packs=nw.slice(0,2).map(()=>`<img class="pack" src="art/pack.png" alt="새로 들어온 사람, 아직 판정 없음" draggable="false">`).join('');
- h+=`<div class="stall"><img class="awning" src="art/awning.png" alt=""><div class="shop"><img src="art/shop.png" alt=""><div class="signlbl">여의도 정육점</div></div><div class="rows">
- ${sec('trim','손질할 고기',td,4,'board',`<img class="cleaver" src="art/cleaver.png" alt="" draggable="false"><span class="slots">${td.slice(0,4).map(face).join('')}</span>`)}
- <div class="plank"></div><div class="cols2">
- ${sec('nw','새로 들어온 고기',nw,2,'tray2',`<span class="slots">${packs}</span>`)}
- ${sec('hold','판정 보류',hd,2,'tray2',`<span class="slots">${hd.slice(0,2).map(face).join('')}</span>`)}
- </div><div class="plank"></div><div class="cols3">
- ${sec('fresh','신선',fr,1,'tray3',`<span class="slots">${fr.slice(0,1).map(face).join('')}</span>`)}
- ${sec('aging','숙성 중',ag,1,'tray3',`<span class="slots">${ag.slice(0,1).map(face).join('')}</span>`)}
- ${sec('spoil','상하기 직전',sp,1,'tray3',`<span class="slots">${sp.slice(0,1).map(face).join('')}</span>`)}
- </div><div class="plank"></div></div></div>`;
+ /* sprite positions from build_base_c2.py / build_n1e.py (390 canvas, crop origin 8,136) */
+ const FB={hold:[9,26,211,192],p0:[11,30,208,189],p1:[10,33,209,190],p2:[9,33,210,187],p3:[11,27,211,193],p4:[12,31,210,189],p5:[11,29,209,192],p6:[11,29,209,190],p7:[12,16,211,203],p8:[11,29,209,191],p9:[10,22,210,199],p10:[11,12,211,206],p11:[11,23,209,196]};
+ const SLOT={trim:{cx:[88,146,204,262],bottom:172,width:52},hold:{cx:[238,297],bottom:322,width:50},fresh:{cx:[82],bottom:466,width:72},aging:{cx:[186],bottom:466,width:73},spoil:{cx:[290],bottom:466,width:78}};
+ const LAB={trim:{ax:36,ay:10,paperW:72,cx:187,cy:217,w:74,h:23},nw:{ax:43,ay:9,paperW:86,cx:108,cy:361,w:88,h:21},hold:{ax:29,ay:9.5,paperW:58,cx:266,cy:361,w:60,h:22},fresh:{ax:17,ay:9,paperW:34,cx:82,cy:505,w:36,h:21},aging:{ax:24,ay:9,paperW:48,cx:186,cy:505,w:50,h:21},spoil:{ax:30,ay:9,paperW:60,cx:290,cy:505,w:62,h:21}};
+ const CW=[0,26,29,30,30,29,30,30,30,29,37,33,36,37,37,36,37,36,37,36,40,35,39,40,40];
+ const BOX={trim:[0,96,376,150],nw:[0,255,188,125],hold:[188,255,188,125],fresh:[0,378,124,152],aging:[124,378,126,152],spoil:[250,378,126,152]};
+ const art=(name,w,ht,style,alt,cls)=>`<img class="${cls||'px'}" src="art/${name}.png" srcset="art/${name}.png 1x, art/${name}@2x.png 2x, art/${name}@3x.png 3x" width="${w}" height="${ht}" alt="${alt||''}" draggable="false" style="${style}">`;
+ const face=(p,slot,i,box)=>{const id=p.hold||p.persona==null?'hold':'p'+p.persona;const b=FB[id];const cssW=slot.width*220/(b[2]-b[0]);const mid=(b[0]+b[2])/2;const left=slot.cx[i]-box[0]-cssW*mid/220;const top=slot.bottom-box[1]-cssW*b[3]/220;const src=id==='hold'?'emoji/hold.svg':'emoji/'+id+'.svg';return `<img class="fc" src="${src}" alt="" draggable="false" style="left:${left.toFixed(1)}px;top:${top.toFixed(1)}px;width:${cssW.toFixed(1)}px;height:${cssW.toFixed(1)}px">`};
+ const sec=(k,title,list,n,inner)=>{const over=Math.max(0,list.length-n);const aria=over?`${title}, ${over}명 더 보기`:`${title}, ${list.length}명`;const m=LAB[k],box=BOX[k];
+  let lcx=m.cx,chip='';
+  if(over){const wc=CW[over]||CW[24];const gl=m.cx-Math.floor((m.paperW+2+wc+2)/2);lcx=gl+Math.floor(m.paperW/2);const cL=gl+m.paperW+2+1-box[0];const cT=m.cy-10-box[1];chip=art('chip-'+Math.min(over,24), (CW[Math.min(over,24)]||40)+1, 24, `left:${cL}px;top:${cT}px`, '', 'ch px')}
+  const stk=art('lab-'+k, m.w, m.h, `left:${(lcx-m.ax-box[0]).toFixed(1)}px;top:${(m.cy-m.ay-box[1]).toFixed(1)}px`, '', 'stk px');
+  return `<button type="button" class="sec" data-a="sec" data-k="${k}" aria-label="${esc(aria)}" style="left:${box[0]}px;top:${box[1]}px;width:${box[2]}px;height:${box[3]}px"><span class="pan">${inner}</span><span class="labg">${stk}${chip}</span></button>`};
+ const packs=nw.slice(0,2).map((_,i)=>{const p=[{x:44,y:280},{x:112,y:280}][i];const b=BOX.nw;return art('pack',56,46,`left:${p.x-b[0]}px;top:${p.y-b[1]}px`,'새로 들어온 사람, 아직 판정 없음','pk px')}).join('');
+ h+=`<div class="stall">${art('stall',376,530,'','','stallbg') }
+ ${sec('trim','손질할 고기',td,4,td.slice(0,4).map((p,i)=>face(p,SLOT.trim,i,BOX.trim)).join(''))}
+ ${sec('nw','새로 들어온 고기',nw,2,packs)}
+ ${sec('hold','판정 보류',hd,2,hd.slice(0,2).map((p,i)=>face(p,SLOT.hold,i,BOX.hold)).join(''))}
+ ${sec('fresh','신선',fr,1,fr.slice(0,1).map((p,i)=>face(p,SLOT.fresh,i,BOX.fresh)).join(''))}
+ ${sec('aging','숙성 중',ag,1,ag.slice(0,1).map((p,i)=>face(p,SLOT.aging,i,BOX.aging)).join(''))}
+ ${sec('spoil','상하기 직전',sp,1,sp.slice(0,1).map((p,i)=>face(p,SLOT.spoil,i,BOX.spoil)).join(''))}
+ </div>`;
  return h+'</div>'}
 
 function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 태그 필터 없앰(태그 탭이 따로 있음) */let L=visible().filter(p=>rated(p)||p.hold);
