@@ -350,3 +350,11 @@ button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .fly{position:fixed;z-index:41;margin:0;pointer-events:none;transition:transform .36s cubic-bezier(.2,.7,.2,1),opacity .36s ease}
 .xfade{position:fixed;inset:0;z-index:40;background:#fff;animation:fadeIn .22s linear}
 @media (prefers-reduced-motion:reduce){.xfade{animation:fadeIn .22s linear!important}}
+/* v33 person-detail back arrow only */
+.phd{position:relative}
+.pback{position:absolute;left:calc(env(safe-area-inset-left, 0px) - 8px);top:50%;margin-top:-24px;width:48px;height:48px;padding:0;background:transparent;display:flex;align-items:center;justify-content:center;z-index:2}
+.pback svg{display:block;width:24px;height:24px}
+.pback:before{content:"";position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:transparent;pointer-events:none}
+button.pback:active{transform:none;filter:none}
+button.pback:active:before{background:#EEEEEE}
+.pback:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
