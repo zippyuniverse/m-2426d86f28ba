@@ -358,3 +358,18 @@ button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 button.pback:active{transform:none;filter:none}
 button.pback:active:before{background:#EEEEEE}
 .pback:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
+/* v34 face-body: static scale on the image only. p1/p2/p9 and o1/o2/o9. */
+.tav,.gz .av .face,.ph-head .av,.tile{overflow:visible}
+img.fbn-p1,img.fbn-p2,img.fbn-p9{image-rendering:pixelated;image-rendering:crispEdges}
+.tav>img.fbn-p1{transform-origin:24.582px 44.909px;transform:translateX(1.418px) scale(1.0571)}
+.tav>img.fbn-p2{transform-origin:26px 44.2px;transform:translateX(0px) scale(1.0882)}
+.tav>img.fbn-p9{transform-origin:26.355px 47.036px;transform:translateX(-0.355px) scale(1.1654)}
+.gz .face img.fbn-p1,.ph-head .av img.fbn-p1{transform-origin:90.764px 165.818px;transform:translateX(5.236px) scale(1.0571)}
+.gz .face img.fbn-p2,.ph-head .av img.fbn-p2{transform-origin:96px 163.2px;transform:translateX(0px) scale(1.0882)}
+.gz .face img.fbn-p9,.ph-head .av img.fbn-p9{transform-origin:97.309px 173.673px;transform:translateX(-1.309px) scale(1.1654)}
+.tile img.fbn-p1{transform-origin:16.073px 29.364px;transform:translateX(0.927px) scale(1.0571)}
+.tile img.fbn-p2{transform-origin:17px 28.9px;transform:translateX(0px) scale(1.0882)}
+.tile img.fbn-p9{transform-origin:17.232px 30.755px;transform:translateX(-0.232px) scale(1.1654)}
+.hsheet .tile img.fbn-p1{transform-origin:24.109px 44.045px;transform:translateX(1.391px) scale(1.0571)}
+.hsheet .tile img.fbn-p2{transform-origin:25.5px 43.35px;transform:translateX(0px) scale(1.0882)}
+.hsheet .tile img.fbn-p9{transform-origin:25.848px 46.132px;transform:translateX(-0.348px) scale(1.1654)}
