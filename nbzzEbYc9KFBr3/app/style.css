@@ -323,8 +323,12 @@ button.sec:active .labg{transform:translateY(1px)}
 button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .pan,.labg{position:absolute;inset:0}
 .labg{transition:transform .06s linear}
-.px,.fc{image-rendering:pixelated;image-rendering:crispEdges}
+.px,.fc,.fc-ol img{image-rendering:pixelated;image-rendering:crispEdges}
 .fc,.stk,.ch,.pk{position:absolute;pointer-events:none}
+.fc{z-index:2}
+.fc-ol{position:absolute;z-index:1;pointer-events:none;overflow:visible}
+.fc-ol img{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;filter:brightness(0) invert(1)}
+.labg{z-index:3}
 .sheet.secsheet{height:auto;max-height:72vh;max-height:72dvh;display:flex;flex-direction:column;padding:0;overflow:hidden}
 .secsheet .sechead{flex:none}
 .secsheet .sectitle{height:52px;padding:0 18px;display:flex;align-items:center;position:relative}
