@@ -87,8 +87,10 @@ function render(dir){const v=nav[nav.length-1];if(v.v=='verdict'){$('#vlayer').i
  if(tabs.includes(v.v))h+=navBar(v.v);
  app.innerHTML=h;const sc=app.querySelector('.scr');if(sc&&dir){sc.classList.add('enter');if(dir=='back')sc.classList.add('back');if(dir=='fade')sc.classList.add('fade')}
  if(dir&&dir!=='same')window.scrollTo(0,0);
+ if(v.v=='shelf')fitStall();
  if(window.curlRest)curlRest();
  const n=countN();const ne=app.querySelector('#nnum');if(ne&&lastN!=null&&lastN!==n){ne.classList.add('bump')}lastN=n}
+function fitStall(){if(!nav[nav.length-1]||nav[nav.length-1].v!='shelf')return;const w=$('.stallwrap'),app=$('#app');if(!w||!app)return;w.style.setProperty('--s',String(Math.min(1,app.clientWidth/376)))}
 function navBar(c){const t=[['shelf','진열대','🥩'],['fridge','냉장고','🧊'],['tags','태그','🏷️'],['verdict','내 판정서','📋']];
  return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button class="vt" tabindex="-1" aria-hidden="true"><b>${x[2]}</b>${x[1]}</button>`:`<button data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}"><b data-ic="${x[0]}">${x[2]}</b>${x[1]}</button>`).join('')}</nav>`}
 function info(k){return `<button class="info" data-a="info" data-k="${k}">i</button>`}
@@ -398,6 +400,8 @@ function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.que
   if(lastId==s.id&&n-lastTap<=300){lastTap=0;doGesture(s.id,'kkul')}else{lastTap=n;lastId=s.id}});
  document.addEventListener('pointercancel',()=>st=null);})();
 document.addEventListener('keydown',e=>{if(e.key!='Escape'||!document.querySelector('.secsheet'))return;e.preventDefault();closeSheet()});
+addEventListener('resize',fitStall);
+addEventListener('orientationchange',fitStall);
 const had=localStorage.getItem(KEY);load();if(!had)seed();render('fade');
 if(location.hash=='#test')testMenu();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
