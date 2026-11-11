@@ -240,18 +240,23 @@ function bindSwipe(){const sh=$('#sheet-root .sheet');if(!sh||sh._sw)return;sh._
  sh.addEventListener('pointermove',e=>{if(y0==null)return;const dy=e.clientY-y0;sh.style.transform=dy>0?`translateY(${dy}px)`:''});
  sh.addEventListener('pointerup',()=>{if(y0==null)return;const dy=parseFloat((sh.style.transform.match(/[\d.]+/)||[0])[0]);y0=null;if(dy>64)closeSheet();else sh.style.transform=''});
  sh.addEventListener('pointercancel',()=>{y0=null;sh.style.transform=''})}
-function goFridge(k,el){const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
- const land=()=>{ui.ff={st:[k],gr:[],tg:[]};tab('fridge')};
- if(reduce){const d=document.createElement('div');d.className='xfade';document.body.appendChild(d);setTimeout(()=>{d.remove();land()},220);return}
- const pan=el.querySelector('.pan');const r=pan.getBoundingClientRect();
- const scene=document.createElement('div');scene.className='xscene';scene.innerHTML='<img class="xdoor" src="art/fridge.png" alt="">';
- const fly=pan.cloneNode(true);fly.classList.add('fly');
- fly.style.cssText=`left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px`;
- document.body.appendChild(scene);document.body.appendChild(fly);
- requestAnimationFrame(()=>requestAnimationFrame(()=>{const door=scene.querySelector('.xdoor');const dr=door.getBoundingClientRect();
-  const dx=(dr.left+dr.width/2)-(r.left+r.width/2);const dy=(dr.top+dr.height*0.45)-(r.top+r.height/2);
-  fly.style.transform=`translate(${dx}px,${dy}px) scale(1.28)`;fly.style.opacity='0'}));
- setTimeout(()=>{fly.remove();scene.remove();land()},380)}
+function goFridge(k){if(ui._xslide)return;
+ const land=()=>{ui.ff={st:[k],gr:[],tg:[]};nav=[{v:'fridge'}];ui._xslide=0;render();window.scrollTo(0,0)};
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches){land();return}
+ const app=$('#app'),scr=app.querySelector('.scr');if(!scr){land();return}
+ ui._xslide=1;ui.ff={st:[k],gr:[],tg:[]};
+ const y=window.scrollY||0;
+ const stage=document.createElement('div');stage.className='xpush';
+ stage.innerHTML='<div class="xrail"><div class="xpane out"></div><div class="xpane inn"></div></div>';
+ const out=stage.querySelector('.out'),inn=stage.querySelector('.inn');
+ scr.style.marginTop=(-y)+'px';out.appendChild(scr);inn.innerHTML=fridge();
+ const block=document.createElement('div');block.className='xpush-block';
+ document.body.appendChild(block);app.appendChild(stage);
+ let done=false;
+ const end=()=>{if(done)return;done=true;stage.remove();block.remove();land()};
+ out.addEventListener('transitionend',e=>{if(e.propertyName==='transform')end()});
+ requestAnimationFrame(()=>requestAnimationFrame(()=>stage.classList.add('go')));
+ setTimeout(end,1000)}
 const INFO={shelf:['진열대는 이렇게 봐요',['새로 들어온 고기는 폰에 새로 저장한 연락처예요. 7일 동안 남아요.','오늘 손질할 고기는 연락할 때가 됐거나 지난 사람이에요.','아직 등급 안 매긴 고기는 판단 보류로 저장한 사람이에요.','전화·문자 버튼을 누르면 연락 기록이 저절로 남아요.']],
  write:['평가는 이렇게 써요',['이름은 이 폰에서만 읽어요',"아직 판단하기 이르면 '판단 보류'를 골라요. 성격과 등급 없이 저장돼요.",'평판 태그는 같은 태그를 3명 이상 달아야 판정서에 보여요.','성격과 등급만 고르면 저장돼요. 나머지 질문과 태그는 선택이에요.']],
  tags:['태그는 이렇게 써요',['태그를 누르면 그 태그가 붙은 사람을 모아 봐요.','메모 태그를 길게 누르면 이름 바꾸기, 합치기, 옮기기, 지우기를 할 수 있어요.','평판 태그는 같은 태그를 3명 이상 달았을 때만 익명으로 보여요.']],
