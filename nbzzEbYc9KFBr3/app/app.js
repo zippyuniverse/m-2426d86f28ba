@@ -233,7 +233,7 @@ function drawSec(){const k=ui.sec;if(!k)return;const title={trim:'손질할 고�
  const x='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
  sheet(`<div class="sechead"><div class="sectitle"><h3 id="sec-title">${title} ${L.length}명</h3>${x}</div></div><div class="seclist">${body}</div>`);
  const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-labelledby','sec-title');sh.tabIndex=-1}bindSwipe();
- if(sh&&!sh.contains(document.activeElement)){const b=sh.querySelector('.secx');if(b)b.focus()}}
+ if(sh&&!sh.contains(document.activeElement)){const b=sh.querySelector('.secx');if(b)b.focus({focusVisible:false})}}
 function bindSwipe(){const sh=$('#sheet-root .sheet');if(!sh||sh._sw)return;sh._sw=1;const list=sh.querySelector('.seclist');let y0=null;
  const arm=e=>{if(e.target.closest('.secx'))return;if(list&&list.scrollTop>0)return;y0=e.clientY};
  sh.querySelector('.sectitle').addEventListener('pointerdown',arm);
@@ -245,6 +245,7 @@ function goFridge(k){if(ui._xslide)return;
  if(matchMedia('(prefers-reduced-motion:reduce)').matches){land();return}
  const app=$('#app'),scr=app.querySelector('.scr');if(!scr){land();return}
  ui._xslide=1;ui.ff={st:[k],gr:[],tg:[]};
+ document.querySelectorAll('nav.tab button[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==='fridge'));
  const y=window.scrollY||0;
  const stage=document.createElement('div');stage.className='xpush';
  stage.innerHTML='<div class="xrail"><div class="xpane out"></div><div class="xpane inn"></div></div>';
