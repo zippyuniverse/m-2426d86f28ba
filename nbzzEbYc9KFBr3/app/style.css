@@ -6,7 +6,7 @@ html{font:-apple-system-body;font-size:17px}@supports (font:-apple-system-body){
 html,body{margin:0;background:#fff;color:var(--ink);font-family:P,-apple-system,sans-serif;font-size:0.8824rem;-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
 button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
 input{font:inherit}
-#app{max-width:480px;margin:0 auto;min-height:100vh}
+#app{max-width:480px;margin:0 auto;min-height:100vh;container-type:inline-size}
 .scr{padding:calc(var(--sat) + 12px) 16px calc(var(--sab) + 90px)}
 .scr.nonav{padding-bottom:calc(var(--sab) + 150px)}
 .hd{display:flex;align-items:center;gap:6px;min-height:44px}
@@ -325,7 +325,8 @@ nav.tab.xslide.go button[data-v="fridge"] b{animation:tabIcoIn .3s linear forwar
 .hsrow .holdbtn{width:100%;margin-top:0;height:50px;border-radius:25px;min-width:0;white-space:nowrap}
 .hsrow .btn-r{width:100%;min-width:0}
 /* v31 stall layers from build_base_c2.py + build_n1e.py (390 grid, crop origin 8,136) */
-.stall{position:relative;width:376px;height:530px;margin:34px 0 10px -8px}
+.stallwrap{--s:min(1,100cqw / 376px);width:calc(376px * var(--s));height:calc(530px * var(--s));margin:34px 0 10px calc((100cqw - 376px * var(--s)) / 2 - 16px)}
+.stall{position:relative;width:376px;height:530px;margin:0;zoom:var(--s)}
 .stallbg{position:absolute;left:0;top:0;width:376px;height:530px;image-rendering:pixelated;pointer-events:none}
 button.sec{position:absolute;background:none;padding:0;color:inherit}
 button.sec:active{transform:none;filter:none}
