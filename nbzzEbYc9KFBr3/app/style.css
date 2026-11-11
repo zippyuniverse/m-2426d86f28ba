@@ -305,6 +305,16 @@ html.vlock,html.vlock body{overflow:hidden}
 nav.tab button[data-v] b{filter:none!important;opacity:1!important;width:30px;height:30px;display:block;color:#9A9A9A}
 nav.tab button[data-v] b svg{width:30px;height:30px;display:block}
 nav.tab button[data-v].on b{color:var(--ink)}
+nav.tab.xslide button.on:before{visibility:hidden}
+.tabglide{position:absolute;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--ink);pointer-events:none;transition:transform .3s ease-out}
+nav.tab.xslide.go button[data-v="shelf"]{animation:tabLabOut .3s linear forwards}
+nav.tab.xslide.go button[data-v="fridge"]{animation:tabLabIn .3s linear forwards}
+nav.tab.xslide.go button[data-v="shelf"] b{animation:tabIcoOut .3s linear forwards}
+nav.tab.xslide.go button[data-v="fridge"] b{animation:tabIcoIn .3s linear forwards}
+@keyframes tabLabOut{0%,30%{color:var(--ink);font-weight:700}70%,100%{color:#6B6B6B;font-weight:400}}
+@keyframes tabLabIn{0%,30%{color:#6B6B6B;font-weight:400}70%,100%{color:var(--ink);font-weight:700}}
+@keyframes tabIcoOut{0%,30%{color:var(--ink)}70%,100%{color:#9A9A9A}}
+@keyframes tabIcoIn{0%,30%{color:#9A9A9A}70%,100%{color:var(--ink)}}
 .bic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;color:#5E5E5E}.bic svg{width:30px;height:30px}
 /* v28 사람 상세 성격·등급 고르기만: 얼굴 51px·타일 88px, 판단 보류 30% / 저장 70% 한 줄 */
 .hsheet .tile{height:88px}
