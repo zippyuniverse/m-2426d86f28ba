@@ -104,7 +104,7 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
  if(!nw.length&&!td.length&&!hd.length&&!fr.length&&!ag.length&&!sp.length)h+=`<div class="empty">오늘은 손질할 고기가 없어요.<br>이름이나 번호로 찾아 평가를 써 보세요.</div>`;
  /* sprite positions from build_base_c2.py / build_n1e.py (390 canvas, crop origin 8,136) */
  const FB={hold:[9,26,211,192],p0:[11,30,208,189],p1:[10,33,209,190],p2:[9,33,210,187],p3:[11,27,211,193],p4:[12,31,210,189],p5:[11,29,209,192],p6:[11,29,209,190],p7:[12,16,211,203],p8:[11,29,209,191],p9:[10,22,210,199],p10:[11,12,211,206],p11:[11,23,209,196]};
- const SLOT={trim:{cx:[66,130,194,258],bottom:172,width:52},hold:{cx:[238,297],bottom:322,width:50},fresh:{cx:[82],bottom:466,width:72},aging:{cx:[186],bottom:466,width:73},spoil:{cx:[290],bottom:466,width:78}};
+ const SLOT={trim:{cx:[66,130,194,258],bottom:172,width:52},hold:{cx:[238,297],bottom:322,width:50},fresh:{cx:[82],bottom:466,width:50},aging:{cx:[186],bottom:466,width:50},spoil:{cx:[290],bottom:466,width:50}};
  const LAB={trim:{ax:36,ay:10,paperW:72,cx:187,cy:217,w:74,h:23},nw:{ax:43,ay:9,paperW:86,cx:108,cy:361,w:88,h:21},hold:{ax:29,ay:9.5,paperW:58,cx:266,cy:361,w:60,h:22},fresh:{ax:17,ay:9,paperW:34,cx:82,cy:505,w:36,h:21},aging:{ax:24,ay:9,paperW:48,cx:186,cy:505,w:50,h:21},spoil:{ax:30,ay:9,paperW:60,cx:290,cy:505,w:62,h:21}};
  const CW=[0,26,29,30,30,29,30,30,30,29,37,33,36,37,37,36,37,36,37,36,40,35,39,40,40];
  const BOX={trim:[0,96,376,150],nw:[0,255,188,125],hold:[188,255,188,125],fresh:[0,378,124,152],aging:[124,378,126,152],spoil:[250,378,126,152]};
