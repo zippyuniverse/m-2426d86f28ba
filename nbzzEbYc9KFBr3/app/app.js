@@ -231,12 +231,11 @@ function drawSec(){const k=ui.sec;if(!k)return;const title={trim:'손질할 고�
   if(!ui.sheetMore&&L.length>5)body+=`<button type="button" class="row more" data-a="sheetmore">${L.length-5}명 더 보기</button>`}
  else body=L.map(p=>`<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><img class="hface" src="emoji/hold.svg" alt=""><span class="grow"><span class="nm">${esc(p.name)}</span><span class="meta">${md(p.ratedDay)} 판정 보류</span></span></button><button type="button" class="go" data-a="holdsheet" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
  const x='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
- sheet(`<div class="sechead"><div class="grab" aria-hidden="true"></div><div class="sectitle"><h3 id="sec-title">${title} ${L.length}명</h3>${x}</div></div><div class="seclist">${body}</div>`);
+ sheet(`<div class="sechead"><div class="sectitle"><h3 id="sec-title">${title} ${L.length}명</h3>${x}</div></div><div class="seclist">${body}</div>`);
  const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-labelledby','sec-title');sh.tabIndex=-1}bindSwipe();
  if(sh&&!sh.contains(document.activeElement)){const b=sh.querySelector('.secx');if(b)b.focus()}}
 function bindSwipe(){const sh=$('#sheet-root .sheet');if(!sh||sh._sw)return;sh._sw=1;const list=sh.querySelector('.seclist');let y0=null;
  const arm=e=>{if(e.target.closest('.secx'))return;if(list&&list.scrollTop>0)return;y0=e.clientY};
- sh.querySelector('.grab').addEventListener('pointerdown',arm);
  sh.querySelector('.sectitle').addEventListener('pointerdown',arm);
  sh.addEventListener('pointermove',e=>{if(y0==null)return;const dy=e.clientY-y0;sh.style.transform=dy>0?`translateY(${dy}px)`:''});
  sh.addEventListener('pointerup',()=>{if(y0==null)return;const dy=parseFloat((sh.style.transform.match(/[\d.]+/)||[0])[0]);y0=null;if(dy>64)closeSheet();else sh.style.transform=''});

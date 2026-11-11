@@ -327,7 +327,6 @@ button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .fc,.stk,.ch,.pk{position:absolute;pointer-events:none}
 .sheet.secsheet{height:auto;max-height:72vh;max-height:72dvh;display:flex;flex-direction:column;padding:0;overflow:hidden}
 .secsheet .sechead{flex:none}
-.secsheet .grab{width:40px;height:5px;border-radius:3px;background:#E0E0E0;margin:10px auto 6px;touch-action:none}
 .secsheet .sectitle{height:52px;padding:0 18px;display:flex;align-items:center;position:relative}
 .secsheet h3{margin:0;flex:1;min-width:0;padding-right:46px;font-size:1.0588rem;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .secx{position:absolute;right:12px;top:4px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#4A4A4A;border-radius:22px}
