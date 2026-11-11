@@ -245,7 +245,11 @@ function goFridge(k){if(ui._xslide)return;
  if(matchMedia('(prefers-reduced-motion:reduce)').matches){land();return}
  const app=$('#app'),scr=app.querySelector('.scr');if(!scr){land();return}
  ui._xslide=1;ui.ff={st:[k],gr:[],tg:[]};
- document.querySelectorAll('nav.tab button[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v==='fridge'));
+ const tabnav=app.querySelector('nav.tab'),shelfB=tabnav&&tabnav.querySelector('button[data-v="shelf"]'),fridgeB=tabnav&&tabnav.querySelector('button[data-v="fridge"]');
+ let mark=null,dx=0;
+ if(shelfB&&fridgeB){const nr=tabnav.getBoundingClientRect(),sr=shelfB.getBoundingClientRect(),fr=fridgeB.getBoundingClientRect();
+  mark=document.createElement('i');mark.className='tabglide';mark.style.left=(sr.left-nr.left+sr.width*.28)+'px';mark.style.width=(sr.width*.44)+'px';
+  dx=fr.left-sr.left;tabnav.classList.add('xslide');tabnav.appendChild(mark)}
  const y=window.scrollY||0;
  const stage=document.createElement('div');stage.className='xpush';
  stage.innerHTML='<div class="xrail"><div class="xpane out"></div><div class="xpane inn"></div></div>';
@@ -256,7 +260,7 @@ function goFridge(k){if(ui._xslide)return;
  let done=false;
  const end=()=>{if(done)return;done=true;stage.remove();block.remove();land()};
  out.addEventListener('transitionend',e=>{if(e.propertyName==='transform')end()});
- requestAnimationFrame(()=>requestAnimationFrame(()=>stage.classList.add('go')));
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{stage.classList.add('go');if(mark){mark.style.transform='translateX('+dx+'px)';tabnav.classList.add('go')}}));
  setTimeout(end,1000)}
 const INFO={shelf:['진열대는 이렇게 봐요',['새로 들어온 고기는 폰에 새로 저장한 연락처예요. 7일 동안 남아요.','오늘 손질할 고기는 연락할 때가 됐거나 지난 사람이에요.','아직 등급 안 매긴 고기는 판단 보류로 저장한 사람이에요.','전화·문자 버튼을 누르면 연락 기록이 저절로 남아요.']],
  write:['평가는 이렇게 써요',['이름은 이 폰에서만 읽어요',"아직 판단하기 이르면 '판단 보류'를 골라요. 성격과 등급 없이 저장돼요.",'평판 태그는 같은 태그를 3명 이상 달아야 판정서에 보여요.','성격과 등급만 고르면 저장돼요. 나머지 질문과 태그는 선택이에요.']],
@@ -290,7 +294,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
  if(a=='sclose'&&e.target!==el)return;e.stopPropagation();
  const p=id?P(id):null;
  switch(a){
- case 'tab':ui.q='';tab(el.dataset.v);break;
+ case 'tab':if(ui._xslide)break;ui.q='';tab(el.dataset.v);break;
  case 'qset':{const q=P(+id),f=el.dataset.f,x=el.dataset.x;q[f]=q[f]===x?null:x;save();render('same');break}
  case 'vopen':openVerdict();break;
  case 'vback':closeVerdict();break;
