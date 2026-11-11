@@ -353,6 +353,13 @@ button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .secsheet .sline .who .grow{gap:6px}
 .secsheet .sline .meta{margin-top:0}
 .secsheet .tav .stamp{bottom:-20px;right:-14px}
+.xpush{position:fixed;z-index:4;top:0;left:0;right:0;bottom:calc(58px + var(--sab));background:#fff;overflow:hidden}
+.xrail{position:relative;height:100%;max-width:480px;margin:0 auto;overflow:hidden}
+.xpane{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;transition:transform .3s ease-out}
+.xpane.inn{transform:translateX(100%)}
+.xpush.go .xpane.out{transform:translateX(-100%)}
+.xpush.go .xpane.inn{transform:translateX(0)}
+.xpush-block{position:fixed;inset:0;z-index:60;background:transparent}
 .xscene{position:fixed;inset:0;z-index:40;pointer-events:none;background:rgba(0,0,0,.18)}
 .xdoor{position:absolute;left:50%;bottom:76px;width:120px;height:156px;margin-left:-60px;image-rendering:pixelated}
 .fly{position:fixed;z-index:41;margin:0;pointer-events:none;transition:transform .36s cubic-bezier(.2,.7,.2,1),opacity .36s ease}
