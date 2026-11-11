@@ -325,7 +325,8 @@ nav.tab.xslide.go button[data-v="fridge"] b{animation:tabIcoIn .3s linear forwar
 .hsrow .holdbtn{width:100%;margin-top:0;height:50px;border-radius:25px;min-width:0;white-space:nowrap}
 .hsrow .btn-r{width:100%;min-width:0}
 /* v31 stall layers from build_base_c2.py + build_n1e.py (390 grid, crop origin 8,136) */
-.stall{position:relative;width:376px;height:530px;margin:34px 0 10px -8px}
+.stallwrap{width:calc(376px * var(--s,1));height:calc(530px * var(--s,1));margin:34px 0 10px calc(50% - 188px * var(--s,1))}
+.stall{position:relative;width:376px;height:530px;margin:0;zoom:var(--s,1)}
 .stallbg{position:absolute;left:0;top:0;width:376px;height:530px;image-rendering:pixelated;pointer-events:none}
 button.sec{position:absolute;background:none;padding:0;color:inherit}
 button.sec:active{transform:none;filter:none}
