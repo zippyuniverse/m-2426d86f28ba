@@ -17,9 +17,10 @@ input{font:inherit}
 .info{width:22px;height:22px;border:1.6px solid var(--ink);border-radius:11px;font-size:0.7647rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
 .back{font-size:1.5294rem;width:36px;height:44px}
 .lead{margin:2px 0 12px;font-size:0.8824rem}
-.search{display:flex;align-items:center;gap:8px;border:1px solid #D4D4D4;border-radius:20px;padding:0 12px;height:46px}
-.search input{border:0;outline:0;flex:1;font-size:0.9412rem;background:none}
+.search{display:flex;align-items:center;gap:8px;border:1px solid #D4D4D4;border-radius:20px;padding:0 12px;height:42px}
+.search input{border:0;outline:0;flex:1;font-size:16px;background:transparent;min-width:0}
 .search input::placeholder{color:var(--ph)}
+.search input::-webkit-search-cancel-button{filter:grayscale(1);opacity:.6}
 h2{font-size:1.0588rem;margin:24px 0 10px;font-weight:700}
 h2 small{font-weight:500;color:var(--sub);font-size:0.8824rem;margin-left:4px}
 .card{border:1px solid #DADADA;border-radius:14px;overflow:hidden}
@@ -263,14 +264,12 @@ html.vlock,html.vlock body{overflow:hidden}
 .gsb:not(.on) .stamp{--sc:#C2C2C2;box-shadow:0 0 0 2px #fff,0 1px 2px rgba(0,0,0,.08)}
 .gsb.on .stamp{transform:scale(1.06)}
 /* v20 냉장고 검색·전체 */
-.fsrch{margin:4px 0 10px;height:42px}
-.fsrch input{flex:1;border:0;outline:0;font-size:16px;background:transparent;min-width:0}
+.fsrch{margin:4px 0 10px}
 .gsb.gall .stamp{--sc:#C2C2C2}
 .gsb.gall .stamp .ink{font-size:.72rem;filter:none;-webkit-text-stroke:0}
 .gsb.gall.on .stamp .ink{background:#4A4A4A;border-color:#4A4A4A;color:#fff}
 .chips.gst{gap:2px;padding:4px 0}
 .gst .gsb{min-width:46px}
-.fsrch input::-webkit-search-cancel-button{filter:grayscale(1);opacity:.6}
 .row.more{width:100%;justify-content:center;color:var(--ink2,#555);font-size:.8824rem;font-weight:600;min-height:48px;background:none;border:0}
 .row.more{border-top:1px solid var(--line)}
 /* v23 오늘 손질할 고기: 소 얼굴(도장보다 크게) + 도장 배지 오른쪽 아래 */
