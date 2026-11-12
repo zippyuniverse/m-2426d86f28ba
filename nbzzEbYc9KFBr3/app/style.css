@@ -418,5 +418,6 @@ img.fbn-p1,img.fbn-p2,img.fbn-p9{image-rendering:pixelated;image-rendering:crisp
 #flist .frrow .nm .nmt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;width:100%;line-height:1.25}
 #flist .frrow .nm .org{flex:none;margin:0}
 #flist .frrow .meta{white-space:normal;margin-top:2px}
-#flist .frrow .pill{grid-area:pill;justify-self:start;align-self:end}
+#flist .frchips{grid-area:pill;justify-self:start;align-self:end;display:flex;flex-wrap:wrap;gap:4px}
+.sflags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 #flist .frrow .tav>img{filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)}
