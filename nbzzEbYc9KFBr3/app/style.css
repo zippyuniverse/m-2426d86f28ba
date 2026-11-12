@@ -261,23 +261,19 @@ html.vlock,html.vlock body{overflow:hidden}
 #app .scr{padding-bottom:calc(var(--sab) + 118px)}
 
 .chips.frow{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.chips.frow::-webkit-scrollbar{display:none}.chips.frow .chip{flex:0 0 auto}
-/* v19 냉장고 등급 도장 칩: 미선택 회색, 선택 시 등급 색 */
-.chips.gst{gap:6px;padding:4px 2px}
-.gsb{flex:0 0 auto;padding:0;border:0;background:none;min-width:48px;min-height:48px;display:inline-flex;align-items:center;justify-content:center}
-.gsb .stamp{width:42px;height:42px}
-.gsb .stamp .ink{font-size:.9rem}
-.gsb .stamp.g1 .ink{font-size:.72rem}
-.gsb .stamp.ghd .ink{font-size:.72rem;border-style:dashed;border-width:2.5px;-webkit-text-stroke:.4px var(--sc);filter:none}
-.ghd{--sc:#9E9E9E}
-.gsb:not(.on) .stamp{--sc:#C2C2C2;box-shadow:0 0 0 2px #fff,0 1px 2px rgba(0,0,0,.08)}
-.gsb.on .stamp{transform:scale(1.06)}
-/* v20 냉장고 검색·전체 */
+/* v52 냉장고 등급 줄: 46×44 버튼, 간격 6px. 상태 칩은 보이는 30px, 터치는 44px */
+.chips.gst{gap:6px;padding:0}
+.gsb{flex:0 0 46px;width:46px;height:44px;min-width:46px;padding:0;border:0;border-radius:var(--r);background:var(--bg2);color:var(--ink);font-size:13px;font-weight:600;line-height:1;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.gsb.on{background:var(--sc);color:#fff}
+.gsb.gall.on{background:#4A4A4A}
+.gsb.ghd.on{background:#525252}
 .fsrch{margin:4px 0 10px}
-.gsb.gall .stamp{--sc:#C2C2C2}
-.gsb.gall .stamp .ink{font-size:.72rem;filter:none;-webkit-text-stroke:0}
-.gsb.gall.on .stamp .ink{background:#4A4A4A;border-color:#4A4A4A;color:#fff}
-.chips.gst{gap:2px;padding:4px 0}
-.gst .gsb{min-width:46px}
+.chips.frow.fst:has(.sortlbl){margin-top:-7px!important;padding-bottom:0}
+.fst .sortlbl{margin-bottom:0}
+.fst>.chip.sm{position:relative;z-index:0;height:44px;min-height:44px;background:transparent;border-radius:0}
+.fst>.chip.sm:before{content:"";position:absolute;left:0;right:0;top:7px;height:30px;border-radius:20px;background:var(--bg2);z-index:-1}
+.fst>.chip.sm.on{background:transparent;color:#fff}
+.fst>.chip.sm.on:before{background:var(--ink)}
 .row.more{width:100%;justify-content:center;color:var(--ink2,#555);font-size:.8824rem;font-weight:600;min-height:48px;background:none;border:0}
 .row.more{border-top:1px solid var(--line)}
 /* v23 오늘 손질할 고기: 소 얼굴(도장보다 크게) + 도장 배지 오른쪽 아래 */
