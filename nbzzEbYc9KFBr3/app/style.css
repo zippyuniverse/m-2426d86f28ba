@@ -30,7 +30,7 @@ h2 small{font-weight:500;color:var(--sub);font-size:0.8824rem;margin-left:4px}
 .meta{color:var(--sub);font-size:0.7647rem;margin-top:2px}
 .go{font-weight:600;font-size:0.8235rem;white-space:nowrap}
 .pill{font-size:0.7647rem;font-weight:700;border-radius:8px;padding:5px 9px;white-space:nowrap}
-.st-fresh{background:#E8F5EC;color:#12632B}.st-today{border:1.5px solid var(--ink)}.st-aging{background:#FFF1C2;color:#6B4B00}.st-spoil{background:#FFD447;color:#3D2A00}.st-none{background:var(--bg2);color:var(--sub)}
+.st-fresh{background:#D7EFDF;color:#12632B;box-shadow:inset 0 0 0 1px #8CC9A0}.st-today{border:1.5px solid var(--ink)}.st-aging{background:#FFF1C2;color:#6B4B00;box-shadow:inset 0 0 0 1px #EBC757}.st-spoil{background:#FFD447;color:#3D2A00}.st-none{background:#ECECEC;color:#525252;box-shadow:inset 0 0 0 1px #CFCFCF}
 .acts{display:flex;gap:8px;justify-content:flex-end;padding:0 14px 13px}
 .rb{width:44px;height:44px;border-radius:22px;background:var(--bg2);display:inline-flex;align-items:center;justify-content:center;font-size:1rem}
 .btn-o{height:44px;border:1.5px solid #CFCFCF;border-radius:22px;padding:0 16px;font-weight:600;background:#fff}
@@ -399,3 +399,25 @@ img.fbn-p1,img.fbn-p2,img.fbn-p9{image-rendering:pixelated;image-rendering:crisp
 .hsheet .tile img.fbn-p1{transform-origin:24.109px 44.045px;transform:translateX(1.391px) scale(1.0571)}
 .hsheet .tile img.fbn-p2{transform-origin:25.5px 43.35px;transform:translateX(0px) scale(1.0882)}
 .hsheet .tile img.fbn-p9{transform-origin:25.848px 46.132px;transform:translateX(-0.348px) scale(1.1654)}
+/* v46 fridge: open frame, 2-column grid, glass shelves, frost */
+#flist .frz{position:relative;margin:6px -8px 0;border:0;border-radius:40px 40px 6px 6px;overflow:visible;background:#D9443A;box-shadow:inset 0 0 0 2px #493329,inset 2px 0 0 #F07A6E,inset -2px 0 0 #9E2A22;padding:32px 8px 14px}
+#flist .frz-room{position:relative;background:#E5F3FC;border-radius:12px 12px 4px 4px;box-shadow:inset 0 2px 0 #D4E6F4,inset 2px 0 0 #D4E6F4}
+.frz-arc,.frz-spark,.frz-frost{position:absolute;pointer-events:none;image-rendering:pixelated;image-rendering:crisp-edges;z-index:4}
+.frz-arc{left:8px;top:6px;width:44px;height:22px}
+.frz-spark{right:18px;top:10px;width:14px;height:14px}
+.frz-frost{right:-6px;top:-8px;width:60px;height:42px}
+.frz-foot{position:absolute;bottom:-8px;left:6px;width:10px;height:8px;background:#2E2420;box-shadow:0 0 0 1px #493329;pointer-events:none}
+.frz-foot.r{left:auto;right:6px}
+.frtier{display:grid;grid-template-columns:1fr 1fr;column-gap:6px;position:relative}
+.frtier::before{content:"";position:absolute;left:50%;top:4px;bottom:6px;width:4px;transform:translateX(-50%);background:linear-gradient(90deg,#C2D7E7 0 2px,#D7E7F4 2px 4px);pointer-events:none;z-index:1}
+.frtier.solo::before{display:none}
+.frtier::after{content:"";position:absolute;left:-2px;right:-2px;bottom:0;height:8px;background:linear-gradient(#493329,#493329) left top/4px 8px no-repeat,linear-gradient(#493329,#493329) right top/4px 8px no-repeat,linear-gradient(#fff 0 2px,#B7D8F0 2px 4px,#493329 4px 6px) center bottom/calc(100% - 8px) 6px no-repeat;pointer-events:none;z-index:2}
+#flist .frrow{display:grid;grid-template-columns:52px minmax(0,1fr);grid-template-areas:"tav grow" "pill pill";grid-template-rows:auto 1fr;column-gap:12px;row-gap:12px;align-items:center;align-content:stretch;padding:10px 6px 18px 8px;min-width:0;min-height:0;border:0;background:transparent;position:relative;z-index:3}
+#flist .frrow .tav{grid-area:tav;margin:0}
+#flist .frrow .grow{grid-area:grow;margin:0;min-width:0}
+#flist .frrow .nm{display:flex;flex-wrap:wrap;white-space:normal;overflow:visible;text-overflow:clip;row-gap:2px}
+#flist .frrow .nm .nmt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;width:100%;line-height:1.25}
+#flist .frrow .nm .org{flex:none;margin:0}
+#flist .frrow .meta{white-space:normal;margin-top:2px}
+#flist .frrow .pill{grid-area:pill;justify-self:start;align-self:end}
+#flist .frrow .tav>img{filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)}
