@@ -35,6 +35,9 @@ function emo(p,cls='em'){const id=p.hold||p.persona==null?'hold':'p'+p.persona;c
 function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp g${g} ${big?'big':''}"><i class="ink">${GR[g][0]}</i></span>`}
 function organic(p){const wk=d=>Math.floor((d-S.day%7+70000)/7);if(!p.pats||!p.pats.length)return false;const w=new Set(p.pats.map(d=>Math.floor(d/7)));const cw=Math.floor(S.day/7);return (w.has(cw)&&w.has(cw-1))||(w.has(cw-1)&&w.has(cw-2))}
 function visible(){return S.people.filter(p=>!p.hidden)}
+function personTags(p){return [...new Set([].concat(p.memo||[],p.rep||[]).map(String))]}
+function matchPerson(p,q){const s=String(q||'').trim().toLowerCase();if(!s)return true;return p.name.toLowerCase().includes(s)||personTags(p).some(t=>t.toLowerCase().includes(s))}
+function searchPeople(){return visible().filter(p=>rated(p)||p.hold)}
 /* v22: 앱 설치 후 저장한 연락처만, 7일, 최근 저장 순 */function newOnes(){const ins=S.installDay??-Infinity;return visible().filter(p=>p.isNew&&!rated(p)&&!p.hold&&p.addedDay>=ins&&S.day-p.addedDay<7).sort((a,b)=>b.addedDay-a.addedDay||b.id-a.id)}
 function todayList(){return visible().filter(p=>rated(p)&&!p.hold&&['today','aging','spoil'].includes(stage(p).k)).sort(sortFn)}
 function holdList(){return visible().filter(p=>p.hold).sort((a,b)=>(a.ratedDay??0)-(b.ratedDay??0)||a.id-b.id)}
@@ -99,7 +102,7 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
  const unread=S.notifs.some(x=>!x.read)&&!S.readBell;
  let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span><button class="ib" data-a="bell"><span class="bic">🔔</span>${unread?'<span class="dot"></span>':''}</button></div>
  <div class="search"><span class="sic">🔍</span><input id="q" type="search" placeholder="이름 / 태그 로 검색" value="${esc(q)}" autocomplete="off" enterkeyhint="search"></div>`;
- if(q){const r=S.people.filter(p=>p.name.includes(q)||p.phone.includes(q));
+ if(q.trim()){const r=searchPeople().filter(p=>matchPerson(p,q));
   h+=`<div class="card" style="margin-top:10px">${r.map(p=>`<div class="row tap" data-a="${rated(p)||p.hold?'open':'write'}" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${esc(p.name)}</div><div class="meta">${p.phone}</div></div><span class="go">${rated(p)||p.hold?'›':'평가 쓰기 →'}</span></div>`).join('')}
   <div class="row tap" data-a="add"><div class="grow"><div class="nm">＋ 새 연락처로 추가</div><div class="meta">테스트용: 폰 연락처 대신 여기서 넣어요</div></div></div></div>`;
   return h+'</div>'}
@@ -129,8 +132,8 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
  </div></div>`;
  return h+'</div>'}
 
-function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 태그 필터 없앰(태그 탭이 따로 있음) */let L=visible().filter(p=>rated(p)||p.hold);
- /* v20 검색: 이름·태그 일부 */const sq=(ui.fs||'').trim().toLowerCase();const tgs=p=>[...new Set([].concat(p.memo||[],p.rep||[]).map(String))];if(sq)L=L.filter(p=>p.name.toLowerCase().includes(sq)||tgs(p).some(t=>t.toLowerCase().includes(sq)));
+function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 태그 필터 없앰(태그 탭이 따로 있음) */let L=searchPeople();
+ const sq=(ui.fs||'').trim().toLowerCase();if(sq)L=L.filter(p=>matchPerson(p,sq));
  if(f.st.length)L=L.filter(p=>f.st.includes(stage(p).k));
  if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));
  if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
@@ -141,7 +144,7 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  <div class="chips frow" style="margin:0 0 12px">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}<span class="small sortlbl">연락 임박순</span></div>`;
  if(!all)return h+`<div class="empty">냉장고가 비어 있어요.<br>진열대에서 연락처를 찾아 첫 평가를 써 보세요.<br><br><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`;
  if(!L.length)return h+`<div id="flist"><div class="empty">맞는 사람이 없어요</div></div></div>`;
- const cell=p=>{const s=p.hold?{k:'none',t:'판단 보류'}:stage(p);const mt=sq?tgs(p).filter(t=>t.toLowerCase().includes(sq)):[];const org=!p.hold&&p.persona!=null&&organic(p);
+ const cell=p=>{const s=p.hold?{k:'none',t:'판단 보류'}:stage(p);const mt=sq?personTags(p).filter(t=>t.toLowerCase().includes(sq)):[];const org=!p.hold&&p.persona!=null&&organic(p);
   return `<div class="row tap frrow" data-a="open" data-id="${p.id}"><div class="tav">${emo(p,'').replace('src="emoji/p'+p.persona,org?'src="emoji/o'+p.persona:'src="emoji/p'+p.persona)}${p.hold||p.grade==null?'':stamp(p.grade)}</div><div class="grow"><div class="nm"><span class="nmt">${esc(p.name)}</span>${org?'<span class="org">유기농</span>':''}</div><div class="meta">${cycLabel(p)} 주기${mt.length?' · '+mt.map(esc).join(' · '):''}</div></div><span class="pill st-${s.k}">${s.t}</span></div>`};
  let tiers='';
  for(let i=0;i<L.length;i+=2)tiers+=`<div class="frtier${L[i+1]?'':' solo'}">${cell(L[i])}${L[i+1]?cell(L[i+1]):'<div class="frpad"></div>'}</div>`;
