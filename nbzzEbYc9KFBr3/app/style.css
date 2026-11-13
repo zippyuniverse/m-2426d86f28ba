@@ -97,7 +97,6 @@ nav.tab button.on b{opacity:1;filter:none}
 .ph-head{text-align:center;margin-top:8px}
 .ph-head .av{position:relative;width:96px;height:96px;margin:0 auto}
 .ph-head .av img{width:96px;height:96px;object-fit:contain}
-.ph-head .av .stamp{position:absolute;right:-8px;bottom:-4px}
 .ph-head h1{font-size:1.2941rem;margin:12px 0 2px}
 .kv{display:flex;align-items:center;justify-content:space-between;padding:14px;border-top:1px solid var(--line);min-height:50px}
 .kv:first-child{border-top:0}
@@ -205,7 +204,7 @@ button[disabled]{cursor:default;pointer-events:none}
 .gz{width:216px;height:216px}
 .ph-head .av,.gz .av .face{width:192px;height:192px}
 .ph-head .av img{width:192px;height:192px}
-.stampbtn{right:-12px;bottom:-4px;min-width:66px;min-height:66px;z-index:3}
+.stampbtn{right:-12px;bottom:-3px;width:66px;height:66px;min-width:66px;min-height:66px;line-height:0;z-index:3}
 
 .gh{font-size:26px}.gh-l{left:-62px}.gh-r{right:-62px}
 .gz.r-pat .face:after{background:radial-gradient(ellipse 18px 12px at 25% 60%,rgba(247,140,165,.85),rgba(247,140,165,0)),radial-gradient(ellipse 18px 12px at 75% 60%,rgba(247,140,165,.85),rgba(247,140,165,0))}
