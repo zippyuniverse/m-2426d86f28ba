@@ -404,19 +404,27 @@ img.fbn-p1,img.fbn-p2,img.fbn-p9{image-rendering:pixelated;image-rendering:crisp
 .hsheet .tile img.fbn-p1{transform-origin:24.109px 44.045px;transform:translateX(1.391px) scale(1.0571)}
 .hsheet .tile img.fbn-p2{transform-origin:25.5px 43.35px;transform:translateX(0px) scale(1.0882)}
 .hsheet .tile img.fbn-p9{transform-origin:25.848px 46.132px;transform:translateX(-0.348px) scale(1.1654)}
-/* v46 fridge: open frame, 2-column grid, glass shelves, frost */
-#flist .frz{position:relative;margin:6px -8px 0;border:0;border-radius:40px 40px 6px 6px;overflow:visible;background:#D9443A;box-shadow:inset 0 0 0 2px #493329,inset 2px 0 0 #F07A6E,inset -2px 0 0 #9E2A22;padding:32px 8px 14px}
-#flist .frz-room{position:relative;background:#E5F3FC;border-radius:12px 12px 4px 4px;box-shadow:inset 0 2px 0 #D4E6F4,inset 2px 0 0 #D4E6F4}
+/* v55 냉장고 A 쿨 실버. 필터 두 줄은 v54. 짧은 목록은 빈 선반으로 채우고, 긴 목록은 끝까지 내렸을 때만 바닥이 붙음 */
+#app:has(#flist){display:flex;flex-direction:column}
+#app:has(#flist)>.scr{flex:1 0 auto;display:flex;flex-direction:column;padding-bottom:calc(var(--sab) + 108px)}
+#app>.scr:has(#flist)>.fsrch{margin-bottom:4px}
+#flist{flex:1 0 auto;display:flex;flex-direction:column;min-height:0}
+#flist .frz{position:relative;flex:1 0 auto;display:flex;flex-direction:column;margin:1px -8px 0;border:0;border-radius:40px 40px 6px 6px;overflow:visible;background:#C5CFD7;box-shadow:inset 0 0 0 2px #44515D,inset 4px 0 0 #E9EEF2,inset -4px 0 0 #97A4AF,inset 0 -4px 0 #97A4AF;padding:32px 8px 14px}
+#flist .frz-room{position:relative;flex:1 0 auto;display:flex;flex-direction:column;background:#E5F3FC;border-radius:12px 12px 4px 4px;box-shadow:0 0 0 2px #7D8B97,inset 0 2px 0 #D4E6F4,inset 2px 0 0 #D4E6F4}
 .frz-arc,.frz-spark,.frz-frost{position:absolute;pointer-events:none;image-rendering:pixelated;image-rendering:crisp-edges;z-index:4}
-.frz-arc{left:8px;top:6px;width:44px;height:22px}
-.frz-spark{right:18px;top:10px;width:14px;height:14px}
+.frz-arc{left:7px;top:5px;width:46px;height:24px}
+.frz-spark{right:17px;top:9px;width:16px;height:16px}
 .frz-frost{right:-6px;top:-8px;width:60px;height:42px}
-.frz-foot{position:absolute;bottom:-8px;left:6px;width:10px;height:8px;background:#2E2420;box-shadow:0 0 0 1px #493329;pointer-events:none}
+.frz-shade{position:absolute;left:0;right:0;bottom:-11px;height:3px;border-radius:50%;background:#E4EAEE;pointer-events:none;z-index:0}
+.frz-foot{position:absolute;bottom:-8px;left:6px;width:10px;height:8px;background:#2C3640;box-shadow:0 0 0 1px #44515D;pointer-events:none;z-index:1}
 .frz-foot.r{left:auto;right:6px}
 .frtier{display:grid;grid-template-columns:1fr 1fr;column-gap:6px;position:relative}
 .frtier::before{content:"";position:absolute;left:50%;top:4px;bottom:6px;width:4px;transform:translateX(-50%);background:linear-gradient(90deg,#C2D7E7 0 2px,#D7E7F4 2px 4px);pointer-events:none;z-index:1}
 .frtier.solo::before{display:none}
-.frtier::after{content:"";position:absolute;left:-2px;right:-2px;bottom:0;height:8px;background:linear-gradient(#493329,#493329) left top/4px 8px no-repeat,linear-gradient(#493329,#493329) right top/4px 8px no-repeat,linear-gradient(#fff 0 2px,#B7D8F0 2px 4px,#493329 4px 6px) center bottom/calc(100% - 8px) 6px no-repeat;pointer-events:none;z-index:2}
+.frtier::after{content:"";position:absolute;left:-2px;right:-2px;bottom:0;height:8px;background:linear-gradient(#44515D,#44515D) left top/4px 8px no-repeat,linear-gradient(#44515D,#44515D) right top/4px 8px no-repeat,linear-gradient(#fff 0 2px,#B7D8F0 2px 4px,#44515D 4px 6px) center bottom/calc(100% - 8px) 6px no-repeat;pointer-events:none;z-index:2}
+#flist .frz-room>.frtier:not(:has(~ .frtier))::after{display:none}
+#flist .fsv-fill{flex:1 0 0;min-height:0;display:flex;flex-direction:column;flex-wrap:wrap;align-content:flex-start;overflow:hidden;pointer-events:none}
+#flist .fsv-rest{flex:1 0 0;min-height:66px;width:100%;pointer-events:none;image-rendering:pixelated;background-repeat:no-repeat,round;background-position:center top,center top}
 #flist .frrow{display:grid;grid-template-columns:52px minmax(0,1fr);grid-template-areas:"tav grow" "pill pill";grid-template-rows:auto 1fr;column-gap:12px;row-gap:12px;align-items:center;align-content:stretch;padding:10px 6px 18px 8px;min-width:0;min-height:0;border:0;background:transparent;position:relative;z-index:3}
 #flist .frrow .tav{grid-area:tav;margin:0}
 #flist .frrow .grow{grid-area:grow;margin:0;min-width:0}
