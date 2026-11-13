@@ -1,4 +1,4 @@
-const C='yjp-v55';
+const C='yjp-v56';
 const ART=['stall','pack','lab-trim','lab-nw','lab-hold','lab-fresh','lab-aging','lab-spoil'].concat([...Array(24).keys()].map(i=>'chip-'+(i+1)));
 const F=['./','index.html','style.css','app.js','curl.js','icons.js','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png','fonts/Pretendard-Regular.woff2','fonts/Pretendard-Bold.woff2','emoji/hold.svg','art/fridge.png','art/arc.png','art/arc@2x.png','art/spark.png','art/spark@2x.png','art/frost.png','art/frost@2x.png'].concat(ART.flatMap(n=>[n,n+'@2x',n+'@3x'].map(x=>'art/'+x+'.png'))).concat([...Array(12).keys()].map(i=>'emoji/p'+i+'.svg')).concat([...Array(12).keys()].map(i=>'emoji/o'+i+'.svg'));
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F)).then(()=>self.skipWaiting()))});

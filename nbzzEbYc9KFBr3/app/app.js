@@ -98,11 +98,14 @@ function render(dir){const v=nav[nav.length-1];if(v.v=='verdict'){$('#vlayer').i
  if(window.curlRest)curlRest();
  const n=countN();const ne=app.querySelector('#nnum');if(ne&&lastN!=null&&lastN!==n){ne.classList.add('bump')}lastN=n}
 function fitStall(){if(!nav[nav.length-1]||nav[nav.length-1].v!='shelf')return;const w=$('.stallwrap'),app=$('#app');if(!w||!app)return;w.style.setProperty('--s',String(Math.min(1,app.clientWidth/376)))}
-function fitFridge(){if(!nav[nav.length-1]||nav[nav.length-1].v!='fridge')return;const tier=$('#flist .frtier'),room=$('#flist .frz-room'),rest=$('#flist .fsv-rest');if(!tier||!room||!rest)return;const w=Math.round(room.getBoundingClientRect().width),th=Math.max(1,Math.round(tier.getBoundingClientRect().height));
+function fitFridge(){if(!nav[nav.length-1]||nav[nav.length-1].v!='fridge')return;const room=$('#flist .frz-room'),rest=$('#flist .fsv-rest');if(!room||!rest)return;const rb=room.getBoundingClientRect(),w=Math.round(rb.width);room.classList.toggle('cramped',rb.height<400);
  const svg=(h,a)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="4" height="8" fill="#44515D" opacity="${a}"/><rect x="${w-4}" width="4" height="8" fill="#44515D" opacity="${a}"/><rect x="4" y="2" width="${w-8}" height="2" fill="#FFFFFF" opacity="${a}"/><rect x="4" y="4" width="${w-8}" height="2" fill="#B7D8F0" opacity="${a}"/><rect x="4" y="6" width="${w-8}" height="2" fill="#44515D" opacity="${a}"/></svg>`;
  const uri=s=>'url("data:image/svg+xml,'+encodeURIComponent(s)+'")';
- rest.style.backgroundImage=uri(svg(8,1))+','+uri(svg(th,.5));
- rest.style.backgroundSize=w+'px 8px,'+w+'px '+th+'px'}
+ const tier=$('#flist .frtier');
+ if(tier){const th=Math.max(1,Math.round(tier.getBoundingClientRect().height));rest.style.backgroundImage=uri(svg(8,1))+','+uri(svg(th,.5));rest.style.backgroundSize=w+'px 8px,'+w+'px '+th+'px';rest.style.backgroundRepeat='';rest.style.backgroundPosition='';return}
+ const k=Math.max(1,Math.round(rb.height/115)),t=rb.height/k,imgs=[],sizes=[],pos=[];
+ for(let i=1;i<k;i++){imgs.push(uri(svg(8,1)));sizes.push(w+'px 8px');pos.push('center '+(i*t)+'px')}
+ rest.style.minHeight='0';rest.style.backgroundImage=imgs.join(',');rest.style.backgroundSize=sizes.join(',');rest.style.backgroundRepeat='no-repeat';rest.style.backgroundPosition=pos.join(',')}
 function navBar(c){const t=[['shelf','진열대','🥩'],['fridge','냉장고','🧊'],['tags','태그','🏷️'],['verdict','내 판정서','📋']];
  return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button class="vt" tabindex="-1" aria-hidden="true"><b>${x[2]}</b>${x[1]}</button>`:`<button data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}"><b data-ic="${x[0]}">${x[2]}</b>${x[1]}</button>`).join('')}</nav>`}
 function info(k){return `<button class="info" data-a="info" data-k="${k}">i</button>`}
@@ -145,19 +148,18 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  if(f.st.length)L=L.filter(p=>f.st.includes(stage(p).k));
  if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));
  if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
- L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;
+ L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;const none=!L.length||!all;
+ const note=!all?`<div class="door-note"><div class="door-card"><i class="door-tape" aria-hidden="true"></i><p class="door-title">냉장고가 비어 있어요.</p><p class="door-body">진열대에서 연락처를 찾아 첫 평가를 써&nbsp;보세요.</p><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`:(none?`<div class="door-note"><div class="door-card"><i class="door-tape" aria-hidden="true"></i><p class="door-title">맞는 사람이 없어요</p>${f.gr.length||f.st.length?'<button class="btn-o" data-a="fall">전체 보기</button>':''}</div></div>`:'');
  let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span></div>
  <div class="search fsrch"><span class="sic">🔍</span><input id="fqs" type="search" placeholder="이름 / 태그 로 검색" value="${esc(ui.fs||'')}" autocomplete="off" enterkeyhint="search"></div>
  <div class="chips frow gst" style="margin:6px 0 8px"><button class="gsb gall ${f.gr.length||f.st.length?'':'on'}" data-a="fall" aria-pressed="${!(f.gr.length||f.st.length)}" aria-label="전체(등급·상태 선택 해제)">전체</button>${[5,4,3,2,1].map(g=>[String(g),GR[g][0],'g'+g]).concat([['hold','보류','ghd']]).map(x=>`<button class="gsb ${x[2]} ${f.gr.includes(x[0])?'on':''}" data-a="fq" data-k="gr" data-x="${x[0]}" aria-pressed="${f.gr.includes(x[0])}" aria-label="${x[0]=='hold'?'판단 보류':x[1]+' 등급'}">${esc(x[1])}</button>`).join('')}</div>
- <div class="chips frow fst" style="margin:0 0 12px">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}<span class="small sortlbl">연락 임박순</span></div>`;
- if(!all)return h+`<div class="empty">냉장고가 비어 있어요.<br>진열대에서 연락처를 찾아 첫 평가를 써 보세요.<br><br><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`;
- if(!L.length)return h+`<div id="flist"><div class="empty">맞는 사람이 없어요</div></div></div>`;
+ <div class="chips frow fst" style="margin:0 0 12px">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}<span class="small sortlbl"${none?' hidden':''}>연락 임박순</span></div>`;
  const cell=p=>{const s=p.hold?{k:'none',t:'판단 보류'}:stage(p);const mt=sq?personTags(p).filter(t=>t.toLowerCase().includes(sq)):[];const org=!p.hold&&p.persona!=null&&organic(p);const bare=!rated(p)&&!p.hold;
   return `<div class="row tap frrow" data-a="${searchAct(p)}" data-id="${p.id}"><div class="tav">${emo(p,'').replace('src="emoji/p'+p.persona,org?'src="emoji/o'+p.persona:'src="emoji/p'+p.persona)}${bare||p.grade==null?'':stamp(p.grade)}</div><div class="grow"><div class="nm"><span class="nmt">${esc(p.name)}</span>${org?'<span class="org">유기농</span>':''}</div><div class="meta">${cycLabel(p)} 주기${mt.length?' · '+mt.map(esc).join(' · '):''}</div></div><div class="frchips">${bare?'':`<span class="pill st-${s.k}">${s.t}</span>`}${searchFlags(p)}</div></div>`};
  let tiers='';
- for(let i=0;i<L.length;i+=2)tiers+=`<div class="frtier${L[i+1]?'':' solo'}">${cell(L[i])}${L[i+1]?cell(L[i+1]):'<div class="frpad"></div>'}</div>`;
- const decal=(n,c)=>`<img class="frz-${c}" alt="" draggable="false" src="art/${n}.png" srcset="art/${n}.png 1x, art/${n}@2x.png 2x">`;
- return h+`<div id="flist"><div class="card frz">${decal('arc','arc')}${decal('spark','spark')}<div class="frz-room">${tiers}<div class="fsv-fill" aria-hidden="true"><div class="fsv-rest"></div></div>${decal('frost','frost')}</div><i class="frz-shade"></i><i class="frz-foot"></i><i class="frz-foot r"></i></div></div></div>`}
+ if(!none)for(let i=0;i<L.length;i+=2)tiers+=`<div class="frtier${L[i+1]?'':' solo'}">${cell(L[i])}${L[i+1]?cell(L[i+1]):'<div class="frpad"></div>'}</div>`;
+ const decal=(n,c)=>`<img class="frz-${c}" alt="" aria-hidden="true" draggable="false" src="art/${n}.png" srcset="art/${n}.png 1x, art/${n}@2x.png 2x">`;
+ return h+`<div id="flist"><div class="card frz">${decal('arc','arc')}${decal('spark','spark')}<div class="frz-room">${tiers}<div class="fsv-fill" aria-hidden="true"><div class="fsv-rest"></div></div>${decal('frost','frost')}${note}</div><i class="frz-shade" aria-hidden="true"></i><i class="frz-foot" aria-hidden="true"></i><i class="frz-foot r" aria-hidden="true"></i></div></div></div>`}
 
 function allMemo(){const m={};GROUPS.forEach(g=>m[g[0]]=[...(g[0]=='생년'?[]:g[2])]);Object.entries(S.customTags).forEach(([g,a])=>a.forEach(t=>{if(!m[g].includes(t))m[g].push(t)}));S.people.forEach(p=>p.memo.forEach(t=>{const g=groupOf(t);if(g&&!m[g].includes(t))m[g].push(t)}));return m}
 function groupOf(t){if(/^\d{4}$/.test(t)||/년대$/.test(t))return '생년';for(const g of GROUPS)if(g[2].includes(t))return g[0];for(const [g,a] of Object.entries(S.customTags))if(a.includes(t))return g;return null}
