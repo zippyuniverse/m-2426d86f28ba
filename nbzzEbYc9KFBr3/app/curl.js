@@ -32,7 +32,7 @@ function curlRest(){const g=geo();if(open||anim)return;
  fx.setAttribute('width',g.W);fx.setAttribute('height',g.H);
  const {rem}=draw(0,g);g.nv.style.clipPath='';
  pk.style.left=(g.R-A0)+'px';pk.style.width=A0+'px';pk.style.height=g.B+'px';pk.style.bottom='0px';pk.style.top='auto';const pr={left:g.R-A0,top:g.H-g.B};pk.style.clipPath=poly(rem,pr.left,pr.top);
- pk.querySelector('svg').style.bottom=(g.sab+22)+'px';pk.querySelector('.lb').style.bottom=(g.sab+7)+'px';
+ pk.querySelector('svg').style.bottom=(g.sab+21)+'px';pk.querySelector('.lb').style.bottom=(g.sab+6)+'px';
  const cell=g.nv.querySelector('.vt').getBoundingClientRect();hit.style.left=cell.left+'px';hit.style.width=cell.width+'px';hit.style.top=cell.top+'px';hit.style.height='58px'}
 function frame(tt,g){t=tt;const app=$('#app'),ar=app.getBoundingClientRect();
  const {kept}=draw(tt,g);app.style.clipPath=poly(kept,ar.left,ar.top);if(g.nv){const nr=g.nv.getBoundingClientRect();g.nv.style.clipPath=poly(kept,nr.left,nr.top)}
