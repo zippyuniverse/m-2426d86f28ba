@@ -197,11 +197,12 @@ function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const
  if(edit)h+=`<p class="thint">메모 태그를 누르면 이름을 바꾸거나 지울 수 있어요. ⋯를 누르면 그룹을 바꿀 수 있어요.</p>`;
  memoGroupList().forEach(g=>{const ts=tagsIn(g);const more=edit?`<button type="button" class="t7more" data-a="tmore" data-g="${esc(g.key)}" aria-label="그룹 메뉴">⋯</button>`:'';
   const chipsHtml=ts.map(t=>pill(t,'memo'));
+  const bare=edit&&!ts.length;
   let pills;
   if(edit&&ts.length){const last=chipsHtml.pop();pills=chipsHtml.join('')+`<span class="t7morewrap">${last}${more}</span>`}
-  else if(edit)pills=more;
-  else pills=chipsHtml.join('')||'<span class="small">아직 없어요</span>';
-  h+=`<section class="tcard" style="--gc:${g.color}"><div class="tgh" data-g="${esc(g.key)}"><span class="gdot" aria-hidden="true"></span><h2>${esc(g.name)}</h2></div><div class="chips tpills">${pills}</div></section>`});
+  else if(!edit)pills=chipsHtml.join('')||'<span class="small">아직 없어요</span>';
+  else pills='';
+  h+=`<section class="tcard${bare?' is-empty':''}" style="--gc:${g.color}"><div class="tgh" data-g="${esc(g.key)}"><span class="gdot" aria-hidden="true"></span><h2>${esc(g.name)}</h2>${bare?more:''}</div>${pills?`<div class="chips tpills">${pills}</div>`:''}</section>`});
  const reps=[...REP_POS,...REP_NEG];
  h+=`<div class="tsec"><b>평판 태그</b><span class="tbadge">익명 공개</span></div><p class="thint">정해진 목록이라 검색만 돼요</p><div class="chips tpills">${reps.map(t=>pill(t,'rep')).join('')}</div>`;
  let dock='';
@@ -506,7 +507,7 @@ function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.que
  const t=S.day,arr=k=='pat'?(p.pats=p.pats||[]):(p.kkul=p.kkul||[]);let ok=!arr.includes(t);if(k=='kkul'&&arr.filter(d=>t-d<7&&d<=t).length>=3)ok=false;
  if(ok){arr.push(t);toast(k=='pat'?'쓰담쓰담이 오늘 한 번 기록되었어요':'꿀밤 콩콩이 오늘 한 번 기록되었어요')}save()}
 (function(){let st=null,lastTap=0,lastId=null;
- document.addEventListener('pointerdown',e=>{const hold=e.target.closest('.tpill[data-k="memo"], .tgh');if(hold&&!e.target.closest('.tga,.tschip')&&!(hold.classList.contains('tpill')&&birthTag(hold.dataset.t))){const x0=e.clientX,y0=e.clientY;let kill=false;const timer=setTimeout(()=>{kill=true;ui._lp=1;if(hold.classList.contains('tpill'))tagHoldMenu(hold.dataset.t);else if(hold.dataset.g)groupHold(hold.dataset.g)},550);
+ document.addEventListener('pointerdown',e=>{const hold=e.target.closest('.tpill[data-k="memo"], .tgh');if(hold&&!e.target.closest('.tga,.tschip,.t7more')&&!(hold.classList.contains('tpill')&&birthTag(hold.dataset.t))){const x0=e.clientX,y0=e.clientY;let kill=false;const timer=setTimeout(()=>{kill=true;ui._lp=1;if(hold.classList.contains('tpill'))tagHoldMenu(hold.dataset.t);else if(hold.dataset.g)groupHold(hold.dataset.g)},550);
   const stop=ev=>{if(ev&&ev.type==='pointermove'&&Math.hypot(ev.clientX-x0,ev.clientY-y0)<8)return;clearTimeout(timer);hold.removeEventListener('pointermove',stop);hold.removeEventListener('pointerup',stop);hold.removeEventListener('pointercancel',stop)};
   hold.addEventListener('pointermove',stop);hold.addEventListener('pointerup',stop);hold.addEventListener('pointercancel',stop)}
  const z=e.target.closest('.gz[data-gid]');if(!z||e.target.closest('.stampbtn,.sr'))return;st={z,id:z.dataset.gid,x0:e.clientX,y0:e.clientY,lx:e.clientX,ly:e.clientY,dx:0,dy:0,vx:null,vy:null,ch:0,tr:0,t0:Date.now(),mode:null,moved:false}},{passive:true});
