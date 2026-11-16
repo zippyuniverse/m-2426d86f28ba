@@ -109,7 +109,7 @@ function fitFridge(){if(!nav[nav.length-1]||nav[nav.length-1].v!='fridge')return
  for(let i=1;i<k;i++){imgs.push(uri(svg(8,1)));sizes.push(w+'px 8px');pos.push('center '+(i*t)+'px')}
  rest.style.minHeight='0';rest.style.backgroundImage=imgs.join(',');rest.style.backgroundSize=sizes.join(',');rest.style.backgroundRepeat='no-repeat';rest.style.backgroundPosition=pos.join(',')}
 function navBar(c){const t=[['shelf','진열대','🥩'],['fridge','냉장고','🧊'],['tags','태그','🏷️'],['verdict','내 판정서','📋']];
- return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button type="button" class="vt" data-a="tab" data-v="verdict" aria-label="내 판정서"><b aria-hidden="true">${x[2]}</b><span>${x[1]}</span></button>`:`<button type="button" data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}" aria-label="${x[1]}"><b data-ic="${x[0]}">${x[2]}</b><span>${x[1]}</span></button>`).join('')}</nav>`}
+ return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button type="button" class="vt" data-a="tab" data-v="verdict" aria-label="내 판정서"></button>`:`<button type="button" data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}" aria-label="${x[1]}"><b data-ic="${x[0]}">${x[2]}</b><span>${x[1]}</span></button>`).join('')}</nav>`}
 function info(k){return `<button class="info" data-a="info" data-k="${k}">i</button>`}
 
 function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fresh'),ag=byStage('aging'),sp=byStage('spoil');const q=ui.q||'';
