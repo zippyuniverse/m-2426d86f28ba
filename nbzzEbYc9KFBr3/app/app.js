@@ -95,6 +95,7 @@ function render(dir){const v=nav[nav.length-1];if(v.v=='verdict'){$('#vlayer').i
  if(dir&&dir!=='same')window.scrollTo(0,0);
  if(v.v=='shelf')fitStall();
  if(v.v=='fridge')fitFridge();
+ if(v.v=='tags')requestAnimationFrame(tagFit);
  if(window.curlRest)curlRest();
  const n=countN();const ne=app.querySelector('#nnum');if(ne&&lastN!=null&&lastN!==n){ne.classList.add('bump')}lastN=n}
 function fitStall(){if(!nav[nav.length-1]||nav[nav.length-1].v!='shelf')return;const w=$('.stallwrap'),app=$('#app');if(!w||!app)return;w.style.setProperty('--s',String(Math.min(1,app.clientWidth/376)))}
@@ -166,12 +167,70 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  return h+`<div id="flist"><div class="card frz">${decal('arc','arc')}${decal('spark','spark')}<div class="frz-room">${tiers}<div class="fsv-fill" aria-hidden="true"><div class="fsv-rest"></div></div>${decal('frost','frost')}${note}</div><i class="frz-shade" aria-hidden="true"></i><i class="frz-foot" aria-hidden="true"></i><i class="frz-foot r" aria-hidden="true"></i></div></div></div>`}
 
 function allMemo(){const m={};GROUPS.forEach(g=>m[g[0]]=[...(g[0]=='생년'?[]:g[2])]);Object.entries(S.customTags).forEach(([g,a])=>a.forEach(t=>{if(!m[g].includes(t))m[g].push(t)}));S.people.forEach(p=>p.memo.forEach(t=>{const g=groupOf(t);if(g&&!m[g].includes(t))m[g].push(t)}));return m}
-function groupOf(t){if(/^\d{4}$/.test(t)||/년대$/.test(t))return '생년';for(const g of GROUPS)if(g[2].includes(t))return g[0];for(const [g,a] of Object.entries(S.customTags))if(a.includes(t))return g;return null}
-function tags(){const m=allMemo();const used=t=>S.people.some(p=>!p.hidden&&(p.memo.includes(t)||p.rep.includes(t)));
- let h=`<div class="scr"><div class="hd"><h1>태그</h1>${info('tags')}</div><div class="note" style="margin:0 0 10px">메모 태그는 나만 봐요. 평판 태그만 익명으로 모여요.</div>`;
- GROUPS.forEach(g=>{const ts=m[g[0]];h+=`<div class="grp"><div class="gn"><span class="gdot" style="background:${g[1]}"></span>${g[0]}</div><div class="chips">${ts.map(t=>`<button class="chip sm" style="${used(t)?'':'opacity:.45'}" data-a="tagp" data-t="${esc(t)}">${esc(t)}</button>`).join('')||'<span class="small">아직 없어요</span>'}</div></div>`});
- h+=`<div class="grp"><div class="gn"><span class="gdot" style="background:#7F7CF6"></span>평판 <span class="badge">익명 공개</span></div><div class="chips">${[...REP_POS,...REP_NEG].filter(used).map(t=>`<button class="chip sm" data-a="tagp" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>`;
- return h+'</div>'}
+function groupOf(t){if(S.tagMove&&S.tagMove[t])return S.tagMove[t];if(/^\d{4}$/.test(t)||/년대$/.test(t))return '생년';for(const g of GROUPS)if(g[2].includes(t))return g[0];for(const [g,a] of Object.entries(S.customTags||{}))if(a.includes(t))return g;return null}
+const TCOLORS=['#834AF4','#75C895','#88CBF0','#89D16F','#F4A259','#3F89F6','#7F7CF6','#EE8FC0','#2AAFB3','#A8937F'];
+function tagInit(){S.tagRecent=S.tagRecent||[];S.tagGroups=S.tagGroups||[];S.tagMove=S.tagMove||{};S.tagGone=S.tagGone||[];S.groupGone=S.groupGone||[];S.groupName=S.groupName||{};S.groupColor=S.groupColor||{};S.customTags=S.customTags||{};ui.tagSel=ui.tagSel||[]}
+function tagUsed(t){return S.people.some(p=>(p.memo||[]).includes(t)||(p.rep||[]).includes(t))}
+function tagMine(t){const g=groupOf(t);return !!(g&&(S.customTags[g]||[]).includes(t))||tagUsed(t)}
+function tagMatch(sel){sel=sel||ui.tagSel||[];if(!sel.length)return [];return S.people.filter(p=>sel.every(t=>(p.memo||[]).includes(t)||(p.rep||[]).includes(t)))}
+function memoGroupList(){tagInit();const out=GROUPS.filter(g=>!S.groupGone.includes(g[0])).map(g=>({key:g[0],name:S.groupName[g[0]]||g[0],color:S.groupColor[g[0]]||g[1],base:g[2]}));
+ S.tagGroups.forEach(g=>out.push({key:g.name,name:g.name,color:g.color,base:[],custom:1}));return out}
+function tagsIn(g){const gone=new Set(S.tagGone),set=[],push=t=>{if(!t||gone.has(t)||set.includes(t)||groupOf(t)!==g.key)return;set.push(t)};
+ (g.base||[]).forEach(push);(S.customTags[g.key]||[]).forEach(push);Object.entries(S.tagMove).forEach(([t,k])=>{if(k===g.key)push(t)});S.people.forEach(p=>(p.memo||[]).forEach(push));return set}
+function isRepTag(t){return REP_POS.includes(t)||REP_NEG.includes(t)}
+function tagHit(t,q){return !q||t.toLowerCase().includes(q)}
+function pill(t,kind){const on=(ui.tagSel||[]).includes(t);const rep=kind==='rep'||isRepTag(t);const neg=REP_NEG.includes(t);const g=groupOf(t);const col=(memoGroupList().find(x=>x.key===g)||{}).color||'#E6E6E6';
+ const dim=!on&&!rep&&!tagMine(t);const lock=ui.tagEdit&&rep;
+ const cls=['tpill',on?'on':'',rep?'rep':'',neg?'neg':'',dim?'dim':'',lock?'lock':''].filter(Boolean).join(' ');
+ return `<button type="button" class="${cls}" style="--gc:${col}" data-a="tsel" data-t="${esc(t)}" data-k="${rep?'rep':'memo'}" aria-pressed="${on}" ${lock?'disabled':''}>${esc(t)}</button>`}
+function tags(){tagInit();const q=(ui.tq||'').trim().toLowerCase();const sel=ui.tagSel;const n=tagMatch(sel).length;const edit=!!ui.tagEdit;
+ const chips=sel.map(t=>`<button type="button" class="tschip" data-a="tsel" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('');
+ let h=`<div class="scr tagpage${sel.length?' hasbar':''}"><div class="hd"><h1>태그</h1>${info('tags')}${edit?'<span class="sp"></span><button type="button" class="tdone" data-a="teditdone">완료</button>':''}</div>
+ <div class="note" style="margin:0 0 10px">메모 태그는 나만 봐요. 평판 태그만 익명으로 모여요.</div>
+ <div class="search tsearch"><span class="sic">🔍</span><div class="ts-scroll" id="tsscroll">${chips}<input id="tqs" type="search" placeholder="태그 이름으로 찾기" value="${esc(ui.tq||'')}" autocomplete="off" enterkeyhint="search"></div></div>
+ <p class="thint">여러 개 고르면 모두 붙은 사람만 찾아요</p>
+ <div class="trecent"><b>최근 검색 태그</b><button type="button" class="tclearh" data-a="treclear" ${S.tagRecent.length?'':'disabled'}>최근 기록 삭제</button></div>
+ <div class="chips tpills">${S.tagRecent.filter(t=>tagHit(t,q)&&!S.tagGone.includes(t)).map(t=>pill(t)).join('')}</div>`;
+ h+=`<div class="tsec"><b>메모 태그</b><span class="tbadge">나만 보기</span></div>`;
+ if(edit)h+=`<p class="thint">메모 태그를 누르면 이름을 바꾸거나 지울 수 있어요.</p>`;
+ memoGroupList().forEach(g=>{let ts=tagsIn(g).filter(t=>tagHit(t,q));if(q&&!ts.length)return;
+  h+=`<section class="tcard" style="--gc:${g.color}"><div class="tgh" data-g="${esc(g.key)}"><h2>${esc(g.name)}</h2>${edit?`<span class="tga"><button type="button" data-a="trenameg" data-g="${esc(g.key)}">이름</button><button type="button" data-a="trecolor" data-g="${esc(g.key)}">색</button><button type="button" data-a="tdelg" data-g="${esc(g.key)}">지우기</button></span>`:''}</div><div class="chips tpills">${ts.map(t=>pill(t,'memo')).join('')||'<span class="small">아직 없어요</span>'}</div></section>`});
+ const reps=[...REP_POS,...REP_NEG].filter(t=>tagHit(t,q));
+ h+=`<div class="tsec"><b>평판 태그</b><span class="tbadge">익명 공개</span></div><p class="thint">정해진 목록이라 검색만 돼요</p><div class="chips tpills">${reps.map(t=>pill(t,'rep')).join('')}</div>`;
+ let dock='';
+ if(!edit)dock+=`<button type="button" class="tfab${sel.length?' up':''}" data-a="tmenu" aria-expanded="${ui.tagMenu?'true':'false'}" aria-label="태그 메뉴">+</button>${ui.tagMenu?`<div class="tmenu${sel.length?' up':''}"><button type="button" data-a="tadd">태그 추가</button><button type="button" data-a="tgadd">그룹 추가</button><button type="button" data-a="tedit">전체 편집</button></div>`:''}`;
+ if(sel.length)dock+=`<div class="tagbar"><span class="tn">고른 태그를 모두 가진 사람 ${n}명</span><button type="button" class="btn-r" data-a="tsearch" ${n?'':'disabled'}>검색</button></div>`;
+ return h+'</div>'+dock}
+function drawTagSheet(){tagInit();const sel=ui.tagSel.slice();const L=tagMatch(sel);const x='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
+ const chips=`<div class="tpicks">${sel.map(t=>`<button type="button" class="tschip" data-a="tx" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('')}</div>`;
+ let body;
+ if(!L.length)body=`<div class="tempty"><p>고른 태그를 모두 가진 사람이 없어요</p><p class="sub">위 칩의 ×를 눌러 태그를 하나씩 빼 보세요.</p><button type="button" class="tzero" data-a="tclear">고른 태그 모두 빼기</button></div>`;
+ else body=L.map(p=>{const org=!p.hold&&p.persona!=null&&organic(p);const src=p.hold||p.persona==null?'emoji/hold.svg':(org?'emoji/o'+p.persona+'.svg':'emoji/p'+p.persona+'.svg');const idn=p.hold||p.persona==null?'hold':'p'+p.persona;
+  const st=p.hold?{k:'none',t:'판정 보류'}:(p.grade==null?null:stage(p));
+  return `<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><span class="tav"><img class="${fbn(idn)}" src="${src}" alt="">${p.grade==null?'':stamp(p.grade)}</span><span class="grow"><span class="nm"><span class="nmt">${esc(p.name)}</span>${org?'<span class="org">유기농</span>':''}</span>${st?`<span class="meta"><span class="pill st-${st.k}">${st.t}</span></span>`:''}</span></button><button type="button" class="rb" data-a="tcall" data-t="전화" data-id="${p.id}">전화걸기</button></div>`}).join('');
+ sheet(`<div class="sechead"><div class="sectitle"><h3 id="sec-title">고른 태그를 모두 가진 사람 ${L.length}명</h3>${x}</div>${chips}</div><div class="seclist">${body}</div>`);
+ const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet','tagres');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-labelledby','sec-title');sh.tabIndex=-1}bindSwipe();
+ if(sh&&!sh.contains(document.activeElement)){const b=sh.querySelector('.secx');if(b)b.focus({focusVisible:false})}}
+function tagFit(){const sc=$('#tsscroll');if(!sc)return;if(ui.tagScroll){sc.scrollLeft=sc.scrollWidth;ui.tagScroll=0}else if(ui.tagLeft)sc.scrollLeft=ui.tagLeft;
+ const mask=()=>{const left=sc.scrollLeft>2,right=sc.scrollLeft+sc.clientWidth<sc.scrollWidth-2;ui.tagLeft=sc.scrollLeft;
+  sc.style.webkitMaskImage=sc.style.maskImage=left&&right?'linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 16px),transparent)':left?'linear-gradient(90deg,transparent,#000 16px)':right?'linear-gradient(90deg,#000 calc(100% - 16px),transparent)':''};
+ mask();if(!sc._b){sc._b=1;sc.addEventListener('scroll',mask,{passive:true})}}
+function tagRemember(){tagInit();ui.tagSel.forEach(t=>{S.tagRecent=S.tagRecent.filter(x=>x!==t);S.tagRecent.unshift(t)});S.tagRecent=S.tagRecent.filter(t=>!S.tagGone.includes(t)).slice(0,12);save()}
+function adoptTag(t){if(isRepTag(t)||tagMine(t))return;const g=groupOf(t);if(!g)return;S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(t))S.customTags[g].push(t)}
+function dropTag(t){S.people.forEach(p=>{p.memo=(p.memo||[]).filter(x=>x!==t)});Object.keys(S.customTags).forEach(g=>{S.customTags[g]=(S.customTags[g]||[]).filter(x=>x!==t)});
+ delete S.tagMove[t];if(!S.tagGone.includes(t))S.tagGone.push(t);S.tagRecent=S.tagRecent.filter(x=>x!==t);ui.tagSel=ui.tagSel.filter(x=>x!==t)}
+function memoNames(){const s=[];memoGroupList().forEach(g=>tagsIn(g).forEach(t=>{if(!s.includes(t))s.push(t)}));return s}
+function renameTag(old,neu){const g=groupOf(old);S.people.forEach(p=>{p.memo=(p.memo||[]).map(t=>t===old?neu:t);p.memo=[...new Set(p.memo)]});
+ Object.keys(S.customTags).forEach(k=>{S.customTags[k]=(S.customTags[k]||[]).map(t=>t===old?neu:t)});if(S.tagMove[old]){S.tagMove[neu]=S.tagMove[old];delete S.tagMove[old]}
+ if(g){S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(neu))S.customTags[g].push(neu)}if(!S.tagGone.includes(old))S.tagGone.push(old);S.tagGone=S.tagGone.filter(t=>t!==neu);
+ S.tagRecent=S.tagRecent.map(t=>t===old?neu:t);ui.tagSel=ui.tagSel.map(t=>t===old?neu:t)}
+function mergeTag(a,b){if(!a||!b||a===b||isRepTag(a)||isRepTag(b))return;S.people.forEach(p=>{if((p.memo||[]).includes(a)){p.memo=p.memo.filter(t=>t!==a);if(!p.memo.includes(b))p.memo.push(b)}});dropTag(a)}
+function tagEditMenu(t){sheet(`<h3>${esc(t)}</h3><button type="button" class="srow" data-a="trenamet" data-t="${esc(t)}">이름 바꾸기</button><button type="button" class="srow" data-a="tdel" data-t="${esc(t)}">지우기</button>`)}
+function tagHoldMenu(t){if(!t||isRepTag(t))return;sheet(`<h3>${esc(t)}</h3><button type="button" class="srow" data-a="trenamet" data-t="${esc(t)}">이름 바꾸기</button><button type="button" class="srow" data-a="tmerge" data-t="${esc(t)}">다른 태그와 합치기</button><button type="button" class="srow" data-a="tmove" data-t="${esc(t)}">다른 그룹으로 옮기기</button><button type="button" class="srow" data-a="tdel" data-t="${esc(t)}">지우기</button>`)}
+function groupHold(key){const g=memoGroupList().find(x=>x.key===key);if(!g)return;sheet(`<h3>${esc(g.name)}</h3><button type="button" class="srow" data-a="trenameg" data-g="${esc(key)}">이름 바꾸기</button><button type="button" class="srow" data-a="trecolor" data-g="${esc(key)}">그룹 색 변경</button><button type="button" class="srow" data-a="tdelg" data-g="${esc(key)}">지우기</button>`)}
+function tagRenameGroup(key){ui.renameG=key;const nm=(memoGroupList().find(g=>g.key===key)||{}).name||key;secSheetWrap(`<div class="sechead"><div class="sectitle"><h3>이름 바꾸기</h3>${SECX}</div></div><div class="tform"><label class="inp">그룹 이름<input id="tname" maxlength="20" value="${esc(nm)}"></label><div class="small" id="tcnt">${nm.length}/20</div><button type="button" class="btn-r" data-a="trenamegok">저장</button></div>`)}
+function secSheetWrap(inner){sheet(inner);const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.tabIndex=-1}const b=$('#sheet-root .secx');if(b)b.focus({focusVisible:false})}
+const SECX='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
 function tagPeople(v){const L=visible().filter(p=>p.memo.includes(v.t)||p.rep.includes(v.t));const isRep=REP_POS.includes(v.t)||REP_NEG.includes(v.t);
  return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">${esc(v.t)}</h1></div>${isRep?`<div class="small">내 연락처 ${L.length}명</div>`:''}<div class="card" style="margin-top:10px">${L.map(p=>`<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)}</div></div></div>`).join('')||'<div class="empty">아직 없어요</div>'}</div></div>`}
 
@@ -290,7 +349,7 @@ function goFridge(k){if(ui._xslide)return;
  setTimeout(end,1000)}
 const INFO={shelf:['진열대는 이렇게 봐요',['새로 들어온 고기는 폰에 새로 저장한 연락처예요. 7일 동안 남아요.','손질할 고기는 연락할 때가 됐거나 지난 사람이에요.','판정 보류 고기는 판정 보류로 저장한 사람이에요.','신선·숙성 중·상하기 직전 칸을 누르면 냉장고의 그 상태로 넘어가요.','전화 버튼을 누르면 연락 기록이 저절로 남아요.']],
  write:['평가는 이렇게 써요',['이름은 이 폰에서만 읽어요',"아직 판단하기 이르면 '판단 보류'를 골라요. 성격과 등급 없이 저장돼요.",'평판 태그는 같은 태그를 3명 이상 달아야 판정서에 보여요.','성격과 등급만 고르면 저장돼요. 나머지 질문과 태그는 선택이에요.']],
- tags:['태그는 이렇게 써요',['태그를 누르면 그 태그가 붙은 사람을 모아 봐요.','메모 태그를 길게 누르면 이름 바꾸기, 합치기, 옮기기, 지우기를 할 수 있어요.','평판 태그는 같은 태그를 3명 이상 달았을 때만 익명으로 보여요.']],
+ tags:['태그는 이렇게 써요',['태그를 골라 검색하면 그 태그를 모두 가진 사람을 모아 봐요.','메모 태그를 길게 누르면 이름 바꾸기, 합치기, 옮기기, 지우기를 할 수 있어요.','평판 태그는 같은 태그를 3명 이상 달았을 때만 익명으로 보여요.']],
  verdict:['',['결과는 매주 토요일 오전 9시에 갱신돼요','언제든 판정서를 닫을 수 있어요.']]};
 function infoSheet(k){const x=INFO[k];sheet(`${x[0]?`<h3>${x[0]}</h3>`:''}<ul>${x[1].map(l=>`<li>${l}</li>`).join('')}</ul><button class="btn-r" data-a="sclose2">알겠어요</button>`);if(k=='write'){S.firstWrite=false;save()}}
 function repSheet(){const w=ui.w;const neg=w.rep.filter(t=>REP_NEG.includes(t)).length;
@@ -315,8 +374,8 @@ function testMenu(){sheet(`<h3>테스트 메뉴</h3><div class="small">지금 �
 
 /* events */
 let taps=[];
-document.addEventListener('input',e=>{if(e.target.id=='fqs'){ui.fs=e.target.value;const d=document.createElement('div');d.innerHTML=fridge();const n=d.querySelector('#flist'),o=$('#flist');if(n&&o)o.replaceWith(n);return}if(e.target.id=='q'){ui.q=e.target.value;const pos=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(pos,pos)}});
-document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,id=el.dataset.id;
+document.addEventListener('input',e=>{if(e.target.id=='fqs'){ui.fs=e.target.value;const d=document.createElement('div');d.innerHTML=fridge();const n=d.querySelector('#flist'),o=$('#flist');if(n&&o)o.replaceWith(n);return}if(e.target.id=='q'){ui.q=e.target.value;const pos=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(pos,pos);return}if(e.target.id=='tqs'){ui.tq=e.target.value;const pos=e.target.selectionStart,y=window.scrollY,sc=$('#tsscroll');if(sc)ui.tagLeft=sc.scrollLeft;render('same');window.scrollTo(0,y);const q=$('#tqs');if(q){q.focus();try{q.setSelectionRange(pos,pos)}catch(err){}}return}if(e.target.id=='tnew'||e.target.id=='tname'||e.target.id=='gnew'){const n=$('#tcnt');if(n)n.textContent=e.target.value.length+'/20'}});
+document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.stopPropagation();return}if(ui.tagMenu&&!e.target.closest('.tmenu,.tfab')){ui.tagMenu=0;render('same')}const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,id=el.dataset.id;
  if(a=='sclose'&&e.target!==el)return;e.stopPropagation();
  const p=id?P(id):null;
  switch(a){
@@ -377,6 +436,37 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!
  case 'pgsheet':holdSheet(id);break;
  case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rel:null,rep:[],priv:false,ratedDay:S.day});if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판단 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
+ case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0)ui.tagSel.splice(i,1);else{adoptTag(t);ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
+ case 'tsearch':{if(!tagMatch().length)break;tagRemember();drawTagSheet();break}
+ case 'tx':{tagInit();ui.tagSel=ui.tagSel.filter(t=>t!==el.dataset.t);if(!ui.tagSel.length){closeSheet();render('same');break}render('same');drawTagSheet();break}
+ case 'tclear':{ui.tagSel=[];closeSheet();render('same');break}
+ case 'tcall':{p.contacts.push({day:S.day,t:'전화'});const got=earnPt(p.id);save();toast('전화 기록을 남겼어요'+(got?' · 포인트 +1':''));break}
+ case 'treclear':S.tagRecent=[];save();render('same');break;
+ case 'tmenu':ui.tagMenu=!ui.tagMenu;render('same');break;
+ case 'tadd':ui.tagMenu=0;ui.tagNewGroup=(memoGroupList()[0]||{}).key||'';secSheetWrap(`<div class="sechead"><div class="sectitle"><h3>태그 추가</h3>${SECX}</div></div><div class="tform"><label class="inp">태그 이름 (20자까지)<input id="tnew" maxlength="20" placeholder="태그 이름 (20자까지)"></label><div class="small" id="tcnt">0/20</div><div class="tlab">그룹</div><div class="chips tpills">${memoGroupList().map(g=>`<button type="button" class="tpill ${g.key===ui.tagNewGroup?'on':''}" style="--gc:${g.color}" data-a="tnewg" data-g="${esc(g.key)}">${esc(g.name)}</button>`).join('')}</div><p class="thint">평판 태그는 정해진 목록에서만 골라요.</p><button type="button" class="btn-r" data-a="tnewsave">저장</button></div>`);break;
+ case 'tnewg':ui.tagNewGroup=el.dataset.g;document.querySelectorAll('#sheet-root .tpill').forEach(b=>b.classList.toggle('on',b.dataset.g===ui.tagNewGroup));break;
+ case 'tnewsave':{const name=($('#tnew').value||'').trim().slice(0,20);const g=ui.tagNewGroup;if(!name||!g||isRepTag(name)||groupOf(name))break;S.tagGone=S.tagGone.filter(x=>x!==name);S.customTags[g]=S.customTags[g]||[];S.customTags[g].push(name);save();closeSheet();render('same');break}
+ case 'tgadd':ui.tagMenu=0;ui.tagColor=TCOLORS[0];secSheetWrap(`<div class="sechead"><div class="sectitle"><h3>그룹 추가</h3>${SECX}</div></div><div class="tform"><label class="inp">그룹 이름<input id="gnew" maxlength="20"></label><div class="small" id="tcnt">0/20</div><div class="tlab">그룹 색 변경</div><div class="tcolors">${TCOLORS.map(c=>`<button type="button" class="tcol ${c===ui.tagColor?'on':''}" style="background:${c}" data-a="tcol" data-c="${c}" aria-label="${c}"></button>`).join('')}</div><button type="button" class="btn-r" data-a="tgsave">저장</button></div>`);break;
+ case 'tcol':ui.tagColor=el.dataset.c;document.querySelectorAll('#sheet-root .tcol').forEach(b=>b.classList.toggle('on',b.dataset.c===ui.tagColor));break;
+ case 'tgsave':{const name=($('#gnew').value||'').trim().slice(0,20);if(!name||memoGroupList().some(g=>g.name===name||g.key===name))break;S.tagGroups.push({name,color:ui.tagColor||TCOLORS[0]});S.customTags[name]=[];save();closeSheet();render('same');break}
+ case 'tedit':ui.tagMenu=0;ui.tagEdit=1;render('same');break;
+ case 'teditdone':ui.tagEdit=0;render('same');break;
+ case 'trenameg':tagRenameGroup(el.dataset.g);break;
+ case 'trenamegok':{const neu=($('#tname').value||'').trim().slice(0,20),key=ui.renameG;if(!neu||memoGroupList().some(g=>g.key!==key&&(g.name===neu||g.key===neu)))break;const cg=S.tagGroups.find(x=>x.name===key);
+  if(cg){const old=cg.name;cg.name=neu;if(S.customTags[old]){S.customTags[neu]=S.customTags[old];delete S.customTags[old]}Object.keys(S.tagMove).forEach(t=>{if(S.tagMove[t]===old)S.tagMove[t]=neu})}else S.groupName[key]=neu;save();closeSheet();render('same');break}
+ case 'trecolor':ui.recolorG=el.dataset.g;ui.tagColor=(memoGroupList().find(g=>g.key===el.dataset.g)||{}).color||TCOLORS[0];secSheetWrap(`<div class="sechead"><div class="sectitle"><h3>그룹 색 변경</h3>${SECX}</div></div><div class="tform"><div class="tcolors">${TCOLORS.map(c=>`<button type="button" class="tcol ${c===ui.tagColor?'on':''}" style="background:${c}" data-a="tcol" data-c="${c}" aria-label="${c}"></button>`).join('')}</div><button type="button" class="btn-r" data-a="trecolorsave">저장</button></div>`);break;
+ case 'trecolorsave':{const g=ui.recolorG;const cg=S.tagGroups.find(x=>x.name===g);if(cg)cg.color=ui.tagColor;else S.groupColor[g]=ui.tagColor;save();closeSheet();render('same');break}
+ case 'tdelg':{const g=el.dataset.g,nm=(memoGroupList().find(x=>x.key===g)||{}).name||g;sheet(`<h3>'${esc(nm)}' 그룹을 지울까요?</h3><p>이 그룹의 태그가 붙은 사람에게서도 빠져요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="tdelgok" data-g="${esc(g)}">지우기</button></div>`,true);break}
+ case 'tdelgok':{const g=el.dataset.g;tagsIn({key:g,base:[]}).concat((GROUPS.find(x=>x[0]===g)||[])[2]||[]).forEach(dropTag);S.tagGroups=S.tagGroups.filter(x=>x.name!==g);delete S.customTags[g];if(!S.groupGone.includes(g))S.groupGone.push(g);save();closeSheet();render('same');break}
+ case 'thold':tagHoldMenu(el.dataset.t);break;
+ case 'trenamet':ui.renameT=el.dataset.t;secSheetWrap(`<div class="sechead"><div class="sectitle"><h3>이름 바꾸기</h3>${SECX}</div></div><div class="tform"><label class="inp">태그 이름 (20자까지)<input id="tname" maxlength="20" value="${esc(el.dataset.t)}"></label><div class="small" id="tcnt">${[...el.dataset.t].length}/20</div><button type="button" class="btn-r" data-a="trenametok">저장</button></div>`);break;
+ case 'trenametok':{const neu=($('#tname').value||'').trim().slice(0,20),old=ui.renameT;if(!neu||neu===old||isRepTag(neu)||(groupOf(neu)&&neu!==old))break;renameTag(old,neu);save();closeSheet();render('same');break}
+ case 'tmerge':ui.mergeT=el.dataset.t;secSheetWrap(`<div class="sechead"><div class="sectitle"><h3>다른 태그와 합치기</h3>${SECX}</div></div><div class="seclist">${memoNames().filter(t=>t!==el.dataset.t).map(t=>`<button type="button" class="srow" data-a="tmergeok" data-t="${esc(t)}">${esc(t)}</button>`).join('')||'<div class="empty">합칠 태그가 없어요</div>'}</div>`);break;
+ case 'tmergeok':{mergeTag(ui.mergeT,el.dataset.t);save();closeSheet();render('same');break}
+ case 'tmove':ui.moveT=el.dataset.t;secSheetWrap(`<div class="sechead"><div class="sectitle"><h3>다른 그룹으로 옮기기</h3>${SECX}</div></div><div class="seclist">${memoGroupList().filter(g=>g.key!==groupOf(el.dataset.t)).map(g=>`<button type="button" class="srow" data-a="tmoveok" data-g="${esc(g.key)}">${esc(g.name)}</button>`).join('')}</div>`);break;
+ case 'tmoveok':{const t=ui.moveT,g=el.dataset.g,og=groupOf(t);if(og&&S.customTags[og])S.customTags[og]=S.customTags[og].filter(x=>x!==t);S.tagMove[t]=g;S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(t))S.customTags[g].push(t);if(S.tagGone.includes(t))S.tagGone=S.tagGone.filter(x=>x!==t);save();closeSheet();const nm=(memoGroupList().find(x=>x.key===g)||{}).name||g;render('same');toast("'"+nm+"' 그룹으로 옮겼어요.");break}
+ case 'tdel':sheet(`<h3>'${esc(el.dataset.t)}' 태그를 지울까요?</h3><p>이 태그가 붙은 사람에게서도 빠져요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="tdelok" data-t="${esc(el.dataset.t)}">지우기</button></div>`,true);break;
+ case 'tdelok':dropTag(el.dataset.t);save();closeSheet();render('same');break;
  case 'filter':filterSheet();break;
  case 'newmore':ui.newAll=true;render('same');break;
  case 'fall':{ui.ff={st:[],gr:[],tg:[]};render('same');break}
@@ -411,7 +501,10 @@ function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.que
  const t=S.day,arr=k=='pat'?(p.pats=p.pats||[]):(p.kkul=p.kkul||[]);let ok=!arr.includes(t);if(k=='kkul'&&arr.filter(d=>t-d<7&&d<=t).length>=3)ok=false;
  if(ok){arr.push(t);toast(k=='pat'?'쓰담쓰담이 오늘 한 번 기록되었어요':'꿀밤 콩콩이 오늘 한 번 기록되었어요')}save()}
 (function(){let st=null,lastTap=0,lastId=null;
- document.addEventListener('pointerdown',e=>{const z=e.target.closest('.gz[data-gid]');if(!z||e.target.closest('.stampbtn,.sr'))return;st={z,id:z.dataset.gid,x0:e.clientX,y0:e.clientY,lx:e.clientX,ly:e.clientY,dx:0,dy:0,vx:null,vy:null,ch:0,tr:0,t0:Date.now(),mode:null,moved:false}},{passive:true});
+ document.addEventListener('pointerdown',e=>{const hold=e.target.closest('.tpill[data-k="memo"], .tgh');if(hold&&!e.target.closest('.tga,.tschip')){const x0=e.clientX,y0=e.clientY;let kill=false;const timer=setTimeout(()=>{kill=true;ui._lp=1;if(hold.classList.contains('tpill'))tagHoldMenu(hold.dataset.t);else if(hold.dataset.g)groupHold(hold.dataset.g)},550);
+  const stop=ev=>{if(ev&&ev.type==='pointermove'&&Math.hypot(ev.clientX-x0,ev.clientY-y0)<8)return;clearTimeout(timer);hold.removeEventListener('pointermove',stop);hold.removeEventListener('pointerup',stop);hold.removeEventListener('pointercancel',stop)};
+  hold.addEventListener('pointermove',stop);hold.addEventListener('pointerup',stop);hold.addEventListener('pointercancel',stop)}
+ const z=e.target.closest('.gz[data-gid]');if(!z||e.target.closest('.stampbtn,.sr'))return;st={z,id:z.dataset.gid,x0:e.clientX,y0:e.clientY,lx:e.clientX,ly:e.clientY,dx:0,dy:0,vx:null,vy:null,ch:0,tr:0,t0:Date.now(),mode:null,moved:false}},{passive:true});
  document.addEventListener('pointermove',e=>{if(!st)return;const dx=e.clientX-st.x0,dy=e.clientY-st.y0;
   if(Math.hypot(dx,dy)>6)st.moved=true;
   const mx=e.clientX-st.lx,my=e.clientY-st.ly,seg=Math.hypot(mx,my);if(seg<3)return;st.tr+=seg;st.lx=e.clientX;st.ly=e.clientY;
