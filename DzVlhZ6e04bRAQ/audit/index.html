@@ -7,7 +7,7 @@
 <h2>현재 상태 요약 (r9b · 107장)</h2>
 <ul>
 <li><strong>사람 상세 · 줄마다 바로 고치기 (r9~r9b)</strong>: '평가 수정' 버튼 없음. 내 평가 줄마다 › 표시, 누르면 그 줄 시트(person-detail-sheet-grade · -persona · -again · -rel · -share · -memo), '저장' → 시트를 연 화면으로 돌아감. 평가 쓰기 화면은 새 평가만.</li>
-<li><strong>보류 사람</strong>: '판단 보류' 줄 하나 → 시트 하나(person-detail-hold-sheet: 성격 + 등급, 둘 다 골라야 '저장' 켜짐 · -one · -both) → person-detail-graded. 메모는 같은 메모 시트(person-detail-hold-sheet-memo).</li>
+<li><strong>보류 사람</strong>: '판정 보류' 줄 하나 → 시트 하나(person-detail-hold-sheet: 성격 + 등급, 둘 다 골라야 '저장' 켜짐 · -one · -both) → person-detail-graded. 메모는 같은 메모 시트(person-detail-hold-sheet-memo).</li>
 <li><strong>'+ 추가'</strong>: 메모 상자 → 메모 시트, 그룹별 '+ 추가' → 이름 칸(0/20, '추가'). 평판 상자 → 평판 태그 고르기(person-detail-rep-picker). 보류 사람 평판 상자는 흐리고 '+ 추가' 없음.</li>
 <li><strong>지우기 확인 창</strong>: 맨 아래 '이 평가 지우기' → person-detail-delete-confirm(97행 문구 그대로). 보류는 '이 기록 지우기' → person-detail-hold-delete-confirm("이 기록을 지울까요?" / "연락 주기와 메모 태그가 지워져요." / '지우기' · '취소').</li>
 <li><strong>태그 빼기 알림</strong>: 평판 태그 길게 누름 → person-detail-rep-menu('지우기') → person-detail-rep-removed("태그를 뺐어요." + '되돌리기').</li>
@@ -42,9 +42,9 @@
 <tr>
 <td>N2</td>
 <td>51, 71</td>
-<td>"판단 보류는 등급이 아니다." / "상태·등급·태그는 여러 개를 함께 고를 수 있고"</td>
+<td>"판정 보류는 등급이 아니다." / "상태·등급·태그는 여러 개를 함께 고를 수 있고"</td>
 <td>fridge-filter-sheet, fridge-filter-sheet-grade, fridge-filter-sheet-tag, fridge-filter-sheet-multi, fridge-filter-sheet-zero, fridge-filter-sheet-golf, fridge-filter-sheet-birth</td>
-<td>시트 '등급' 구역 끝에 '판단 보류' 칩이 있음(기획/개발 bot 결정). 기획서는 보류를 등급이 아니라고 적어서, 등급 필터에 넣는다는 말이 없음</td>
+<td>시트 '등급' 구역 끝에 '판정 보류' 칩이 있음(기획/개발 bot 결정). 기획서는 보류를 등급이 아니라고 적어서, 등급 필터에 넣는다는 말이 없음</td>
 </tr>
 <tr>
 <td>N3</td>
