@@ -1,5 +1,7 @@
 @font-face{font-family:P;src:url(fonts/Pretendard-Regular.woff2) format('woff2');font-weight:400 500;font-display:swap}
 @font-face{font-family:P;src:url(fonts/Pretendard-Bold.woff2) format('woff2');font-weight:600 800;font-display:swap}
+@font-face{font-family:Galmuri;src:url(fonts/Galmuri11-Bold.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:Mulmaru;src:url(fonts/Mulmaru.woff2) format('woff2');font-weight:500;font-display:swap}
 :root{--red:#D93A44;--red-t:#C8333D;--ink:#1A1A1A;--sub:#525252;--ph:#6B6B6B;--blank:#595959;--line:#E5E5E5;--bg2:#F4F4F4;--org:#12843A;--r:22px;--sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font:-apple-system-body;font-size:17px}@supports (font:-apple-system-body){html{font:-apple-system-body}}
@@ -55,7 +57,7 @@ h2 small{font-weight:500;color:var(--sub);font-size:0.8824rem;margin-left:4px}
 .org{display:inline-block;background:var(--org);color:#fff;font-size:0.5882rem;font-weight:700;border-radius:3px;padding:1px 3px}
 .empty{text-align:center;color:var(--sub);padding:34px 10px;line-height:1.6}
 nav.tab{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:var(--sab);z-index:5;max-width:480px;margin:0 auto}
-nav.tab button{flex:1;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:0.6471rem;color:#6B6B6B;position:relative}
+nav.tab button{flex:1;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 0;font-size:12px;color:#525252;position:relative}
 nav.tab button b{font-size:1.1765rem;font-weight:400;filter:grayscale(1);opacity:.6}
 nav.tab button.on{color:var(--ink);font-weight:700}nav.tab button.on:before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--ink)}
 nav.tab button.on b{opacity:1;filter:none}
@@ -216,8 +218,8 @@ button[disabled]{cursor:default;pointer-events:none}
 #vlayer{position:fixed;inset:0;z-index:0;background:#0b0b0b;overflow-y:auto;-webkit-overflow-scrolling:touch;visibility:hidden}
 #vlayer.on{visibility:visible}
 #vpeek{position:fixed;z-index:5;display:none;pointer-events:none;background:radial-gradient(circle at 85% 80%,#2a2723 0,#151311 50%,#0b0b0b 85%)}
-#vpeek svg{position:absolute;right:7px;width:22px;height:22px}
-#vpeek .lb{position:absolute;right:6px;font-size:0.6471rem;font-weight:700;color:#E9DFC9;white-space:nowrap}
+#vpeek svg{position:absolute;right:2px;width:20px;height:20px}
+#vpeek .lb{position:absolute;right:6px;font-size:12px;font-weight:700;color:#E9DFC9;white-space:nowrap}
 #vfx{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:6;pointer-events:none;overflow:visible;display:none}
 #vflap{filter:drop-shadow(-3px -4px 7px rgba(0,0,0,.28))}
 #vhit{position:fixed;z-index:7;display:none;border:0;padding:0;background:transparent;-webkit-tap-highlight-color:transparent;min-height:44px}
@@ -306,8 +308,8 @@ html.vlock,html.vlock body{overflow:hidden}
 
 /* v25 얇은 선 아이콘 (A1: 탭 30px, 돋보기 25px, 종 30px) */
 .sic{display:inline-flex;align-items:center;width:25px;height:25px;color:#8A8A8A}.sic svg{width:25px;height:25px}
-nav.tab button[data-v] b{filter:none!important;opacity:1!important;width:30px;height:30px;display:block;color:#9A9A9A}
-nav.tab button[data-v] b svg{width:30px;height:30px;display:block}
+nav.tab button[data-v] b{filter:none!important;opacity:1!important;width:28px;height:28px;display:block;color:#8A8A8A}
+nav.tab button[data-v] b svg{width:28px;height:28px;display:block}
 nav.tab button[data-v].on b{color:var(--ink)}
 nav.tab.xslide button.on:before{visibility:hidden}
 .tabglide{position:absolute;top:0;height:3px;border-radius:0 0 3px 3px;background:var(--ink);pointer-events:none;transition:transform .3s ease-out}
@@ -443,3 +445,34 @@ img.fbn-p1,img.fbn-p2,img.fbn-p9{image-rendering:pixelated;image-rendering:crisp
 #flist .frchips{grid-area:pill;justify-self:start;align-self:end;display:flex;flex-wrap:wrap;gap:4px}
 .sflags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 #flist .frrow .tav>img{filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)}
+/* v60: 물마루 간판, 갈무리 라벨·칩, 랜딩, 하단 메뉴, 냉장고 글씨 */
+.pxfont,.slabl,.schip,.land-copy{font-family:Galmuri,ui-monospace,monospace;font-weight:700;-webkit-font-smoothing:none;text-rendering:optimizeSpeed}
+.signboard{position:absolute;left:122px;top:63px;width:132px;height:38px;z-index:4;pointer-events:none}
+html.landing .signboard{visibility:hidden}
+.slabl{position:absolute;z-index:3;height:22px;display:flex;align-items:center;justify-content:center;background:#fff;color:#1A1A1A;border-radius:2px;box-shadow:0 1px 0 rgba(58,42,32,.25);font-size:12px;line-height:1;white-space:nowrap}
+.schip{position:absolute;z-index:3;height:24px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;background:#FFE3DE;color:#8E1F17;box-shadow:inset 0 0 0 1px #3A1F12;border-radius:2px;font-size:12px;line-height:1}
+html.landing,html.landing body{overflow:hidden}
+.land{position:fixed;inset:0;z-index:80;background:transparent}
+.land:focus{outline:none}
+.land:focus-visible{outline:2px solid #1A1A1A;outline-offset:-6px}
+.land-bg{position:absolute;inset:0;background:#fff}
+.land-awn,.land-sign,.land-str{position:fixed;z-index:2}
+.land-str{z-index:1;background:#9A928A}
+.land-copy{position:fixed;left:16px;right:16px;margin:0;text-align:center;color:#525252;font-size:14px;line-height:1.2;z-index:3}
+.land.out{transition:opacity .3s linear;opacity:0}
+nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;border-radius:8px}
+.fstatus{display:flex;align-items:flex-start;margin:-8px 0 12px;min-width:0}
+.fstatus>.fst{flex:1 1 auto;min-width:0;margin:0}
+.fstatus>.fst.fade{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 16px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 16px),transparent)}
+.fstatus>.sortlbl{position:static;top:auto;flex:none;align-self:flex-start;height:44px;margin:0;padding:0 0 4px 8px;font-size:12px;font-weight:500;line-height:1;color:var(--sub);white-space:nowrap;display:flex;align-items:center}
+.fstatus>.sortlbl[hidden]{display:none}
+.fst>.chip.sm{color:#1A1A1A;font-size:13px;font-weight:600}
+.fst>.chip.sm:before{background:#fff;box-shadow:inset 0 0 0 1.5px #8A8A8A}
+.fst>.chip.sm.on{color:#fff}
+.fst>.chip.sm.on:before{background:#1A1A1A;box-shadow:none}
+#flist .frrow .meta{font-size:12.5px;line-height:1.35}
+#flist .frrow .nm{display:flex;flex-wrap:nowrap;align-items:center;min-width:0;white-space:nowrap}
+#flist .frrow .nm .nmt{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;word-break:normal;overflow-wrap:normal;-webkit-line-clamp:unset;-webkit-box-orient:unset}
+.sline .who .grow{align-items:stretch;min-width:0;max-width:100%;overflow:hidden}
+.sline .who .nm{display:flex;align-items:center;gap:4px;min-width:0;max-width:100%;overflow:hidden}
+.sline .who .nm .nmt{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

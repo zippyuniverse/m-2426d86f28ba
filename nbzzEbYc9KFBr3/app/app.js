@@ -101,13 +101,14 @@ function fitStall(){if(!nav[nav.length-1]||nav[nav.length-1].v!='shelf')return;c
 function fitFridge(){if(!nav[nav.length-1]||nav[nav.length-1].v!='fridge')return;const room=$('#flist .frz-room'),rest=$('#flist .fsv-rest');if(!room||!rest)return;const rb=room.getBoundingClientRect(),w=Math.round(rb.width);room.classList.toggle('cramped',rb.height<400);
  const svg=(h,a)=>`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="4" height="8" fill="#44515D" opacity="${a}"/><rect x="${w-4}" width="4" height="8" fill="#44515D" opacity="${a}"/><rect x="4" y="2" width="${w-8}" height="2" fill="#FFFFFF" opacity="${a}"/><rect x="4" y="4" width="${w-8}" height="2" fill="#B7D8F0" opacity="${a}"/><rect x="4" y="6" width="${w-8}" height="2" fill="#44515D" opacity="${a}"/></svg>`;
  const uri=s=>'url("data:image/svg+xml,'+encodeURIComponent(s)+'")';
+ const strow=$('.fstatus .fst');if(strow)strow.classList.toggle('fade',strow.scrollWidth>strow.clientWidth+1);
  const tier=$('#flist .frtier');
  if(tier){const th=Math.max(1,Math.round(tier.getBoundingClientRect().height));rest.style.backgroundImage=uri(svg(8,1))+','+uri(svg(th,.5));rest.style.backgroundSize=w+'px 8px,'+w+'px '+th+'px';rest.style.backgroundRepeat='';rest.style.backgroundPosition='';return}
  const k=Math.max(1,Math.round(rb.height/115)),t=rb.height/k,imgs=[],sizes=[],pos=[];
  for(let i=1;i<k;i++){imgs.push(uri(svg(8,1)));sizes.push(w+'px 8px');pos.push('center '+(i*t)+'px')}
  rest.style.minHeight='0';rest.style.backgroundImage=imgs.join(',');rest.style.backgroundSize=sizes.join(',');rest.style.backgroundRepeat='no-repeat';rest.style.backgroundPosition=pos.join(',')}
 function navBar(c){const t=[['shelf','진열대','🥩'],['fridge','냉장고','🧊'],['tags','태그','🏷️'],['verdict','내 판정서','📋']];
- return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button class="vt" tabindex="-1" aria-hidden="true"><b>${x[2]}</b>${x[1]}</button>`:`<button data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}"><b data-ic="${x[0]}">${x[2]}</b>${x[1]}</button>`).join('')}</nav>`}
+ return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button type="button" class="vt" data-a="tab" data-v="verdict" aria-label="내 판정서"><b aria-hidden="true">${x[2]}</b><span>${x[1]}</span></button>`:`<button type="button" data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}" aria-label="${x[1]}"><b data-ic="${x[0]}">${x[2]}</b><span>${x[1]}</span></button>`).join('')}</nav>`}
 function info(k){return `<button class="info" data-a="info" data-k="${k}">i</button>`}
 
 function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fresh'),ag=byStage('aging'),sp=byStage('spoil');const q=ui.q||'';
@@ -122,19 +123,21 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
  /* sprite positions from build_base_c2.py / build_n1e.py (390 canvas, crop origin 8,136) */
  const FB={hold:[9,26,211,192],p0:[11,30,208,189],p1:[10,33,209,190],p2:[9,33,210,187],p3:[11,27,211,193],p4:[12,31,210,189],p5:[11,29,209,192],p6:[11,29,209,190],p7:[12,16,211,203],p8:[11,29,209,191],p9:[10,22,210,199],p10:[11,12,211,206],p11:[11,23,209,196]};
  const SLOT={trim:{cx:[66,130,194,258],bottom:172,width:52},hold:{cx:[238,297],bottom:322,width:50},fresh:{cx:[82],bottom:466,width:50},aging:{cx:[186],bottom:466,width:50},spoil:{cx:[290],bottom:466,width:50}};
- const LAB={trim:{ax:36,ay:10,paperW:72,cx:187,cy:217,w:74,h:23},nw:{ax:43,ay:9,paperW:86,cx:108,cy:361,w:88,h:21},hold:{ax:29,ay:9.5,paperW:58,cx:266,cy:361,w:60,h:22},fresh:{ax:17,ay:9,paperW:34,cx:82,cy:505,w:36,h:21},aging:{ax:24,ay:9,paperW:48,cx:186,cy:505,w:50,h:21},spoil:{ax:30,ay:9,paperW:60,cx:290,cy:505,w:62,h:21}};
- const CW=[0,26,29,30,30,29,30,30,30,29,37,33,36,37,37,36,37,36,37,36,40,35,39,40,40];
+ const LAB={trim:{cx:187,cy:217},nw:{cx:108,cy:361},hold:{cx:266,cy:361},fresh:{cx:82,cy:505},aging:{cx:186,cy:505},spoil:{cx:290,cy:505}};
+ const TW={trim:65,nw:94,hold:53,fresh:24,aging:41,spoil:65};
+ const PAD={trim:4,nw:4,hold:4,fresh:2,aging:2,spoil:2};
+ const ADV=[0,14,17,17,17,17,17,17,17,17,22,19,22,22,22,22,22,22,22,22,25,22,25,25,25];
  const BOX={trim:[0,96,376,150],nw:[0,255,188,125],hold:[188,255,188,125],fresh:[0,378,124,152],aging:[124,378,126,152],spoil:[250,378,126,152]};
  const art=(name,w,ht,style,alt,cls)=>`<img class="${cls||'px'}" src="art/${name}.png" srcset="art/${name}.png 1x, art/${name}@2x.png 2x, art/${name}@3x.png 3x" width="${w}" height="${ht}" alt="${alt||''}" draggable="false" style="${style}">`;
  const FM={p1:{m:1.0625,ax:104,ay:190},p2:{m:1.1047,ax:110,ay:187},p9:{m:1.1771,ax:111.5,ay:199}};
  const face=(p,slot,i,box)=>{const id=p.hold||p.persona==null?'hold':'p'+p.persona;const b=FB[id];const n=FM[id];const m=n?n.m:1;const ax=n?n.ax:(b[0]+b[2])/2;const ay=n?n.ay:b[3];const cssW=slot.width*220/(b[2]-b[0])*m;const left=slot.cx[i]-box[0]-cssW*ax/220;const top=slot.bottom-box[1]-cssW*ay/220;const src=id==='hold'?'emoji/hold.svg':((!p.hold&&p.persona!=null&&organic(p))?'emoji/o'+p.persona+'.svg':'emoji/'+id+'.svg');const st=`left:${left.toFixed(1)}px;top:${top.toFixed(1)}px;width:${cssW.toFixed(1)}px;height:${cssW.toFixed(1)}px`;const ols=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].map(([x,y])=>`<img alt="" draggable="false" style="transform:translate(${x}px,${y}px)" src="${src}">`).join('');return `<span class="fc-ol" style="${st}">${ols}</span><img class="fc" src="${src}" alt="" draggable="false" style="${st}">`};
  const sec=(k,title,list,n,inner)=>{const over=Math.max(0,list.length-n);const aria=over?`${title}, ${over}명 더 보기`:`${title}, ${list.length}명`;const m=LAB[k],box=BOX[k];
-  let lcx=m.cx,chip='';
-  if(over){const wc=CW[over]||CW[24];const gl=m.cx-Math.floor((m.paperW+2+wc+2)/2);lcx=gl+Math.floor(m.paperW/2);const cL=gl+m.paperW+2+1-box[0];const cT=m.cy-10-box[1];chip=art('chip-'+Math.min(over,24), (CW[Math.min(over,24)]||40)+1, 24, `left:${cL}px;top:${cT}px`, '', 'ch px')}
-  const stk=art('lab-'+k, m.w, m.h, `left:${(lcx-m.ax-box[0]).toFixed(1)}px;top:${(m.cy-m.ay-box[1]).toFixed(1)}px`, '', 'stk px');
-  return `<button type="button" class="sec" data-a="sec" data-k="${k}" aria-label="${esc(aria)}" style="left:${box[0]}px;top:${box[1]}px;width:${box[2]}px;height:${box[3]}px"><span class="pan">${inner}</span><span class="labg">${stk}${chip}</span></button>`};
+  const paper=TW[k]+PAD[k]*2;let left=m.cx-paper/2,chip='';
+  if(over){const nch=Math.min(over,24);const wc=ADV[nch]+10;const gl=m.cx-Math.floor((paper+2+wc+2)/2);left=gl;const cL=gl+paper+3-box[0];const cT=m.cy-10-box[1];chip=`<span class="schip" style="left:${cL}px;top:${cT}px;width:${wc}px">+${nch}</span>`}
+  const lab=`<span class="slabl" style="left:${left-box[0]}px;top:${m.cy-10-box[1]}px;width:${paper}px">${title}</span>`;
+  return `<button type="button" class="sec" data-a="sec" data-k="${k}" aria-label="${esc(aria)}" style="left:${box[0]}px;top:${box[1]}px;width:${box[2]}px;height:${box[3]}px"><span class="pan">${inner}</span><span class="labg">${lab}${chip}</span></button>`};
  const packs=nw.slice(0,2).map((_,i)=>{const p=[{x:44,y:280},{x:112,y:280}][i];const b=BOX.nw;return art('pack',56,46,`left:${p.x-b[0]}px;top:${p.y-b[1]}px`,'새로 들어온 사람, 아직 판정 없음','pk px')}).join('');
- h+=`<div class="stallwrap"><div class="stall">${art('stall',376,530,'','','stallbg') }
+ h+=`<div class="stallwrap"><div class="stall">${art('stall',376,530,'','','stallbg')}${art('sign',132,38,'','여의도 정육점','signboard px')}
  ${sec('trim','손질할 고기',td,4,td.slice(0,4).map((p,i)=>face(p,SLOT.trim,i,BOX.trim)).join(''))}
  ${sec('nw','새로 들어온 고기',nw,2,packs)}
  ${sec('hold','판정 보류',hd,2,hd.slice(0,2).map((p,i)=>face(p,SLOT.hold,i,BOX.hold)).join(''))}
@@ -153,7 +156,7 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span></div>
  <div class="search fsrch"><span class="sic">🔍</span><input id="fqs" type="search" placeholder="이름 / 태그 로 검색" value="${esc(ui.fs||'')}" autocomplete="off" enterkeyhint="search"></div>
  <div class="chips frow gst" style="margin:6px 0 8px"><button class="gsb gall ${f.gr.length||f.st.length?'':'on'}" data-a="fall" aria-pressed="${!(f.gr.length||f.st.length)}" aria-label="전체(등급·상태 선택 해제)">전체</button>${[5,4,3,2,1].map(g=>[String(g),GR[g][0],'g'+g]).concat([['hold','보류','ghd']]).map(x=>`<button class="gsb ${x[2]} ${f.gr.includes(x[0])?'on':''}" data-a="fq" data-k="gr" data-x="${x[0]}" aria-pressed="${f.gr.includes(x[0])}" aria-label="${x[0]=='hold'?'판단 보류':x[1]+' 등급'}">${esc(x[1])}</button>`).join('')}</div>
- <div class="chips frow fst" style="margin:0 0 12px">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}<span class="small sortlbl"${none?' hidden':''}>연락 임박순</span></div>`;
+ <div class="fstatus"><div class="chips frow fst">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}</div><span class="sortlbl"${none?' hidden':''}>연락 임박순</span></div>`;
  const cell=p=>{const s=p.hold?{k:'none',t:'판정 보류'}:stage(p);const mt=sq?personTags(p).filter(t=>t.toLowerCase().includes(sq)):[];const org=!p.hold&&p.persona!=null&&organic(p);const bare=!rated(p)&&!p.hold;
   const meta=p.hold?(mt.length?mt.map(esc).join(' · '):''):`${cycLabel(p)} 주기${mt.length?' · '+mt.map(esc).join(' · '):''}`;
   return `<div class="row tap frrow" data-a="${searchAct(p)}" data-id="${p.id}"><div class="tav">${emo(p,'').replace('src="emoji/p'+p.persona,org?'src="emoji/o'+p.persona:'src="emoji/p'+p.persona)}${bare||p.grade==null?'':stamp(p.grade)}</div><div class="grow"><div class="nm"><span class="nmt">${esc(p.name)}</span>${org?'<span class="org">유기농</span>':''}</div>${meta?`<div class="meta">${meta}</div>`:''}</div><div class="frchips">${bare?'':`<span class="pill st-${s.k}">${s.t}</span>`}${searchFlags(p)}</div></div>`};
@@ -248,11 +251,11 @@ function drawSec(){const k=ui.sec;if(!k)return;const title={trim:'손질할 고�
  const L=k=='trim'?todayList():k=='nw'?newOnes():holdList();let body='';
  if(!L.length)body='<div class="empty">아직 없어요</div>';
  else if(k=='trim')body=L.map(p=>{const s=stage(p);const org=!p.hold&&p.persona!=null&&organic(p);const src=org?'emoji/o'+p.persona+'.svg':'emoji/p'+p.persona+'.svg';
-  return `<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><span class="tav"><img class="${fbn(org?'o'+p.persona:'p'+p.persona)}" src="${src}" alt="">${p.grade==null?'':stamp(p.grade)}</span><span class="grow"><span class="nm">${esc(p.name)}${org?' <span class="org">유기농</span>':''}</span><span class="meta"><span class="pill st-${s.k}">${s.t}</span></span></span></button><button type="button" class="rb" data-a="call" data-t="전화" data-id="${p.id}">전화걸기</button><button type="button" class="btn-o" data-a="call" data-t="연락했어요" data-id="${p.id}">연락했어요</button></div>`}).join('');
+  return `<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><span class="tav"><img class="${fbn(org?'o'+p.persona:'p'+p.persona)}" src="${src}" alt="">${p.grade==null?'':stamp(p.grade)}</span><span class="grow"><span class="nm"><span class="nmt">${esc(p.name)}</span>${org?'<span class="org">유기농</span>':''}</span><span class="meta"><span class="pill st-${s.k}">${s.t}</span></span></span></button><button type="button" class="rb" data-a="call" data-t="전화" data-id="${p.id}">전화걸기</button><button type="button" class="btn-o" data-a="call" data-t="연락했어요" data-id="${p.id}">연락했어요</button></div>`}).join('');
  else if(k=='nw'){const show=ui.sheetMore?L:L.slice(0,5);
-  body=show.map(p=>`<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><span class="grow"><span class="meta"><b>NEW</b> · ${S.day==p.addedDay?'오늘':(S.day-p.addedDay)+'일 전'}</span><span class="nm">${esc(p.name)}</span></span></button><button type="button" class="go" data-a="write" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
+  body=show.map(p=>`<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><span class="grow"><span class="meta"><b>NEW</b> · ${S.day==p.addedDay?'오늘':(S.day-p.addedDay)+'일 전'}</span><span class="nm"><span class="nmt">${esc(p.name)}</span></span></span></button><button type="button" class="go" data-a="write" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
   if(!ui.sheetMore&&L.length>5)body+=`<button type="button" class="row more" data-a="sheetmore">${L.length-5}명 더 보기</button>`}
- else body=L.map(p=>`<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><img class="hface" src="emoji/hold.svg" alt=""><span class="grow"><span class="nm">${esc(p.name)}</span><span class="meta">${md(p.ratedDay)} 판정 보류</span></span></button><button type="button" class="go" data-a="holdsheet" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
+ else body=L.map(p=>`<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><img class="hface" src="emoji/hold.svg" alt=""><span class="grow"><span class="nm"><span class="nmt">${esc(p.name)}</span></span><span class="meta">${md(p.ratedDay)} 판정 보류</span></span></button><button type="button" class="go" data-a="holdsheet" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
  const x='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
  sheet(`<div class="sechead"><div class="sectitle"><h3 id="sec-title">${title} ${L.length}명</h3>${x}</div></div><div class="seclist">${body}</div>`);
  const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-labelledby','sec-title');sh.tabIndex=-1}bindSwipe();
@@ -423,6 +426,52 @@ function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.que
 document.addEventListener('keydown',e=>{if(e.key!='Escape'||!document.querySelector('.secsheet'))return;e.preventDefault();closeSheet()});
 addEventListener('resize',()=>{fitStall();fitFridge()});
 addEventListener('orientationchange',()=>{fitStall();fitFridge()});
+function maybeLanding(){
+ if(window.__landed)return;
+ let seen=false;try{seen=sessionStorage.getItem('yjp-landed')==='1'}catch(e){}
+ if(seen){window.__landed=1;return}
+ if(!$('.stall'))return;
+ window.__landed=1;try{sessionStorage.setItem('yjp-landed','1')}catch(e){}
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const land=document.createElement('div');
+ land.id='land';land.className='land';land.tabIndex=0;land.setAttribute('role','button');
+ land.setAttribute('aria-label','등급으로 관리하는 내 인맥. 탭하면 진열대로 넘어갑니다');
+ land.innerHTML='<div class="land-bg"></div><img class="land-awn px" alt="" width="376" height="60" draggable="false" src="art/awning.png" srcset="art/awning.png 1x, art/awning@2x.png 2x, art/awning@3x.png 3x"><i class="land-str"></i><i class="land-str"></i><img class="land-sign px" alt="" width="264" height="76" draggable="false" src="art/sign-land.png"><p class="land-copy">등급으로 관리하는 내 인맥</p>';
+ document.body.appendChild(land);
+ document.documentElement.classList.add('landing');
+ const app=$('#app');if(app)app.setAttribute('aria-hidden','true');
+ const awn=land.querySelector('.land-awn'),sg=land.querySelector('.land-sign'),strs=[...land.querySelectorAll('.land-str')],bg=land.querySelector('.land-bg'),copy=land.querySelector('.land-copy');
+ const rnd=v=>Math.round(v);
+ const geo=()=>{const stall=$('.stall');if(!stall)return null;const sr=stall.getBoundingClientRect();if(!sr.width)return null;const s=sr.width/376;
+  const end={x:sr.left+122*s,y:sr.top+63*s,w:132*s,h:38*s};
+  const start={x:end.x-66*s,y:end.y+48*s,w:end.w*2,h:end.h*2};
+  return {s,start,end,as:{x:sr.left,y:sr.top+33*s,w:sr.width,h:60*s},ae:{x:sr.left,y:sr.top,w:sr.width,h:60*s}}};
+ const paint=(o,k)=>{
+  const x=o.start.x+(o.end.x-o.start.x)*k,y=o.start.y+(o.end.y-o.start.y)*k,w=o.start.w+(o.end.w-o.start.w)*k,h=o.start.h+(o.end.h-o.start.h)*k;
+  sg.style.left=rnd(x)+'px';sg.style.top=rnd(y)+'px';sg.style.width=rnd(w)+'px';sg.style.height=rnd(h)+'px';
+  const mul=w/132,len=9*mul,sw=Math.max(1,rnd(2*o.s));
+  [18,112].forEach((lx,i)=>{const el=strs[i];el.style.left=rnd(x+lx*mul)+'px';el.style.top=rnd(y-len)+'px';el.style.height=Math.max(1,rnd(len))+'px';el.style.width=sw+'px'});
+  awn.style.left=rnd(o.as.x)+'px';awn.style.top=rnd(o.as.y+(o.ae.y-o.as.y)*k)+'px';awn.style.width=rnd(o.as.w)+'px';awn.style.height=rnd(o.as.h)+'px';
+  if(k===0)copy.style.top=rnd(o.start.y+o.start.h+28*o.s)+'px'};
+ const layout=k=>{const o=geo();if(o)paint(o,reduce?0:k);return o};
+ let raf=0,timer=0,running=false,done=false;
+ const close=()=>{if(done)return;done=true;cancelAnimationFrame(raf);clearTimeout(timer);removeEventListener('resize',onResize);
+  document.documentElement.classList.remove('landing');land.remove();const a=$('#app');if(a)a.removeAttribute('aria-hidden')};
+ const frame=k=>{layout(k);if(!reduce){bg.style.opacity=String(1-k);copy.style.opacity=String(Math.max(0,1-k*2.2))}};
+ const run=()=>{if(running||done)return;running=true;clearTimeout(timer);
+  if(reduce){document.documentElement.classList.remove('landing');land.classList.add('out');timer=setTimeout(close,320);return}
+  const t0=performance.now();
+  const step=now=>{const k=Math.min(1,(now-t0)/1200);frame(1-Math.pow(1-k,3));if(k<1)raf=requestAnimationFrame(step);else close()};
+  raf=requestAnimationFrame(step)};
+ const skip=()=>{if(done)return;if(!running){run();return}if(reduce){close();return}cancelAnimationFrame(raf);frame(1);close()};
+ function onResize(){if(!running&&!done)layout(0)}
+ land.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();skip()});
+ land.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();skip()}});
+ addEventListener('resize',onResize);
+ layout(0);requestAnimationFrame(()=>{if(!running&&!done)layout(0)});
+ try{land.focus({preventScroll:true})}catch(e){}
+ timer=setTimeout(run,1500)}
 const had=localStorage.getItem(KEY);load();if(!had)seed();render('fade');
 if(location.hash=='#test')testMenu();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+maybeLanding();
