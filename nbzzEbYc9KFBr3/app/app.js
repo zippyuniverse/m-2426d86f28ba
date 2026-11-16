@@ -169,7 +169,10 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
 function allMemo(){const m={};GROUPS.forEach(g=>m[g[0]]=[...(g[0]=='생년'?[]:g[2])]);Object.entries(S.customTags).forEach(([g,a])=>a.forEach(t=>{if(!m[g].includes(t))m[g].push(t)}));S.people.forEach(p=>p.memo.forEach(t=>{const g=groupOf(t);if(g&&!m[g].includes(t))m[g].push(t)}));return m}
 function groupOf(t){if(S.tagMove&&S.tagMove[t])return S.tagMove[t];if(/^\d{4}$/.test(t)||/년대$/.test(t))return '생년';for(const g of GROUPS)if(g[2].includes(t))return g[0];for(const [g,a] of Object.entries(S.customTags||{}))if(a.includes(t))return g;return null}
 const TCOLORS=['#834AF4','#75C895','#88CBF0','#89D16F','#F4A259','#3F89F6','#7F7CF6','#EE8FC0','#2AAFB3','#A8937F'];
-function tagInit(){S.tagRecent=S.tagRecent||[];S.tagGroups=S.tagGroups||[];S.tagMove=S.tagMove||{};S.tagGone=S.tagGone||[];S.groupGone=S.groupGone||[];S.groupName=S.groupName||{};S.groupColor=S.groupColor||{};S.customTags=S.customTags||{};ui.tagSel=ui.tagSel||[]}
+function tagInit(){S.tagRecent=S.tagRecent||[];S.tagGroups=S.tagGroups||[];S.tagMove=S.tagMove||{};S.tagGone=S.tagGone||[];S.groupGone=S.groupGone||[];S.groupName=S.groupName||{};S.groupColor=S.groupColor||{};S.customTags=S.customTags||{};ui.tagSel=ui.tagSel||[];
+ const base=new Set();GROUPS.forEach(g=>(g[2]||[]).forEach(t=>base.add(t)));let dirty=false;
+ Object.keys(S.customTags).forEach(g=>{const next=(S.customTags[g]||[]).filter(t=>{if(!base.has(t)||tagUsed(t))return true;dirty=true;return false});if(next.length!==(S.customTags[g]||[]).length)S.customTags[g]=next});
+ if(dirty)save()}
 function tagUsed(t){return S.people.some(p=>(p.memo||[]).includes(t)||(p.rep||[]).includes(t))}
 function tagMine(t){const g=groupOf(t);return !!(g&&(S.customTags[g]||[]).includes(t))||tagUsed(t)}
 function tagMatch(sel){sel=sel||ui.tagSel||[];if(!sel.length)return [];return S.people.filter(p=>sel.every(t=>(p.memo||[]).includes(t)||(p.rep||[]).includes(t)))}
@@ -211,7 +214,6 @@ function drawTagSheet(){tagInit();const sel=ui.tagSel.slice();const L=tagMatch(s
  if(sh&&!sh.contains(document.activeElement)){const b=sh.querySelector('.secx');if(b)b.focus({focusVisible:false})}}
 function tagFit(){const sc=$('#tbchips');if(!sc||!ui.tagScroll)return;sc.scrollLeft=sc.scrollWidth;ui.tagScroll=0}
 function tagRemember(){tagInit();ui.tagSel.forEach(t=>{S.tagRecent=S.tagRecent.filter(x=>x!==t);S.tagRecent.unshift(t)});S.tagRecent=S.tagRecent.filter(t=>!S.tagGone.includes(t)).slice(0,12);save()}
-function adoptTag(t){if(isRepTag(t)||tagMine(t))return;const g=groupOf(t);if(!g)return;S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(t))S.customTags[g].push(t)}
 function dropTag(t){S.people.forEach(p=>{p.memo=(p.memo||[]).filter(x=>x!==t)});Object.keys(S.customTags).forEach(g=>{S.customTags[g]=(S.customTags[g]||[]).filter(x=>x!==t)});
  delete S.tagMove[t];if(!S.tagGone.includes(t))S.tagGone.push(t);S.tagRecent=S.tagRecent.filter(x=>x!==t);ui.tagSel=ui.tagSel.filter(x=>x!==t)}
 function memoNames(){const s=[];memoGroupList().forEach(g=>tagsIn(g).forEach(t=>{if(!s.includes(t))s.push(t)}));return s}
@@ -431,7 +433,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'pgsheet':holdSheet(id);break;
  case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rel:null,rep:[],priv:false,ratedDay:S.day});if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판단 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
- case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0)ui.tagSel.splice(i,1);else{adoptTag(t);ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
+ case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0)ui.tagSel.splice(i,1);else{ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
  case 'tsearch':{if(!tagMatch().length)break;tagRemember();drawTagSheet();break}
  case 'tx':{tagInit();ui.tagSel=ui.tagSel.filter(t=>t!==el.dataset.t);if(!ui.tagSel.length){closeSheet();render('same');break}render('same');drawTagSheet();break}
  case 'tclear':{ui.tagSel=[];closeSheet();render('same');break}
