@@ -183,23 +183,22 @@ function pill(t,kind){const on=(ui.tagSel||[]).includes(t);const rep=kind==='rep
  const dim=!on&&!rep&&!tagMine(t);const lock=ui.tagEdit&&rep;
  const cls=['tpill',on?'on':'',rep?'rep':'',neg?'neg':'',dim?'dim':'',lock?'lock':''].filter(Boolean).join(' ');
  return `<button type="button" class="${cls}" style="--gc:${col}" data-a="tsel" data-t="${esc(t)}" data-k="${rep?'rep':'memo'}" aria-pressed="${on}" ${lock?'disabled':''}>${esc(t)}</button>`}
-function tags(){tagInit();const q=(ui.tq||'').trim().toLowerCase();const sel=ui.tagSel;const n=tagMatch(sel).length;const edit=!!ui.tagEdit;
+function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const edit=!!ui.tagEdit;
  const chips=sel.map(t=>`<button type="button" class="tschip" data-a="tsel" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('');
  let h=`<div class="scr tagpage${sel.length?' hasbar':''}"><div class="hd"><h1>태그</h1>${info('tags')}${edit?'<span class="sp"></span><button type="button" class="tdone" data-a="teditdone">완료</button>':''}</div>
  <div class="note" style="margin:0 0 10px">메모 태그는 나만 봐요. 평판 태그만 익명으로 모여요.</div>
- <div class="search tsearch"><span class="sic">🔍</span><div class="ts-scroll" id="tsscroll">${chips}<input id="tqs" type="search" placeholder="태그 이름으로 찾기" value="${esc(ui.tq||'')}" autocomplete="off" enterkeyhint="search"></div></div>
  <p class="thint">여러 개 고르면 모두 붙은 사람만 찾아요</p>
  <div class="trecent"><b>최근 검색 태그</b><button type="button" class="tclearh" data-a="treclear" ${S.tagRecent.length?'':'disabled'}>최근 기록 삭제</button></div>
- <div class="chips tpills">${S.tagRecent.filter(t=>tagHit(t,q)&&!S.tagGone.includes(t)).map(t=>pill(t)).join('')}</div>`;
+ <div class="chips tpills">${S.tagRecent.filter(t=>!S.tagGone.includes(t)).map(t=>pill(t)).join('')}</div>`;
  h+=`<div class="tsec"><b>메모 태그</b><span class="tbadge">나만 보기</span></div>`;
  if(edit)h+=`<p class="thint">메모 태그를 누르면 이름을 바꾸거나 지울 수 있어요.</p>`;
- memoGroupList().forEach(g=>{let ts=tagsIn(g).filter(t=>tagHit(t,q));if(q&&!ts.length)return;
+ memoGroupList().forEach(g=>{const ts=tagsIn(g);
   h+=`<section class="tcard" style="--gc:${g.color}"><div class="tgh" data-g="${esc(g.key)}"><h2>${esc(g.name)}</h2>${edit?`<span class="tga"><button type="button" data-a="trenameg" data-g="${esc(g.key)}">이름</button><button type="button" data-a="trecolor" data-g="${esc(g.key)}">색</button><button type="button" data-a="tdelg" data-g="${esc(g.key)}">지우기</button></span>`:''}</div><div class="chips tpills">${ts.map(t=>pill(t,'memo')).join('')||'<span class="small">아직 없어요</span>'}</div></section>`});
- const reps=[...REP_POS,...REP_NEG].filter(t=>tagHit(t,q));
+ const reps=[...REP_POS,...REP_NEG];
  h+=`<div class="tsec"><b>평판 태그</b><span class="tbadge">익명 공개</span></div><p class="thint">정해진 목록이라 검색만 돼요</p><div class="chips tpills">${reps.map(t=>pill(t,'rep')).join('')}</div>`;
  let dock='';
  if(!edit)dock+=`<button type="button" class="tfab${sel.length?' up':''}" data-a="tmenu" aria-expanded="${ui.tagMenu?'true':'false'}" aria-label="태그 메뉴">+</button>${ui.tagMenu?`<div class="tmenu${sel.length?' up':''}"><button type="button" data-a="tadd">태그 추가</button><button type="button" data-a="tgadd">그룹 추가</button><button type="button" data-a="tedit">전체 편집</button></div>`:''}`;
- if(sel.length)dock+=`<div class="tagbar"><span class="tn">고른 태그를 모두 가진 사람 ${n}명</span><button type="button" class="btn-r" data-a="tsearch" ${n?'':'disabled'}>검색</button></div>`;
+ if(sel.length)dock+=`<div class="tagbar"><div class="tbchips" id="tbchips">${chips}</div><span class="tn">고른 태그를 모두 가진 사람 ${n}명</span><button type="button" class="btn-r" data-a="tsearch" ${n?'':'disabled'}>검색</button></div>`;
  return h+'</div>'+dock}
 function drawTagSheet(){tagInit();const sel=ui.tagSel.slice();const L=tagMatch(sel);const x='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
  const chips=`<div class="tpicks">${sel.map(t=>`<button type="button" class="tschip" data-a="tx" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('')}</div>`;
@@ -210,10 +209,7 @@ function drawTagSheet(){tagInit();const sel=ui.tagSel.slice();const L=tagMatch(s
  sheet(`<div class="sechead"><div class="sectitle"><h3 id="sec-title">고른 태그를 모두 가진 사람 ${L.length}명</h3>${x}</div>${chips}</div><div class="seclist">${body}</div>`);
  const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet','tagres');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-labelledby','sec-title');sh.tabIndex=-1}bindSwipe();
  if(sh&&!sh.contains(document.activeElement)){const b=sh.querySelector('.secx');if(b)b.focus({focusVisible:false})}}
-function tagFit(){const sc=$('#tsscroll');if(!sc)return;if(ui.tagScroll){sc.scrollLeft=sc.scrollWidth;ui.tagScroll=0}else if(ui.tagLeft)sc.scrollLeft=ui.tagLeft;
- const mask=()=>{const left=sc.scrollLeft>2,right=sc.scrollLeft+sc.clientWidth<sc.scrollWidth-2;ui.tagLeft=sc.scrollLeft;
-  sc.style.webkitMaskImage=sc.style.maskImage=left&&right?'linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 16px),transparent)':left?'linear-gradient(90deg,transparent,#000 16px)':right?'linear-gradient(90deg,#000 calc(100% - 16px),transparent)':''};
- mask();if(!sc._b){sc._b=1;sc.addEventListener('scroll',mask,{passive:true})}}
+function tagFit(){const sc=$('#tbchips');if(!sc||!ui.tagScroll)return;sc.scrollLeft=sc.scrollWidth;ui.tagScroll=0}
 function tagRemember(){tagInit();ui.tagSel.forEach(t=>{S.tagRecent=S.tagRecent.filter(x=>x!==t);S.tagRecent.unshift(t)});S.tagRecent=S.tagRecent.filter(t=>!S.tagGone.includes(t)).slice(0,12);save()}
 function adoptTag(t){if(isRepTag(t)||tagMine(t))return;const g=groupOf(t);if(!g)return;S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(t))S.customTags[g].push(t)}
 function dropTag(t){S.people.forEach(p=>{p.memo=(p.memo||[]).filter(x=>x!==t)});Object.keys(S.customTags).forEach(g=>{S.customTags[g]=(S.customTags[g]||[]).filter(x=>x!==t)});
@@ -373,7 +369,7 @@ function testMenu(){sheet(`<h3>테스트 메뉴</h3><div class="small">지금 �
 
 /* events */
 let taps=[];
-document.addEventListener('input',e=>{if(e.target.id=='fqs'){ui.fs=e.target.value;const d=document.createElement('div');d.innerHTML=fridge();const n=d.querySelector('#flist'),o=$('#flist');if(n&&o)o.replaceWith(n);return}if(e.target.id=='q'){ui.q=e.target.value;const pos=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(pos,pos);return}if(e.target.id=='tqs'){ui.tq=e.target.value;const pos=e.target.selectionStart,y=window.scrollY,sc=$('#tsscroll');if(sc)ui.tagLeft=sc.scrollLeft;render('same');window.scrollTo(0,y);const q=$('#tqs');if(q){q.focus();try{q.setSelectionRange(pos,pos)}catch(err){}}return}if(e.target.id=='tnew'||e.target.id=='tname'||e.target.id=='gnew'){const n=$('#tcnt');if(n)n.textContent=e.target.value.length+'/20'}});
+document.addEventListener('input',e=>{if(e.target.id=='fqs'){ui.fs=e.target.value;const d=document.createElement('div');d.innerHTML=fridge();const n=d.querySelector('#flist'),o=$('#flist');if(n&&o)o.replaceWith(n);return}if(e.target.id=='q'){ui.q=e.target.value;const pos=e.target.selectionStart;render();const q=$('#q');q.focus();q.setSelectionRange(pos,pos);return}if(e.target.id=='tnew'||e.target.id=='tname'||e.target.id=='gnew'){const n=$('#tcnt');if(n)n.textContent=e.target.value.length+'/20'}});
 document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.stopPropagation();return}if(ui.tagMenu&&!e.target.closest('.tmenu,.tfab')){ui.tagMenu=0;render('same')}const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,id=el.dataset.id;
  if(a=='sclose'&&e.target!==el)return;e.stopPropagation();
  const p=id?P(id):null;
