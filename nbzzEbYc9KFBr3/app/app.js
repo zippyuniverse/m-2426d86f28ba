@@ -5,7 +5,6 @@ const GR={5:['1++','투뿔 마블링'],4:['1+','원뿔 등심'],3:['1','무난�
 const DEFC={5:7,4:30,3:90,2:180,1:0};
 const CYC=[['auto','등급 따라 자동'],[7,'1주'],[30,'1개월'],[90,'3개월'],[180,'6개월'],[0,'연락 안 함']];
 const AGAIN=['무조건','상황 봐서','절대 안 함'];
-const REL=['같은 회사','거래처·고객','경쟁사','기타'];
 const REP_POS=['숫자에 강함','약속 칼같음','인맥왕','말발 좋음','디테일 장인'];
 const REP_NEG=['답장 냉동 보관','약속 해동 중','말만 투뿔','뒷심 부족','생색 마블링','숟가락 얹기','밀당 장인','회식 전용','핑계 양념','읽고 숙성'];
 const GROUPS=[['사는 곳','#834AF4',['여의도','마포']],['가족 구성','#75C895',['1남1녀','무자녀']],['생년','#88CBF0',['50년대','60년대','70년대','80년대','90년대','00년대']],['취미·관심사','#89D16F',['골프','등산']],['고향','#F4A259',['서울','부산','대구']],['출신 대학','#3F89F6',['연세대','고려대','서울대']]];
@@ -15,7 +14,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let S,nav=[{v:'shelf'}],ui={},lastN=null;
 
 function blank(){return {day:0,people:[],seq:1,customTags:{},notifs:[],readBell:false,accepted:false,verdictN:7,seenInfo:{},firstWrite:true}}
-function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank()}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(p&&Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}});if(drop)save()}
 function kstDay(){return Math.floor((Date.now()+9*3600e3)/864e5)+S.day}
 function earnPt(id){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[id]===d)return false;S.ptLog[id]=d;S.pts=(S.pts||0)+1;return true}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
@@ -54,7 +53,7 @@ function back(){if(nav.length>1)nav.pop();render('back')}
 function tab(v){if(v=='verdict'){openVerdict();return}nav=[{v}];render('fade')}
 
 /* seed */
-function mk(o){return Object.assign({id:S.seq++,name:'',phone:'',isNew:false,addedDay:S.day,grade:null,persona:null,hold:false,cycle:'auto',again:null,rel:null,memo:[],rep:[],priv:false,contacts:[],ratedDay:S.day,hidden:false,kkul:[],pats:[]},o)}
+function mk(o){return Object.assign({id:S.seq++,name:'',phone:'',isNew:false,addedDay:S.day,grade:null,persona:null,hold:false,cycle:'auto',again:null,memo:[],rep:[],priv:false,contacts:[],ratedDay:S.day,hidden:false,kkul:[],pats:[]},o)}
 function seed(){S=blank();const d=0;
  const add=o=>S.people.push(mk(o));
  add({name:'박철호 부장',phone:'010-****-1234',grade:5,persona:2,ratedDay:-60,contacts:[{day:-7,t:'전화'}],rep:['숫자에 강함','약속 칼같음'],memo:['여의도','골프'],pats:[-8,-2],pub:true});
@@ -270,9 +269,8 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const 
  if(p.ratedDay!=null&&S.day-p.ratedDay>=90)h+=`<div class="recard"><span class="grow">${hold?'이제 등급을 매겨 볼까요?':'지금도 '+GR[p.grade][0]+'인가요? 다시 평가해 보세요.'}</span><button class="chip sm" data-a="stillok" data-id="${p.id}">${hold?'아직 보류할게요':'지금도 맞아요'}</button></div>`;
  h+=`<div class="three"><button class="bigb" data-a="call" data-t="전화" data-id="${p.id}">📞 전화걸기</button><button class="bigb red" data-a="call" data-t="연락했어요" data-id="${p.id}">✓ 연락했어요</button></div>`;
  h+=`<h2>내 평가</h2><div class="card">`;
- if(!hold)h+=[['again','다시 맡기기',AGAIN],['rel','관계',REL]].map(([f,k,L])=>`<div class="kvsec"><span class="k">${k}</span><div class="chips">${L.map(a=>`<button class="chip ${p[f]===a?'on':''}" data-a="qset" data-f="${f}" data-x="${a}" data-id="${p.id}" aria-pressed="${p[f]===a}">${a}</button>`).join('')}</div></div>`).join('');
  h+=`<div class="kv kvtags" data-a="edit" data-f="memo" data-id="${p.id}"><span class="k">메모 태그 <span class="badge me">나만 보기</span></span><span class="v tchips">${chips(p.memo,'memo')}</span></div>`;
- if(!hold)h+=`<div class="kv kvtags" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그 <span class="badge">익명 공개</span></span><span class="v tchips">${chips(p.rep,'rep')}</span></div><div class="kv" data-a="edit" data-f="priv" data-id="${p.id}"><span class="k">판정서 반영</span><span class="v">${p.priv?'나만 보기':'익명으로 반영'}</span></div>`;
+ if(!hold)h+=`<div class="kv kvtags" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그 <span class="badge">익명 공개</span></span><span class="v tchips">${chips(p.rep,'rep')}</span></div><div class="kvsec"><span class="k">다시 맡기기</span><div class="chips">${AGAIN.map(a=>`<button class="chip ${p.again===a?'on':''}" data-a="qset" data-f="again" data-x="${a}" data-id="${p.id}" aria-pressed="${p.again===a}">${a}</button>`).join('')}</div></div><div class="kv" data-a="edit" data-f="priv" data-id="${p.id}"><span class="k">판정서 반영</span><span class="v">${p.priv?'나만 보기':'익명으로 반영'}</span></div>`;
  h+=`</div><h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${cycLabel(p)} 주기 · 마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${hold?'판정 보류':s.t}</span></div></div>
  <h2>연락 기록</h2><div class="card">${p.contacts.slice().reverse().map(c=>`<div class="kv ro"><span>${md(c.day)} ${c.t}</span></div>`).join('')||'<div class="kv ro"><span class="k">아직 없어요</span></div>'}</div>`;
  if(p.pub)h+=`<button class="btn-g" style="margin-top:14px" data-a="pubv">공개된 판정서 보기 <span class="badge test">테스트용 예시</span></button>`;
@@ -287,9 +285,9 @@ function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||
  <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>
  <h2>연락 주기</h2>${hold?'<div class="note" style="margin:-4px 0 8px">판정 보류는 자동으로 1개월 주기예요.</div>':''}<div class="chips">${CYC.map(c=>`<button class="chip ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
- if(!hold)h+=`<h2>다시 거래를 맡기겠다?<span class="opt">선택</span></h2><div class="chips">${AGAIN.map(a=>`<button class="chip ${w.again===a?'on':''}" data-a="w" data-f="again" data-x="${a}">${a}</button>`).join('')}</div>
- <h2>어떤 관계?<span class="opt">선택</span></h2><div class="chips">${REL.map(a=>`<button class="chip ${w.rel===a?'on':''}" data-a="w" data-f="rel" data-x="${a}">${a}</button>`).join('')}</div>`;
- h+=memoBox(w.memo)+`<div class="box ${hold?'dim':''}"><div class="boxh">평판 태그 <span class="badge">익명 공개</span></div>${hold?'<div class="note">성격과 등급을 고르면 평판 태그를 달 수 있어요.</div>':`<div class="chips">${w.rep.map(t=>`<button class="chip sm on ${REP_NEG.includes(t)?'neg':''}" data-a="reprm" data-t="${esc(t)}">${esc(t)} ✕</button>`).join('')}<button class="chip sm dash" data-a="reppick">+ 추가</button></div>`}</div></div>
+ h+=memoBox(w.memo)+`<div class="box ${hold?'dim':''}"><div class="boxh">평판 태그 <span class="badge">익명 공개</span></div>${hold?'<div class="note">성격과 등급을 고르면 평판 태그를 달 수 있어요.</div>':`<div class="chips">${w.rep.map(t=>`<button class="chip sm on ${REP_NEG.includes(t)?'neg':''}" data-a="reprm" data-t="${esc(t)}">${esc(t)} ✕</button>`).join('')}<button class="chip sm dash" data-a="reppick">+ 추가</button></div>`}</div>`;
+ if(!hold)h+=`<h2>다시 거래를 맡기겠다?<span class="opt">선택</span></h2><div class="chips">${AGAIN.map(a=>`<button class="chip ${w.again===a?'on':''}" data-a="w" data-f="again" data-x="${a}">${a}</button>`).join('')}</div>`;
+ h+=`</div>
  <div class="bar">${hold?'':`<div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${w.priv?'on':''}" data-a="w" data-f="priv"></button></div>`}${ok?'':'<div class="hint">성격·등급을 고르면 저장할 수 있어요</div>'}<button class="btn-r" data-a="wsave" ${ok?'':'disabled'}>저장</button></div>`;
  return h}
 function memoBox(sel){return `<div class="box"><div class="boxh">메모 태그 <span class="badge me">나만 보기</span></div>${memoGroupList().map(g=>{const birth=g.key==='생년';const ts=birth?(g.base||[]).filter(t=>!(S.tagGone||[]).includes(t)&&groupOf(t)==='생년'):tagsIn(g);const bsel=birth?sel.find(t=>groupOf(t)==='생년'):null;return `<div class="grp"><div class="gn"><span class="gdot" style="background:${g.color}"></span>${esc(g.name)}${birth&&bsel?` <span class="chip sm on" data-a="memo" data-t="${esc(bsel)}" style="margin-left:auto">${esc(bsel)}</span>`:''}</div><div class="chips">${ts.map(t=>`<button class="chip sm ${sel.includes(t)?'on':''}" data-a="memo" data-t="${esc(t)}">${esc(t)}</button>`).join('')}${birth?`<button class="chip sm dash" data-a="year">연도</button>`:`<button class="chip sm dash" data-a="memoadd" data-g="${esc(g.key)}">+ 추가</button>`}</div></div>`}).join('')}</div>`}
@@ -362,10 +360,10 @@ function repSheet(){const w=ui.w;const neg=w.rep.filter(t=>REP_NEG.includes(t)).
 function holdSheet(id){const p=P(id);ui.hs=p.hold?{id,grade:null,persona:null,hold:false}:{id,grade:p.grade,persona:p.persona,hold:false};drawHold()}
 function drawHold(){const h=ui.hs,ok=h.hold||(h.grade!=null&&h.persona!=null);sheet(`<div class="hsheet"><h3>성격·등급 고르기</h3><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${h.persona===i?'on':''}" data-a="hsx" data-f="persona" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div><div style="height:14px"></div><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${h.grade===g?'on':''}" data-a="hsx" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>${ok?'':'<div class="hint">성격·등급을 고르면 저장할 수 있어요</div>'}<div class="hsrow"><button class="holdbtn ${h.hold?'on':''}" data-a="hsx" data-f="hold">판정 보류</button><button class="btn-r" data-a="hssave" ${ok?'':'disabled'}>저장</button></div></div>`)}
 function editSheet(id,f){const p=P(id);ui.ed={id,f,val:JSON.parse(JSON.stringify(f=='memo'||f=='rep'?p[f]:p[f]))};drawEdit()}
-function drawEdit(){const e=ui.ed,p=P(e.id);let b='';const T={grade:'등급',persona:'성격',again:'다시 맡기기',rel:'관계',memo:'메모 태그',rep:'평판 태그',priv:'판정서 반영',cycle:'연락 주기'}[e.f];
+function drawEdit(){const e=ui.ed,p=P(e.id);let b='';const T={grade:'등급',persona:'성격',again:'다시 맡기기',memo:'메모 태그',rep:'평판 태그',priv:'판정서 반영',cycle:'연락 주기'}[e.f];
  if(e.f=='grade')b=`<div class="grades">${[5,4,3,2,1].map(g=>`<button class="${e.val===g?'on':''}" data-a="edx" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>`;
  if(e.f=='persona')b=`<div class="grid3">${PERS.map((n,i)=>`<button class="tile ${e.val===i?'on':''}" data-a="edx" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div>`;
- if(e.f=='again'||e.f=='rel')b=`<div class="chips">${(e.f=='again'?AGAIN:REL).map(a=>`<button class="chip ${e.val===a?'on':''}" data-a="edx" data-x="${a}">${a}</button>`).join('')}</div>`;
+ if(e.f=='again')b=`<div class="chips">${AGAIN.map(a=>`<button class="chip ${e.val===a?'on':''}" data-a="edx" data-x="${a}">${a}</button>`).join('')}</div>`;
  if(e.f=='cycle')b=`<div class="chips">${CYC.map(c=>`<button class="chip ${e.val===c[0]?'on':''}" data-a="edx" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
  if(e.f=='priv')b=`<div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${e.val?'on':''}" data-a="edx" data-x="t"></button></div>${e.val?'<div class="note">다음 토요일 오전 9시 갱신부터 판정서에서 빠져요. 이미 열린 지난 판정서에는 남을 수 있어요.</div>':''}`;
  if(e.f=='memo')b=memoBox(e.val);
@@ -385,7 +383,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  const p=id?P(id):null;
  switch(a){
  case 'tab':if(ui._xslide)break;ui.q='';tab(el.dataset.v);break;
- case 'qset':{const q=P(+id),f=el.dataset.f,x=el.dataset.x;q[f]=q[f]===x?null:x;save();render('same');break}
+ case 'qset':{const q=P(+id),f=el.dataset.f,x=el.dataset.x;if(f==='rel')break;q[f]=q[f]===x?null:x;save();render('same');break}
  case 'vopen':openVerdict();break;
  case 'vback':closeVerdict();break;
  case 'back':back();break;
@@ -401,7 +399,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'sec':openSec(el.dataset.k,el);break;
  case 'sheetmore':ui.sheetMore=true;drawSec();break;
  case 'open':closeSheet();go({v:'person',id});break;
- case 'write':closeSheet();ui.w={grade:null,persona:null,hold:false,cycle:'auto',again:null,rel:null,memo:[],rep:[],priv:false};go({v:'write',id});break;
+ case 'write':closeSheet();ui.w={grade:null,persona:null,hold:false,cycle:'auto',again:null,memo:[],rep:[],priv:false};go({v:'write',id});break;
  case 'add':go({v:'addContact'});break;
  case 'addsave':{const n=$('#cn').value.trim();if(!n){toast('이름을 넣어 주세요');break}const ph=$('#cp').value.trim()||'010-****-'+String(1000+S.seq*37%9000);
   const np=mk({name:n,phone:ph,isNew:true,addedDay:S.day,ratedDay:null});S.people.push(np);save();ui.q='';ui.fresh=np.id;tab('shelf');toast('새로 들어온 고기에 넣었어요');setTimeout(()=>ui.fresh=null,500);break}
@@ -410,7 +408,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
   else if(f=='priv')w.priv=!w.priv;
   else if(f=='persona'||f=='grade'){w[f]=+x;if(w.hold){w.hold=false;if(f=='grade')w.persona=w._p??null;else w.grade=w._g??null}}
   else if(f=='cycle')w.cycle=x=='auto'?'auto':+x;
-  else w[f]=w[f]===x?null:x;render('same');break}
+  else if(f!=='rel')w[f]=w[f]===x?null:x;render('same');break}
  case 'memo':{const arr=$('#sheet-root .sheet')?ui.ed.val:ui.w.memo;const t=el.dataset.t;const i=arr.indexOf(t);
   if(i>=0)arr.splice(i,1);else{if(groupOf(t)=='생년'){for(let k=arr.length-1;k>=0;k--)if(groupOf(arr[k])=='생년')arr.splice(k,1)}arr.push(t)}
   $('#sheet-root .sheet')?drawEdit():render('same');break}
@@ -421,7 +419,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'reptg':{const t=el.dataset.t,r=ui.w.rep,i=r.indexOf(t);i>=0?r.splice(i,1):r.push(t);repSheet();break}
  case 'reprm':ui.w.rep=ui.w.rep.filter(t=>t!==el.dataset.t);render('same');break;
  case 'wsave':{const v=nav[nav.length-1],q=P(v.id),w=ui.w;
-  Object.assign(q,{hold:w.hold,grade:w.hold?null:w.grade,persona:w.hold?null:w.persona,cycle:w.hold?'auto':w.cycle,again:w.hold?null:w.again,rel:w.hold?null:w.rel,memo:w.memo,rep:w.hold?[]:w.rep,priv:w.hold?false:w.priv,isNew:false,ratedDay:S.day});
+  Object.assign(q,{hold:w.hold,grade:w.hold?null:w.grade,persona:w.hold?null:w.persona,cycle:w.hold?'auto':w.cycle,again:w.hold?null:w.again,memo:w.memo,rep:w.hold?[]:w.rep,priv:w.hold?false:w.priv,isNew:false,ratedDay:S.day});delete q.rel;
   S.firstWrite=false;save();nav.pop();nav.push({v:'person',id:q.id});render('fade');toast(w.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
  case 'call':{const t=el.dataset.t;const row=document.getElementById('r'+id);const sec=ui.sec;
   const doit=()=>{p.contacts.push({day:S.day,t});const got=t=='전화'&&earnPt(p.id);save();render('same');toast(t=='연락했어요'?'연락을 기록했어요':t+' 기록을 남겼어요'+(got?' · 포인트 +1':''));if(sec){ui.sec=sec;drawSec()}};
@@ -435,11 +433,11 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'delok':S.people=S.people.filter(x=>x.id!=id);save();closeSheet();nav=[{v:'shelf'}];render('back');toast('지웠어요');break;
  case 'edit':editSheet(id,el.dataset.f);break;
  case 'edx':{const e2=ui.ed,x=el.dataset.x;if(e2.f=='grade'||e2.f=='persona')e2.val=+x;else if(e2.f=='cycle')e2.val=x=='auto'?'auto':+x;else if(e2.f=='priv')e2.val=!e2.val;else if(e2.f=='rep'){const i=e2.val.indexOf(x);i>=0?e2.val.splice(i,1):e2.val.push(x)}else e2.val=e2.val===x?null:x;drawEdit();break}
- case 'edsave':{const e2=ui.ed,q=P(e2.id);q[e2.f]=e2.val;if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
+ case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}q[e2.f]=e2.val;if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
  case 'holdsheet':holdSheet(id);break;
  case 'hsx':{const h=ui.hs;if(el.dataset.f=='hold'){h.hold=!h.hold;if(h.hold){h.grade=null;h.persona=null}}else{h[el.dataset.f]=+el.dataset.x;h.hold=false}drawHold();break}
  case 'pgsheet':holdSheet(id);break;
- case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rel:null,rep:[],priv:false,ratedDay:S.day});if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
+ case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,ratedDay:S.day});delete q.rel;if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
  case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0)ui.tagSel.splice(i,1);else{ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
  case 'tsearch':{if(!tagMatch().length)break;tagRemember();drawTagSheet();break}
