@@ -490,12 +490,12 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .tsec{display:flex;align-items:center;gap:8px;margin:18px 0 4px}
 .tsec b{font-size:16px}
 .tbadge{background:#F4F4F4;color:#525252;border-radius:12px;padding:4px 10px;font-size:12px;font-weight:600}
-.tcard{position:relative;border:1px solid #E5E5E5;border-radius:14px;padding:12px 12px 12px 16px;margin-top:10px;background:#fff;overflow:hidden}
-.tcard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gc)}
-.tgh{display:flex;align-items:center;gap:8px;min-height:32px}
-.tgh h2{margin:0;font-size:15px;font-weight:700;flex:1}
-.tga{display:flex;gap:2px}
-.tga button{height:32px;padding:0 8px;color:#525252;font-size:13px;font-weight:600}
+.tcard{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:4px;align-items:start;position:relative;border:0;border-top:1px solid #EDEDED;border-radius:0;padding:2px 0;margin:0;background:none;overflow:visible}
+.tagpage .tsec+.tcard,.tagpage .thint+.tcard{border-top:0}
+.tgh{display:flex;align-items:center;gap:6px;min-height:44px;padding:4px 0;min-width:0}
+.tgh .gdot{flex:0 0 auto;width:12px;height:12px;border-radius:3px;background:var(--gc)}
+.tgh h2{margin:0;min-width:0;font-size:13px;font-weight:700;color:#1A1A1A;line-height:17px;max-height:34px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:keep-all;overflow-wrap:anywhere;overflow:hidden}
+.tcard>.tpills{gap:0 6px;min-width:0}
 .tpills{gap:8px}
 .tpill{position:relative;z-index:0;height:44px;padding:0 14px;border:0;background:transparent;color:#1A1A1A;font-size:13px;font-weight:600;line-height:1;display:inline-flex;align-items:center}
 .tpill:before{content:"";position:absolute;left:0;right:0;top:6px;height:32px;border-radius:16px;background:color-mix(in srgb,var(--gc,#F4F4F4) 16%,#fff);z-index:-1}
@@ -510,18 +510,24 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .tpill.rep.on:before{background:#1A1A1A}
 .tpill.lock{color:#525252}
 .tpill.lock:before{background:#E6E6E6}
-.tagbar{position:fixed;left:0;right:0;bottom:calc(58px + var(--sab));z-index:6;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:10px 12px;height:64px;box-sizing:border-box}
-.tbchips{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;height:44px}
+.tagbar{position:fixed;left:8px;right:8px;bottom:calc(var(--sab) + 83px);z-index:6;max-width:464px;margin:0 auto;box-sizing:border-box;background:#fff;border:1px solid #E5E5E5;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.12);display:flex;flex-wrap:wrap;align-items:center;align-content:center;column-gap:8px;row-gap:0;padding:6px 12px 8px;height:84px}
+.tbchips{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;height:44px;padding-right:28px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
 .tbchips::-webkit-scrollbar{display:none}
-.tagbar .tn{flex:none;font-weight:700;font-size:14px;line-height:1.35;white-space:nowrap}
+.tagbar .tn{order:-1;flex:1 0 100%;margin:0;font-weight:700;font-size:13px;line-height:20px;height:20px;color:#1A1A1A;white-space:nowrap}
 .tagbar .btn-r{width:auto;flex:none;height:44px;padding:0 22px}
-.tagpage{padding-bottom:calc(var(--sab) + 150px)}
-.tagpage.hasbar{padding-bottom:calc(var(--sab) + 58px + 64px + 16px)}
+#app .scr.tagpage{padding-bottom:calc(var(--sab) + 251px)}
+.t7shade{position:fixed;left:0;right:0;max-width:480px;margin:0 auto;bottom:calc(var(--sab) + 58px);height:125px;z-index:4;pointer-events:none;background:linear-gradient(to bottom,rgba(255,255,255,0) 0,#fff 16px,#fff 100%)}
+.t7morewrap{display:inline-flex;flex-wrap:nowrap;align-items:center;gap:6px;flex:0 0 auto;max-width:100%;min-width:0}
+.tagpage .tpills .t7more{position:relative;z-index:0;flex:0 0 44px;width:44px;height:44px;margin:0;padding:0;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;color:#525252;font-size:20px;font-weight:700;letter-spacing:1px;line-height:1}
+.tagpage .tpills .t7more::before{content:"";position:absolute;left:50%;top:50%;width:32px;height:32px;margin:-16px 0 0 -16px;border-radius:50%;background:#F4F4F4;pointer-events:none;z-index:-1}
+#sheet-root .sheet h3:has(.t7sdot){display:flex;align-items:center;gap:6px}
+#sheet-root .sheet h3 .t7sdot{flex:0 0 12px;width:12px;height:12px;border-radius:3px;background:var(--gc)}
+#sheet-root .sheet .srow{width:100%;box-sizing:border-box}
+#sheet-root .srow .gsw{margin-left:auto;margin-right:4px;width:16px;height:16px;border-radius:4px;background:var(--gc);flex:0 0 auto}
+#sheet-root .srow[data-a="tdelg"]{color:var(--red-t)}
 .sheet.secsheet:has(.tform){display:block;overflow:auto;height:auto}
-.tfab{position:fixed;right:16px;bottom:calc(58px + var(--sab) + 16px);width:56px;height:56px;border-radius:28px;background:var(--red);color:#fff;font-size:34px;font-weight:400;z-index:6;display:flex;align-items:center;justify-content:center;line-height:1}
-.tfab.up{bottom:calc(58px + var(--sab) + 64px + 12px)}
-.tmenu{position:fixed;right:16px;bottom:calc(58px + var(--sab) + 80px);z-index:7;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.16);min-width:168px;overflow:hidden}
-.tmenu.up{bottom:calc(58px + var(--sab) + 64px + 76px)}
+.tfab{position:fixed;right:16px;bottom:calc(var(--sab) + 179px);width:56px;height:56px;border-radius:28px;background:var(--red);color:#fff;font-size:34px;font-weight:400;z-index:6;display:flex;align-items:center;justify-content:center;line-height:1}
+.tmenu{position:fixed;right:16px;bottom:calc(var(--sab) + 243px);z-index:7;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.16);min-width:168px;overflow:hidden}
 .tmenu button{display:flex;align-items:center;width:100%;height:48px;padding:0 16px;font-weight:600;text-align:left;border-top:1px solid var(--line)}
 .tmenu button:first-child{border-top:0}
 .tdone{height:44px;padding:0 8px;font-weight:700}
