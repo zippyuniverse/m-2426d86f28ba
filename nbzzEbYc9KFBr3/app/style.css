@@ -478,11 +478,6 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .sline .who .nm .nmt{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* v61 태그 탭 */
 .tagpage .thint{margin:8px 0 0;color:#525252;font-size:13px;line-height:1.4}
-.tsearch{height:42px}
-.tsearch .ts-scroll{flex:1;min-width:0;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;height:42px}
-.tsearch .ts-scroll::-webkit-scrollbar{display:none}
-.tsearch input{min-width:96px;flex:1 0 96px}
-.tsearch input::placeholder{color:#6B6B6B}
 .tschip{flex:none;height:30px;border-radius:15px;background:#1A1A1A;color:#fff;font-size:13px;font-weight:600;padding:0 10px;display:inline-flex;align-items:center;gap:4px;line-height:1}
 .trecent{display:flex;align-items:center;justify-content:space-between;margin-top:16px;min-height:44px}
 .trecent b{font-size:15px}
@@ -511,16 +506,18 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .tpill.rep.on:before{background:#1A1A1A}
 .tpill.lock{color:#525252}
 .tpill.lock:before{background:#E6E6E6}
-.tagbar{position:fixed;left:0;right:0;bottom:calc(58px + var(--sab));z-index:6;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 16px;min-height:64px;box-sizing:border-box}
-.tagbar .tn{flex:1;min-width:0;font-weight:700;font-size:14px;line-height:1.35}
+.tagbar{position:fixed;left:0;right:0;bottom:calc(58px + var(--sab));z-index:6;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:10px 12px;height:64px;box-sizing:border-box}
+.tbchips{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;height:44px}
+.tbchips::-webkit-scrollbar{display:none}
+.tagbar .tn{flex:none;font-weight:700;font-size:14px;line-height:1.35;white-space:nowrap}
 .tagbar .btn-r{width:auto;flex:none;height:44px;padding:0 22px}
 .tagpage{padding-bottom:calc(var(--sab) + 150px)}
-.tagpage.hasbar{padding-bottom:calc(var(--sab) + 58px + 80px + 16px)}
+.tagpage.hasbar{padding-bottom:calc(var(--sab) + 58px + 64px + 16px)}
 .sheet.secsheet:has(.tform){display:block;overflow:auto;height:auto}
 .tfab{position:fixed;right:16px;bottom:calc(58px + var(--sab) + 16px);width:56px;height:56px;border-radius:28px;background:var(--red);color:#fff;font-size:34px;font-weight:400;z-index:6;display:flex;align-items:center;justify-content:center;line-height:1}
-.tfab.up{bottom:calc(58px + var(--sab) + 80px + 12px)}
+.tfab.up{bottom:calc(58px + var(--sab) + 64px + 12px)}
 .tmenu{position:fixed;right:16px;bottom:calc(58px + var(--sab) + 80px);z-index:7;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.16);min-width:168px;overflow:hidden}
-.tmenu.up{bottom:calc(58px + var(--sab) + 80px + 76px)}
+.tmenu.up{bottom:calc(58px + var(--sab) + 64px + 76px)}
 .tmenu button{display:flex;align-items:center;width:100%;height:48px;padding:0 16px;font-weight:600;text-align:left;border-top:1px solid var(--line)}
 .tmenu button:first-child{border-top:0}
 .tdone{height:44px;padding:0 8px;font-weight:700}
