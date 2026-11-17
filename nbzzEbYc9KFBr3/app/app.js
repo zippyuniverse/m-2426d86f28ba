@@ -38,7 +38,7 @@ function personTags(p){return [...new Set([].concat(p.memo||[],p.rep||[]).map(St
 function matchPerson(p,q){const s=String(q||'').trim().toLowerCase();if(!s)return true;return p.name.toLowerCase().includes(s)||personTags(p).some(t=>t.toLowerCase().includes(s))}
 function searchPeople(){return visible().filter(p=>rated(p)||p.hold)}
 function searchAll(q){return S.people.filter(p=>matchPerson(p,q))}
-function searchAct(p){return p.hidden?'open':(!rated(p)&&!p.hold)?'write':'open'}
+function searchAct(p){return p.hidden?'open':(!rated(p)||p.hold)?'write':'open'}
 function searchFlags(p){let h='';if(!rated(p)&&!p.hold)h+='<span class="pill st-none">평가 전</span>';if(p.hidden)h+='<span class="pill st-none">숨김</span>';return h}
 /* v22: 앱 설치 후 저장한 연락처만, 7일, 최근 저장 순 */function newOnes(){const ins=S.installDay??-Infinity;return visible().filter(p=>p.isNew&&!rated(p)&&!p.hold&&p.addedDay>=ins&&S.day-p.addedDay<7).sort((a,b)=>b.addedDay-a.addedDay||b.id-a.id)}
 function todayList(){return visible().filter(p=>rated(p)&&!p.hold&&['today','aging','spoil'].includes(stage(p).k)).sort(sortFn)}
@@ -317,7 +317,7 @@ function drawSec(){const k=ui.sec;if(!k)return;const title={trim:'손질할 고�
  else if(k=='nw'){const show=ui.sheetMore?L:L.slice(0,5);
   body=show.map(p=>`<div class="sline"><button type="button" class="who" data-a="write" data-id="${p.id}"><span class="grow"><span class="meta"><b>NEW</b> · ${S.day==p.addedDay?'오늘':(S.day-p.addedDay)+'일 전'}</span><span class="nm"><span class="nmt">${esc(p.name)}</span></span></span></button><button type="button" class="go" data-a="write" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
   if(!ui.sheetMore&&L.length>5)body+=`<button type="button" class="row more" data-a="sheetmore">${L.length-5}명 더 보기</button>`}
- else body=L.map(p=>`<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><img class="hface" src="emoji/hold.svg" alt=""><span class="grow"><span class="nm"><span class="nmt">${esc(p.name)}</span></span><span class="meta">${md(p.ratedDay)} 판정 보류</span></span></button><button type="button" class="go" data-a="holdsheet" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
+ else body=L.map(p=>`<div class="sline"><button type="button" class="who" data-a="write" data-id="${p.id}"><img class="hface" src="emoji/hold.svg" alt=""><span class="grow"><span class="nm"><span class="nmt">${esc(p.name)}</span></span><span class="meta">${md(p.ratedDay)} 판정 보류</span></span></button><button type="button" class="go" data-a="write" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
  const x='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
  sheet(`<div class="sechead"><div class="sectitle"><h3 id="sec-title">${title} ${L.length}명</h3>${x}</div></div><div class="seclist">${body}</div>`);
  const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.setAttribute('aria-labelledby','sec-title');sh.tabIndex=-1}bindSwipe();
@@ -399,7 +399,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'sec':openSec(el.dataset.k,el);break;
  case 'sheetmore':ui.sheetMore=true;drawSec();break;
  case 'open':closeSheet();go({v:'person',id});break;
- case 'write':closeSheet();ui.w={grade:null,persona:null,hold:false,cycle:'auto',again:null,memo:[],rep:[],priv:false};go({v:'write',id});break;
+ case 'write':closeSheet();ui.w={grade:null,persona:null,hold:false,cycle:'auto',again:null,memo:p&&p.hold?(p.memo||[]).slice():[],rep:[],priv:false};go({v:'write',id});break;
  case 'add':go({v:'addContact'});break;
  case 'addsave':{const n=$('#cn').value.trim();if(!n){toast('이름을 넣어 주세요');break}const ph=$('#cp').value.trim()||'010-****-'+String(1000+S.seq*37%9000);
   const np=mk({name:n,phone:ph,isNew:true,addedDay:S.day,ratedDay:null});S.people.push(np);save();ui.q='';ui.fresh=np.id;tab('shelf');toast('새로 들어온 고기에 넣었어요');setTimeout(()=>ui.fresh=null,500);break}
@@ -434,7 +434,6 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'edit':editSheet(id,el.dataset.f);break;
  case 'edx':{const e2=ui.ed,x=el.dataset.x;if(e2.f=='grade'||e2.f=='persona')e2.val=+x;else if(e2.f=='cycle')e2.val=x=='auto'?'auto':+x;else if(e2.f=='priv')e2.val=!e2.val;else if(e2.f=='rep'){const i=e2.val.indexOf(x);if(i>=0)e2.val.splice(i,1);else if(!(REP_NEG.includes(x)&&e2.val.filter(t=>REP_NEG.includes(t)).length>=3))e2.val.push(x)}else e2.val=e2.val===x?null:x;drawEdit();break}
  case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}q[e2.f]=e2.val;if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
- case 'holdsheet':holdSheet(id);break;
  case 'hsx':{const h=ui.hs;if(el.dataset.f=='hold'){h.hold=!h.hold;if(h.hold){h.grade=null;h.persona=null}}else{h[el.dataset.f]=+el.dataset.x;h.hold=false}drawHold();break}
  case 'pgsheet':holdSheet(id);break;
  case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,ratedDay:S.day});delete q.rel;if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
