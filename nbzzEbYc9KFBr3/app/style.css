@@ -80,10 +80,10 @@ nav.tab button.on b{opacity:1;filter:none}
 .opt{color:var(--sub);font-size:0.7059rem;margin-left:6px;font-weight:500}
 .box{border:1px solid #DADADA;border-radius:14px;padding:14px;margin-top:12px}
 .box.dim{opacity:.45}
-.boxh{display:flex;align-items:center;justify-content:space-between;font-weight:700;margin-bottom:10px}
+.boxh{display:flex;align-items:center;justify-content:flex-start;font-weight:700;margin-bottom:10px}
 .badge{font-size:0.7059rem;font-weight:700;background:#FFD447;border-radius:10px;padding:3px 8px}
-.badge.me{background:var(--bg2)}
 .badge.test{background:#E8E3FF;color:#3B2A99}
+.phsub{font-size:0.7059rem;font-weight:500;color:#6B6B6B;background:none;border:0;padding:0;text-decoration:none;white-space:nowrap}
 .grp{margin-top:10px}
 .grp .gn{font-size:0.7647rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .gdot{width:8px;height:8px;border-radius:4px;display:inline-block}
@@ -487,9 +487,8 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .trecent b{font-size:15px}
 .tclearh{height:44px;padding:0 4px;color:#525252;font-size:13px;font-weight:600}
 .tclearh[disabled]{opacity:.4}
-.tsec{display:flex;align-items:center;gap:8px;margin:18px 0 4px}
+.tsec{display:flex;align-items:center;gap:0;margin:18px 0 4px}
 .tsec b{font-size:16px}
-.tbadge{background:#F4F4F4;color:#525252;border-radius:12px;padding:4px 10px;font-size:12px;font-weight:600}
 .tcard{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:4px;align-items:start;position:relative;border:0;border-top:1px solid #EDEDED;border-radius:0;padding:2px 0;margin:0;background:none;overflow:visible}
 .tagpage .tsec+.tcard,.tagpage .thint+.tcard{border-top:0}
 .tgh{display:flex;align-items:center;gap:6px;min-height:44px;padding:4px 0;min-width:0}
