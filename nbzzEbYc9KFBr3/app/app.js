@@ -15,7 +15,15 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let S,nav=[{v:'shelf'}],ui={},lastN=null;
 
 function blank(){return {day:0,people:[],seq:1,customTags:{},notifs:[],readBell:false,accepted:false,verdictN:7,seenInfo:{},firstWrite:true}}
-function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}else if(!p.hold&&p.cycle==='auto'&&p.grade!=null){p.cycle=DEFC[p.grade];drop=true}});if(drop)save()}
+function isBirthDecade(t){return /^(50|60|70|80|90|00)년대$/.test(t)}
+function isBirthYear(t){return /^(0[0-9]|[5-9]\d)$/.test(t)}
+function decadeOfYear(yy){const n=+yy;return (n<10?'00':String(Math.floor(n/10))+'0')+'년대'}
+function yearsOfDecade(dec){const n=+dec.slice(0,2);return Array.from({length:10},(_,i)=>String(n+i).padStart(2,'0'))}
+function isFullBirth(t){return /^(19[5-9]\d|200\d)$/.test(String(t))}
+function decadeOfFull(y){y=+y;return y>=2000?'00년대':String(y).slice(2,3)+'0년대'}
+function migrateBirthList(arr){if(!Array.isArray(arr)||!arr.some(isFullBirth))return arr;let dec=null,yy=null;const rest=[];arr.forEach(t=>{if(isFullBirth(t)){dec=decadeOfFull(t);yy=String(+t).slice(-2)}else if(!isBirthDecade(t)&&!isBirthYear(t))rest.push(t)});if(dec)rest.push(dec);if(yy)rest.push(yy);return rest}
+function migrateBirth(){let drop=false;(S.people||[]).forEach(p=>{if(!p||!p.memo)return;const next=migrateBirthList(p.memo);if(next!==p.memo){p.memo=next;drop=true}});if(Array.isArray(S.tagRecent)){const next=migrateBirthList(S.tagRecent);if(next!==S.tagRecent){S.tagRecent=next;drop=true}}if(Array.isArray(S.tagGone)){const next=S.tagGone.filter(t=>!isFullBirth(t));if(next.length!==S.tagGone.length){S.tagGone=next;drop=true}}if(S.tagMove)Object.keys(S.tagMove).forEach(t=>{if(isFullBirth(t)){delete S.tagMove[t];drop=true}});if(S.customTags)Object.keys(S.customTags).forEach(g=>{const a=S.customTags[g];if(!Array.isArray(a))return;const next=a.filter(t=>!isFullBirth(t));if(next.length!==a.length){S.customTags[g]=next;drop=true}});return drop}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}else if(!p.hold&&p.cycle==='auto'&&p.grade!=null){p.cycle=DEFC[p.grade];drop=true}});if(migrateBirth())drop=true;if(drop)save()}
 function kstDay(){return Math.floor((Date.now()+9*3600e3)/864e5)+S.day}
 function earnPt(id){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[id]===d)return false;S.ptLog[id]=d;S.pts=(S.pts||0)+1;return true}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
@@ -178,7 +186,9 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  return h+`<div id="flist"><div class="card frz">${decal('arc','arc')}${decal('spark','spark')}<div class="frz-room">${tiers}<div class="fsv-fill" aria-hidden="true"><div class="fsv-rest"></div></div>${decal('frost','frost')}${note}</div><i class="frz-shade" aria-hidden="true"></i><i class="frz-foot" aria-hidden="true"></i><i class="frz-foot r" aria-hidden="true"></i></div></div></div>`}
 
 function allMemo(){const m={};GROUPS.forEach(g=>m[g[0]]=[...(g[0]=='생년'?[]:g[2])]);Object.entries(S.customTags).forEach(([g,a])=>a.forEach(t=>{if(!m[g].includes(t))m[g].push(t)}));S.people.forEach(p=>p.memo.forEach(t=>{const g=groupOf(t);if(g&&!m[g].includes(t))m[g].push(t)}));return m}
-function groupOf(t){if(S.tagMove&&S.tagMove[t])return S.tagMove[t];if(/^\d{4}$/.test(t)||/년대$/.test(t))return '생년';for(const g of GROUPS)if(g[2].includes(t))return g[0];for(const [g,a] of Object.entries(S.customTags||{}))if(a.includes(t))return g;return null}
+function groupOf(t){if(S.tagMove&&S.tagMove[t])return S.tagMove[t];if(isFullBirth(t)||isBirthDecade(t)||isBirthYear(t))return '생년';for(const g of GROUPS)if(g[2].includes(t))return g[0];for(const [g,a] of Object.entries(S.customTags||{}))if(a.includes(t))return g;return null}
+function toggleBirth(arr,t){const wipe=()=>{for(let k=arr.length-1;k>=0;k--)if(isBirthDecade(arr[k])||isBirthYear(arr[k]))arr.splice(k,1)};if(isBirthDecade(t)){const on=arr.includes(t);wipe();if(!on)arr.push(t);return}if(!isBirthYear(t))return;const i=arr.indexOf(t);if(i>=0){arr.splice(i,1);return}for(let k=arr.length-1;k>=0;k--)if(isBirthYear(arr[k]))arr.splice(k,1);const dec=decadeOfYear(t);if(!arr.includes(dec))arr.push(dec);arr.push(t)}
+function usedYears(dec){const ys=yearsOfDecade(dec),set=new Set();S.people.forEach(p=>(p.memo||[]).forEach(t=>{if(ys.includes(t))set.add(t)}));return ys.filter(y=>set.has(y))}
 const TCOLORS=['#834AF4','#75C895','#88CBF0','#89D16F','#F4A259','#3F89F6','#7F7CF6','#EE8FC0','#2AAFB3','#A8937F'];
 function tagInit(){S.tagRecent=S.tagRecent||[];S.tagGroups=S.tagGroups||[];S.tagMove=S.tagMove||{};S.tagGone=S.tagGone||[];S.groupGone=S.groupGone||[];S.groupName=S.groupName||{};S.groupColor=S.groupColor||{};S.customTags=S.customTags||{};ui.tagSel=ui.tagSel||[];
  const base=new Set();GROUPS.forEach(g=>(g[2]||[]).forEach(t=>base.add(t)));let dirty=false;
@@ -204,14 +214,17 @@ function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const
  <div class="chips tpills">${S.tagRecent.filter(t=>!S.tagGone.includes(t)&&(isRepTag(t)||tagMine(t))).map(t=>pill(t)).join('')}</div>`;
  h+=`<div class="tsec"><b>메모 태그</b><span class="phsub"> · 나만 봐요</span></div>`;
  if(edit)h+=`<p class="thint">메모 태그를 누르면 이름을 바꾸거나 지울 수 있어요. ⋯를 누르면 그룹을 바꿀 수 있어요.</p>`;
- memoGroupList().forEach(g=>{const ts=tagsIn(g).filter(tagMine);const more=edit?`<button type="button" class="t7more" data-a="tmore" data-g="${esc(g.key)}" aria-label="그룹 메뉴">⋯</button>`:'';
+ memoGroupList().forEach(g=>{let ts=tagsIn(g).filter(tagMine);if(g.key==='생년')ts=ts.filter(t=>!isBirthYear(t));const more=edit?`<button type="button" class="t7more" data-a="tmore" data-g="${esc(g.key)}" aria-label="그룹 메뉴">⋯</button>`:'';
   const chipsHtml=ts.map(t=>pill(t,'memo'));
   const bare=edit&&!ts.length;
   let pills;
   if(edit&&ts.length){const last=chipsHtml.pop();pills=chipsHtml.join('')+`<span class="t7morewrap">${last}${more}</span>`}
   else if(!edit)pills=chipsHtml.join('')||'<span class="small">아직 없어요</span>';
   else pills='';
-  h+=`<section class="tcard${bare?' is-empty':''}" style="--gc:${g.color}"><div class="tgh" data-g="${esc(g.key)}"><span class="gdot" aria-hidden="true"></span><h2>${esc(g.name)}</h2>${bare?more:''}</div>${pills?`<div class="chips tpills">${pills}</div>`:''}</section>`});
+  let yrs='';
+  if(g.key==='생년'&&!edit){const ys=[];(ui.tagSel||[]).filter(isBirthDecade).forEach(d=>usedYears(d).forEach(y=>{if(!ys.includes(y))ys.push(y)}));if(ys.length)yrs=`<div class="chips tpills">${ys.map(y=>pill(y,'memo')).join('')}</div>`}
+  const row=yrs?`<div class="tby">${pills?`<div class="chips tpills">${pills}</div>`:''}${yrs}</div>`:(pills?`<div class="chips tpills">${pills}</div>`:'');
+  h+=`<section class="tcard${bare?' is-empty':''}" style="--gc:${g.color}"><div class="tgh" data-g="${esc(g.key)}"><span class="gdot" aria-hidden="true"></span><h2>${esc(g.name)}</h2>${bare?more:''}</div>${row}</section>`});
  const reps=[...REP_POS,...REP_NEG];
  h+=`<div class="tsec"><b>평판 태그</b><span class="phsub"> · 익명으로 모여요</span></div>${edit?'<p class="thint">정해진 목록이라 검색만 돼요</p>':''}<div class="chips tpills">${reps.map(t=>pill(t,'rep')).join('')}</div>`;
  let dock='';
@@ -303,7 +316,7 @@ function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||
  <div class="bar">${ok?'':'<div class="hint">성격·등급을 고르면 저장할 수 있어요</div>'}<button class="btn-r" data-a="wsave" ${ok?'':'disabled'}>저장</button></div>`;
  return h}
 function selStyle(g){const pair={'#834AF4':['#E6DBFD','#834AF4'],'#75C895':['#D2E5DA','#207F45'],'#88CBF0':['#D0E3EE','#1575AA'],'#89D16F':['#D7E5D2','#397E20'],'#F4A259':['#EFDECE','#AE580C'],'#3F89F6':['#CEE1FC','#0B67EF']};const c=String(g.color||'').toUpperCase();const p=pair[c];if(p)return `--selfill:${p[0]};--sel:${p[1]}`;return /^#[0-9A-F]{6}$/.test(c)?`--sel:${c}`:'--sel:#1A1A1A'}
-function memoBox(sel){return `<div class="box"><div class="boxh">메모 태그<span class="phsub">&nbsp;· 나만 봐요</span></div>${memoGroupList().map(g=>{const birth=g.key==='생년';const ts=birth?(g.base||[]).filter(t=>!(S.tagGone||[]).includes(t)&&groupOf(t)==='생년'):tagsIn(g);const bsel=birth?sel.find(t=>groupOf(t)==='생년'):null;return `<div class="grp" style="${selStyle(g)}"><div class="gn"><span class="gdot" style="background:${g.color}"></span>${esc(g.name)}${birth&&bsel?` <span class="chip sm on" data-a="memo" data-t="${esc(bsel)}" style="margin-left:auto">${esc(bsel)}</span>`:''}</div><div class="chips">${ts.map(t=>`<button class="chip sm ${sel.includes(t)?'on':''}" data-a="memo" data-t="${esc(t)}">${esc(t)}</button>`).join('')}${birth?`<button class="chip sm dash" data-a="year">연도</button>`:`<button class="chip sm dash" data-a="memoadd" data-g="${esc(g.key)}">+ 추가</button>`}</div></div>`}).join('')}</div>`}
+function memoBox(sel){return `<div class="box"><div class="boxh">메모 태그<span class="phsub">&nbsp;· 나만 봐요</span></div>${memoGroupList().map(g=>{const birth=g.key==='생년';const ts=birth?(g.base||[]).filter(t=>!(S.tagGone||[]).includes(t)&&isBirthDecade(t)):tagsIn(g);const shown=birth?sel.filter(isBirthDecade).concat(sel.filter(isBirthYear)):[];const dec=birth?sel.find(isBirthDecade):null;const right=shown.length?`<span style="margin-left:auto;display:inline-flex;gap:6px">${shown.map(t=>`<span class="chip sm on" data-a="memo" data-t="${esc(t)}">${esc(t)}</span>`).join('')}</span>`:'';const years=dec?`<div class="chips">${yearsOfDecade(dec).map(y=>`<button class="chip sm ${sel.includes(y)?'on':''}" data-a="memo" data-t="${y}">${y}</button>`).join('')}</div>`:'';return `<div class="grp" style="${selStyle(g)}"><div class="gn"><span class="gdot" style="background:${g.color}"></span>${esc(g.name)}${right}</div><div class="chips">${ts.map(t=>`<button class="chip sm ${sel.includes(t)?'on':''}" data-a="memo" data-t="${esc(t)}">${esc(t)}</button>`).join('')}${birth?'':`<button class="chip sm dash" data-a="memoadd" data-g="${esc(g.key)}">+ 추가</button>`}</div>${years}</div>`}).join('')}</div>`}
 
 function notifs(){S.readBell=true;save();const g={};S.notifs.forEach(n=>(g[n.day]=g[n.day]||[]).push(n));
  let h=`<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">알림</h1><span class="sp"></span><button class="chip sm" data-a="readall" ${S.notifs.length?'':'disabled'}>모두 읽음</button><button class="ib" data-a="settings">⚙️</button></div>`;
@@ -422,11 +435,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
   else if(f=='persona'||f=='grade'){w[f]=+x;if(f=='grade')w.cycle=DEFC[+x];if(w.hold){w.hold=false;if(f=='grade')w.persona=w._p??null;else w.grade=w._g??null}}
   else if(f=='cycle')w.cycle=+x;
   else if(f!=='rel')w[f]=w[f]===x?null:x;render('same');break}
- case 'memo':{const arr=$('#sheet-root .sheet')?ui.ed.val:ui.w.memo;const t=el.dataset.t;const i=arr.indexOf(t);
-  if(i>=0)arr.splice(i,1);else{if(groupOf(t)=='생년'){for(let k=arr.length-1;k>=0;k--)if(groupOf(arr[k])=='생년')arr.splice(k,1)}arr.push(t)}
-  $('#sheet-root .sheet')?drawEdit():render('same');break}
- case 'year':{const inSheet=!!$('#sheet-root .sheet');const arr=inSheet?ui.ed.val:ui.w.memo;sheet(`<h3>생년 (연도)</h3><div class="chips">${Array.from({length:60},(_,i)=>1950+i).map(y=>`<button class="chip sm" data-a="yearpick" data-x="${y}" data-s="${inSheet?1:0}">${y}</button>`).join('')}</div>`);ui._yarr=arr;ui._ys=inSheet;break}
- case 'yearpick':{const arr=ui._yarr;for(let k=arr.length-1;k>=0;k--)if(groupOf(arr[k])=='생년')arr.splice(k,1);arr.push(el.dataset.x);if(ui._ys)drawEdit();else{closeSheet();render('same')}break}
+ case 'memo':{const sheetOn=!!$('#sheet-root .sheet');const arr=sheetOn?ui.ed.val:ui.w.memo;const t=el.dataset.t;if(isBirthDecade(t)||isBirthYear(t))toggleBirth(arr,t);else{const i=arr.indexOf(t);if(i>=0)arr.splice(i,1);else arr.push(t)}sheetOn?drawEdit():render('same');break}
  case 'memoadd':{const g=el.dataset.g;const t=prompt("'"+g+"' 태그 (20자까지)");if(t&&t.trim()){const v=t.trim().slice(0,20);S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(v))S.customTags[g].push(v);const arr=$('#sheet-root .sheet')?ui.ed.val:ui.w.memo;if(!arr.includes(v))arr.push(v);save();$('#sheet-root .sheet')?drawEdit():render('same')}break}
  case 'wrep':{const t=el.dataset.t,r=ui.w.rep,i=r.indexOf(t);if(i>=0)r.splice(i,1);else if(!(REP_NEG.includes(t)&&r.filter(x=>REP_NEG.includes(x)).length>=3))r.push(t);render('same');break}
  case 'wsave':{const v=nav[nav.length-1],q=P(v.id),w=ui.w;
@@ -449,9 +458,9 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'pgsheet':holdSheet(id);break;
  case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,cycle:'auto',ratedDay:S.day});delete q.rel}else{const was=q.hold,prev=q.grade;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was||prev!==hs.grade)q.cycle=DEFC[hs.grade]}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
- case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0)ui.tagSel.splice(i,1);else{ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
+ case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0){ui.tagSel.splice(i,1);if(isBirthDecade(t))ui.tagSel=ui.tagSel.filter(x=>!isBirthYear(x)||decadeOfYear(x)!==t)}else{ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
  case 'tsearch':{if(!tagMatch().length)break;tagRemember();drawTagSheet();break}
- case 'tx':{tagInit();ui.tagSel=ui.tagSel.filter(t=>t!==el.dataset.t);if(!ui.tagSel.length){closeSheet();render('same');break}render('same');drawTagSheet();break}
+ case 'tx':{tagInit();const tx=el.dataset.t;ui.tagSel=ui.tagSel.filter(t=>t!==tx);if(isBirthDecade(tx))ui.tagSel=ui.tagSel.filter(t=>!isBirthYear(t)||decadeOfYear(t)!==tx);if(!ui.tagSel.length){closeSheet();render('same');break}render('same');drawTagSheet();break}
  case 'tclear':{ui.tagSel=[];closeSheet();render('same');break}
  case 'tcall':{p.contacts.push({day:S.day,t:'전화'});const got=earnPt(p.id);save();toast('전화 기록을 남겼어요'+(got?' · 포인트 +1':''));break}
  case 'treclear':S.tagRecent=[];save();render('same');break;
