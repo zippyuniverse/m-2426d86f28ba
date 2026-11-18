@@ -496,7 +496,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 /* v61 태그 탭 */
 .tagpage .thint{margin:8px 0 0;color:#525252;font-size:13px;line-height:1.4}
 .tschip{flex:none;height:30px;border-radius:15px;background:#1A1A1A;color:#fff;font-size:13px;font-weight:600;padding:0 10px;display:inline-flex;align-items:center;gap:4px;line-height:1}
-.trecent{display:flex;align-items:center;justify-content:space-between;margin-top:28px;min-height:44px}
+.trecent{display:flex;align-items:center;justify-content:space-between;margin-top:8px;min-height:44px}
 .trecent b{font-size:15px}
 .tclearh{height:44px;padding:0 4px;color:#525252;font-size:13px;font-weight:600}
 .tclearh[disabled]{opacity:.4}
@@ -508,6 +508,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .tgh .gdot{flex:0 0 auto;width:12px;height:12px;border-radius:3px;background:var(--gc)}
 .tgh h2{margin:0;min-width:0;font-size:13px;font-weight:700;color:#1A1A1A;line-height:17px;max-height:34px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:keep-all;overflow-wrap:anywhere;overflow:hidden}
 .tcard>.tpills{gap:0 6px;min-width:0}
+.tagpage .tcard>.tpills:has(>.small){align-self:stretch;justify-content:center;align-items:center;min-height:44px}
 .tpills{gap:8px}
 .tagpage .thint+.chips.tpills,.tagpage .trecent+.chips.tpills,.wrep.tpills{gap:0 8px}
 .tpill{position:relative;z-index:0;height:44px;padding:0 14px;border:0;background:transparent;color:#1A1A1A;font-size:13px;font-weight:600;line-height:1;display:inline-flex;align-items:center}
