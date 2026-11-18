@@ -7,7 +7,7 @@ const CYC=[[7,'1주'],[30,'1개월'],[90,'3개월'],[180,'6개월'],[0,'연락 �
 const AGAIN=['무조건','상황 봐서','절대 안 함'];
 const REP_POS=['숫자에 강함','약속 칼같음','인맥왕','말발 좋음','디테일 장인'];
 const REP_NEG=['답장 냉동 보관','약속 해동 중','말만 투뿔','뒷심 부족','생색 마블링','숟가락 얹기','밀당 장인','회식 전용','핑계 양념','읽고 숙성'];
-const GROUPS=[['사는 곳','#834AF4',['여의도','마포']],['가족 구성','#75C895',['1남1녀','무자녀']],['생년','#88CBF0',['50s','60s','70s','80s','90s','00s']],['취미·관심사','#89D16F',['골프','등산']],['고향','#F4A259',['서울','부산','대구']],['출신 대학','#3F89F6',['연세대','고려대','서울대']]];
+const GROUPS=[['사는 곳','#834AF4',['여의도','마포']],['가족 구성','#75C895',['1남1녀','무자녀']],['생년','#88CBF0',['60s','70s','80s','90s','00s']],['취미·관심사','#89D16F',['골프','등산']],['고향','#F4A259',['서울','부산','대구']],['출신 대학','#3F89F6',['연세대','고려대','서울대']]];
 const BASE=new Date(2026,9,27);
 const $=s=>document.querySelector(s);
 const BACK='<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M 11 5 L 4 12 L 11 19 M 4 12 H 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -16,7 +16,7 @@ let S,nav=[{v:'shelf'}],ui={},lastN=null;
 
 function blank(){return {day:0,people:[],seq:1,customTags:{},notifs:[],readBell:false,accepted:false,verdictN:7,seenInfo:{},firstWrite:true}}
 const DECADE_ALL=['50s','60s','70s','80s','90s','00s','10s','20s'];
-const DECADE_BASE=['50s','60s','70s','80s','90s','00s'];
+const DECADE_BASE=['60s','70s','80s','90s','00s'];
 function isBirthDecade(t){return DECADE_ALL.includes(t)}
 function oldDecade(t){return /^(50|60|70|80|90|00)년대$/.test(String(t))}
 function isBirthYear(t){return /^(0\d|1\d|2\d|[5-9]\d)$/.test(t)}
