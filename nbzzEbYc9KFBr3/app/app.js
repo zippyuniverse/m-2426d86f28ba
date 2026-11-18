@@ -472,13 +472,9 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'tmoveok':{const t=ui.moveT,g=el.dataset.g;if(birthTag(t)||g==='생년')break;const og=groupOf(t);if(og&&S.customTags[og])S.customTags[og]=S.customTags[og].filter(x=>x!==t);S.tagMove[t]=g;S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(t))S.customTags[g].push(t);if(S.tagGone.includes(t))S.tagGone=S.tagGone.filter(x=>x!==t);save();closeSheet();const nm=(memoGroupList().find(x=>x.key===g)||{}).name||g;render('same');toast("'"+nm+"' 그룹으로 옮겼어요.");break}
  case 'tdel':if(birthTag(el.dataset.t))break;sheet(`<h3>'${esc(el.dataset.t)}' 태그를 지울까요?</h3><p>이 태그가 붙은 사람에게서도 빠져요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="tdelok" data-t="${esc(el.dataset.t)}">지우기</button></div>`,true);break;
  case 'tdelok':if(birthTag(el.dataset.t))break;dropTag(el.dataset.t);save();closeSheet();render('same');break;
- case 'filter':filterSheet();break;
  case 'newmore':ui.newAll=true;render('same');break;
  case 'fall':{ui.ff={st:[],gr:[],tg:[]};render('same');break}
  case 'fq':{ui.ff=ui.ff||{st:[],gr:[],tg:[]};const f=ui.ff,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);f[k]=i>=0?[]:[x];render('same');break}
- case 'ffx':{const f=ui.ff2,k=el.dataset.k,x=el.dataset.x,i=f[k].indexOf(x);i>=0?f[k].splice(i,1):f[k].push(x);filterSheet(true);break}
- case 'ffreset':ui.ff2={st:[],gr:[],tg:[]};filterSheet(true);break;
- case 'ffok':ui.ff=ui.ff2;closeSheet();render('same');break;
  case 'accept':S.accepted=true;S.reopen=false;save();render('same');break;
  case 'invite':toast('테스트용 예시: 실제로 보내지 않아요');break;
  case 'pubtog':if(S.pub){S.pub=false;save();render('same')}else sheet(`<h3>내 판정서를 공개할까요?</h3><p>연락처에 저장한 사용자 누구나 볼 수 있어요.<br>대표 등급·대표 성격·평판 태그만 보이고 누가 어떻게 평가했는지는 안 보여요.<br>누가 봤는지 알리지 않아요.<br>끄면 바로 안 보이고, 판정서를 닫으면 공개가 꺼져요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="pubok">공개하기</button></div>`,true);break;
@@ -492,12 +488,6 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
   if(x=='vn'){S.verdictN=S.verdictN>=5?3:7;save();testMenu();render('same')}
   if(x=='newc'){const n=['남궁민 과장','도현우 차장','변소라 대리'][S.seq%3];const np=mk({name:n,phone:'010-****-'+(2000+S.seq*53%7000),isNew:true,addedDay:S.day,ratedDay:null});S.people.push(np);save();closeSheet();ui.fresh=np.id;tab('shelf');setTimeout(()=>ui.fresh=null,500)}break}
  }});
-function filterSheet(keep){if(!keep)ui.ff2=JSON.parse(JSON.stringify(ui.ff||{st:[],gr:[],tg:[]}));const f=ui.ff2;f.tg=[];
- const base=visible().filter(p=>rated(p)||p.hold);let L=base;if(f.st.length)L=L.filter(p=>!p.hold&&f.st.includes(stage(p).k));if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)));
- const c=(k,x,l)=>`<button class="chip sm ${f[k].includes(x)?'on':''}" data-a="ffx" data-k="${k}" data-x="${esc(x)}">${esc(l)}</button>`;
- sheet(`<h3>골라 보기</h3><div class="gn" style="font-weight:700;margin:6px 0">상태</div><div class="chips">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>c('st',x[0],x[1])).join('')}</div>
- <div style="font-weight:700;margin:14px 0 6px">등급</div><div class="chips">${[5,4,3,2,1].map(g=>c('gr',String(g),GR[g][0])).join('')}${c('gr','hold','판정 보류')}</div>
- <div class="dbtn" style="margin-top:18px"><button data-a="ffreset">초기화</button><button class="r" data-a="ffok" ${L.length?'':'disabled style="opacity:.5"'}>${L.length?L.length+'명 보기':'맞는 사람이 없어요'}</button></div>`)}
 
 /* v7 제스처 */
 function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.querySelector('.gz[data-gid="'+id+'"]');
