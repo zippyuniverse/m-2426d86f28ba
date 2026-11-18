@@ -188,7 +188,6 @@ function pill(t,kind){const on=(ui.tagSel||[]).includes(t);const rep=kind==='rep
 function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const edit=!!ui.tagEdit;
  const chips=sel.map(t=>`<button type="button" class="tschip" data-a="tsel" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('');
  let h=`<div class="scr tagpage${sel.length?' hasbar':''}"><div class="hd"><h1>태그</h1>${info('tags')}${edit?'<span class="sp"></span><button type="button" class="tdone" data-a="teditdone">완료</button>':''}</div>
- <div class="note" style="margin:0 0 10px">메모 태그는 나만 봐요. 평판 태그만 익명으로 모여요.</div>
  <p class="thint">여러 개 고르면 모두 붙은 사람만 찾아요</p>
  <div class="trecent"><b>최근 검색 태그</b><button type="button" class="tclearh" data-a="treclear" ${S.tagRecent.length?'':'disabled'}>최근 기록 삭제</button></div>
  <div class="chips tpills">${S.tagRecent.filter(t=>!S.tagGone.includes(t)).map(t=>pill(t)).join('')}</div>`;
