@@ -205,7 +205,7 @@ function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const
   else pills='';
   h+=`<section class="tcard${bare?' is-empty':''}" style="--gc:${g.color}"><div class="tgh" data-g="${esc(g.key)}"><span class="gdot" aria-hidden="true"></span><h2>${esc(g.name)}</h2>${bare?more:''}</div>${pills?`<div class="chips tpills">${pills}</div>`:''}</section>`});
  const reps=[...REP_POS,...REP_NEG];
- h+=`<div class="tsec"><b>평판 태그</b><span class="phsub"> · 익명으로 모여요</span></div><p class="thint">정해진 목록이라 검색만 돼요</p><div class="chips tpills">${reps.map(t=>pill(t,'rep')).join('')}</div>`;
+ h+=`<div class="tsec"><b>평판 태그</b><span class="phsub"> · 익명으로 모여요</span></div>${edit?'<p class="thint">정해진 목록이라 검색만 돼요</p>':''}<div class="chips tpills">${reps.map(t=>pill(t,'rep')).join('')}</div>`;
  let dock='';
  if(!edit&&!sel.length)dock+=`<button type="button" class="tfab" data-a="tmenu" aria-expanded="${ui.tagMenu?'true':'false'}" aria-label="태그 메뉴">+</button>${ui.tagMenu?`<div class="tmenu"><button type="button" data-a="tadd">태그 추가</button><button type="button" data-a="tgadd">그룹 추가</button><button type="button" data-a="tedit">전체 편집</button></div>`:''}`;
  if(sel.length)dock+=`<div class="t7shade" aria-hidden="true"></div><div class="tagbar"><span class="tn">고른 태그를 모두 가진 사람 ${n}명</span><div class="tbchips" id="tbchips">${chips}</div><button type="button" class="btn-r" data-a="tsearch" ${n?'':'disabled'}>검색</button></div>`;
