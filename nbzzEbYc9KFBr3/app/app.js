@@ -185,18 +185,18 @@ function tagsIn(g){const gone=new Set(S.tagGone),set=[],push=t=>{if(!t||gone.has
 function isRepTag(t){return REP_POS.includes(t)||REP_NEG.includes(t)}
 function tagHit(t,q){return !q||t.toLowerCase().includes(q)}
 function pill(t,kind){const on=(ui.tagSel||[]).includes(t);const rep=kind==='rep'||isRepTag(t);const neg=REP_NEG.includes(t);const g=groupOf(t);const col=(memoGroupList().find(x=>x.key===g)||{}).color||'#E6E6E6';
- const dim=!on&&!rep&&!tagMine(t);const lock=ui.tagEdit&&rep;
- const cls=['tpill',on?'on':'',rep?'rep':'',neg?'neg':'',dim?'dim':'',lock?'lock':''].filter(Boolean).join(' ');
+ const lock=ui.tagEdit&&rep;
+ const cls=['tpill',on?'on':'',rep?'rep':'',neg?'neg':'',lock?'lock':''].filter(Boolean).join(' ');
  return `<button type="button" class="${cls}" style="--gc:${col}" data-a="tsel" data-t="${esc(t)}" data-k="${rep?'rep':'memo'}" aria-pressed="${on}" ${lock?'disabled':''}>${esc(t)}</button>`}
 function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const edit=!!ui.tagEdit;
  const chips=sel.map(t=>`<button type="button" class="tschip" data-a="tsel" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('');
  let h=`<div class="scr tagpage${sel.length?' hasbar':''}"><div class="hd"><h1>태그</h1>${info('tags')}${edit?'<span class="sp"></span><button type="button" class="tdone" data-a="teditdone">완료</button>':''}</div>
  <p class="thint">여러 개 고르면 모두 붙은 사람만 찾아요</p>
  <div class="trecent"><b>최근 검색 태그</b><button type="button" class="tclearh" data-a="treclear" ${S.tagRecent.length?'':'disabled'}>최근 기록 삭제</button></div>
- <div class="chips tpills">${S.tagRecent.filter(t=>!S.tagGone.includes(t)).map(t=>pill(t)).join('')}</div>`;
+ <div class="chips tpills">${S.tagRecent.filter(t=>!S.tagGone.includes(t)&&(isRepTag(t)||tagMine(t))).map(t=>pill(t)).join('')}</div>`;
  h+=`<div class="tsec"><b>메모 태그</b><span class="phsub"> · 나만 봐요</span></div>`;
  if(edit)h+=`<p class="thint">메모 태그를 누르면 이름을 바꾸거나 지울 수 있어요. ⋯를 누르면 그룹을 바꿀 수 있어요.</p>`;
- memoGroupList().forEach(g=>{const ts=tagsIn(g);const more=edit?`<button type="button" class="t7more" data-a="tmore" data-g="${esc(g.key)}" aria-label="그룹 메뉴">⋯</button>`:'';
+ memoGroupList().forEach(g=>{const ts=tagsIn(g).filter(tagMine);const more=edit?`<button type="button" class="t7more" data-a="tmore" data-g="${esc(g.key)}" aria-label="그룹 메뉴">⋯</button>`:'';
   const chipsHtml=ts.map(t=>pill(t,'memo'));
   const bare=edit&&!ts.length;
   let pills;
