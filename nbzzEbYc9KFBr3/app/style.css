@@ -517,7 +517,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .tagpage .tcard>.tpills:has(>.small){align-self:stretch;justify-content:center;align-items:center;min-height:44px}
 .tpills{gap:8px}
 .tagpage .thint+.chips.tpills,.tagpage .tsec+.chips.tpills,.tagpage .trecent+.chips.tpills,.wrep.tpills{gap:0 8px}
-.tpill{position:relative;z-index:0;height:44px;padding:0 14px;border:0;background:transparent;color:#1A1A1A;font-size:13px;font-weight:600;line-height:1;display:inline-flex;align-items:center}
+.tpill{position:relative;z-index:0;height:44px;padding:0 14px;border:0;background:transparent;color:#1A1A1A;font-size:13px;font-weight:400;line-height:1;display:inline-flex;align-items:center}
 .tpill:before{content:"";position:absolute;left:0;right:0;top:6px;height:32px;border-radius:16px;background:color-mix(in srgb,var(--gc,#F4F4F4) 16%,#fff);z-index:-1}
 .tpill.on{color:#fff}
 .tpill.on:before{background:#1A1A1A}
