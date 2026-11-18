@@ -190,8 +190,7 @@ function pill(t,kind){const on=(ui.tagSel||[]).includes(t);const rep=kind==='rep
  return `<button type="button" class="${cls}" style="--gc:${col}" data-a="tsel" data-t="${esc(t)}" data-k="${rep?'rep':'memo'}" aria-pressed="${on}" ${lock?'disabled':''}>${esc(t)}</button>`}
 function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const edit=!!ui.tagEdit;
  const chips=sel.map(t=>`<button type="button" class="tschip" data-a="tsel" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('');
- let h=`<div class="scr tagpage${sel.length?' hasbar':''}"><div class="hd"><h1>태그</h1>${info('tags')}${edit?'<span class="sp"></span><button type="button" class="tdone" data-a="teditdone">완료</button>':''}</div>
- <p class="thint">여러 개 고르면 모두 붙은 사람만 찾아요</p>
+ let h=`<div class="scr tagpage${sel.length?' hasbar':''}"><div class="hd"><h1>태그</h1>${info('tags')}<span class="phsub thlead">여러 개 고르면 모두 붙은 사람만 찾아요</span>${edit?'<button type="button" class="tdone" data-a="teditdone">완료</button>':''}</div>
  <div class="trecent"><b>최근 검색 태그</b><button type="button" class="tclearh" data-a="treclear" ${S.tagRecent.length?'':'disabled'}>최근 기록 삭제</button></div>
  <div class="chips tpills">${S.tagRecent.filter(t=>!S.tagGone.includes(t)&&(isRepTag(t)||tagMine(t))).map(t=>pill(t)).join('')}</div>`;
  h+=`<div class="tsec"><b>메모 태그</b><span class="phsub"> · 나만 봐요</span></div>`;
