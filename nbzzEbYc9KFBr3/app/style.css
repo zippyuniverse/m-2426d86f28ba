@@ -230,13 +230,7 @@ button[disabled]{cursor:default;pointer-events:none}
 #app{position:relative;z-index:1;background:#fff}
 #vlayer{position:fixed;inset:0;z-index:0;background:#0b0b0b;overflow-y:auto;-webkit-overflow-scrolling:touch;visibility:hidden}
 #vlayer.on{visibility:visible}
-#vpeek{position:fixed;z-index:5;display:none;pointer-events:none}
-#vfold{position:fixed;z-index:6;width:58px;height:63px;pointer-events:none;display:none}
-.vcorner{position:absolute;left:0;bottom:0;width:58px;height:58px;overflow:hidden;clip-path:polygon(0 100%,100% 100%,100% 0);background:radial-gradient(circle at 85% 80%,#2a2723 0,#151311 50%,#0b0b0b 85%)}
-.vface{position:absolute;left:6.8px;top:6.8px;width:48px;height:48px;background:url(emoji/hold_blink.png) 0 0/300% 100% no-repeat;image-rendering:pixelated}
-.vface.f1{background-position:50% 0}
-.vface.f2{background-position:100% 0}
-.vpaper{position:absolute;left:0;top:0;width:58px;height:63px;overflow:visible;display:block}
+#vcorner{position:fixed;z-index:6;width:96px;height:72px;pointer-events:none;display:none;image-rendering:pixelated}
 #vfx{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:6;pointer-events:none;overflow:visible;display:none}
 #vflap{filter:drop-shadow(-3px -4px 7px rgba(0,0,0,.28))}
 #vhit{position:fixed;z-index:7;display:none;border:0;padding:0;background:transparent;-webkit-tap-highlight-color:transparent;min-height:44px}
