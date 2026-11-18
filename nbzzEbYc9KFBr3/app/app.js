@@ -272,7 +272,7 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
  h+=`<div class="three"><button class="bigb" data-a="call" data-t="전화" data-id="${p.id}">📞 전화걸기</button><button class="bigb red" data-a="call" data-t="연락했어요" data-id="${p.id}">✓ 연락했어요</button></div>`;
  h+=`<h2>내 평가</h2><div class="card">`;
  h+=`<div class="kv kvtags" data-a="edit" data-f="memo" data-id="${p.id}"><span class="k">메모 태그<span class="phsub"> · 나만 봐요</span></span><span class="v tchips">${chips(p.memo,'memo')}</span></div>`;
- if(!hold)h+=`<div class="kv kvtags" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그<span class="phsub"> · 익명으로 모여요</span></span><span class="v tchips">${chips(p.rep,'rep')}</span></div><div class="kvsec"><span class="k">다시 맡기기</span><div class="chips">${AGAIN.map(a=>`<button class="chip ${p.again===a?'on':''}" data-a="qset" data-f="again" data-x="${a}" data-id="${p.id}" aria-pressed="${p.again===a}">${a}</button>`).join('')}</div></div><div class="kv" data-a="edit" data-f="priv" data-id="${p.id}"><span class="k">판정서 반영</span><span class="v">${p.priv?'나만 보기':'익명으로 반영'}</span></div>`;
+ if(!hold)h+=`<div class="kv kvtags" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그<span class="phsub"> · 익명으로 모여요</span></span><span class="v tchips">${chips(p.rep,'rep')}</span></div><div class="kvsec"><span class="k">다시 맡기기</span><div class="chips">${AGAIN.map(a=>`<button class="chip c32 ${p.again===a?'on':''}" data-a="qset" data-f="again" data-x="${a}" data-id="${p.id}" aria-pressed="${p.again===a}">${a}</button>`).join('')}</div></div><div class="kv" data-a="edit" data-f="priv" data-id="${p.id}"><span class="k">판정서 반영</span><span class="v">${p.priv?'나만 보기':'익명으로 반영'}</span></div>`;
  h+=`</div>`;
  if(!hold){const s=stage(p);const lab=cycLabel(p);h+=`<h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${lab?lab+' 주기 · ':''}마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${s.t}</span></div></div>`}
  h+=`<h2>연락 기록</h2><div class="card">${p.contacts.slice().reverse().map(c=>`<div class="kv ro"><span>${md(c.day)} ${c.t}</span></div>`).join('')||'<div class="kv ro"><span class="k">아직 없어요</span></div>'}</div>`;
@@ -287,9 +287,9 @@ function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||
  <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div>
  <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}<span class="gcy">${defCycleLine(g)}</span></button>`).join('')}</div>
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>`;
- if(!hold)h+=`<h2>연락 주기</h2><div class="chips">${CYC.map(c=>`<button class="chip ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
+ if(!hold)h+=`<h2>연락 주기</h2><div class="chips">${CYC.map(c=>`<button class="chip c32 ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
  h+=memoBox(w.memo)+`<div class="box ${hold?'dim':''}"><div class="boxh">평판 태그<span class="phsub">&nbsp;· 익명으로 모여요</span></div>${hold?'<div class="note wrepnote">성격과 등급을 고르면 평판 태그를 달 수 있어요.</div>':writeRep(w.rep)}</div>`;
- if(!hold)h+=`<h2>다시 거래를 맡기겠다?<span class="opt">선택</span></h2><div class="chips">${AGAIN.map(a=>`<button class="chip ${w.again===a?'on':''}" data-a="w" data-f="again" data-x="${a}">${a}</button>`).join('')}</div><div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${w.priv?'on':''}" data-a="w" data-f="priv"></button></div>`;
+ if(!hold)h+=`<h2>다시 거래를 맡기겠다?<span class="opt">선택</span></h2><div class="chips">${AGAIN.map(a=>`<button class="chip c32 ${w.again===a?'on':''}" data-a="w" data-f="again" data-x="${a}">${a}</button>`).join('')}</div><div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${w.priv?'on':''}" data-a="w" data-f="priv"></button></div>`;
  h+=`</div>
  <div class="bar">${ok?'':'<div class="hint">성격·등급을 고르면 저장할 수 있어요</div>'}<button class="btn-r" data-a="wsave" ${ok?'':'disabled'}>저장</button></div>`;
  return h}
@@ -368,7 +368,7 @@ function drawEdit(){const e=ui.ed,p=P(e.id);let b='';const T={grade:'등급',per
  if(e.f=='grade')b=`<div class="grades">${[5,4,3,2,1].map(g=>`<button class="${e.val===g?'on':''}" data-a="edx" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>`;
  if(e.f=='persona')b=`<div class="grid3">${PERS.map((n,i)=>`<button class="tile ${e.val===i?'on':''}" data-a="edx" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div>`;
  if(e.f=='again')b=`<div class="chips">${AGAIN.map(a=>`<button class="chip ${e.val===a?'on':''}" data-a="edx" data-x="${a}">${a}</button>`).join('')}</div>`;
- if(e.f=='cycle')b=`<div class="chips">${CYC.map(c=>`<button class="chip ${e.val===c[0]?'on':''}" data-a="edx" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
+ if(e.f=='cycle')b=`<div class="chips">${CYC.map(c=>`<button class="chip c32 ${e.val===c[0]?'on':''}" data-a="edx" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
  if(e.f=='priv')b=`<div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${e.val?'on':''}" data-a="edx" data-x="t"></button></div>${e.val?'<div class="note">다음 토요일 오전 9시 갱신부터 판정서에서 빠져요. 이미 열린 지난 판정서에는 남을 수 있어요.</div>':''}`;
  if(e.f=='memo')b=memoBox(e.val);
  if(e.f=='rep')b=repChips(e.val,'edx','x');
