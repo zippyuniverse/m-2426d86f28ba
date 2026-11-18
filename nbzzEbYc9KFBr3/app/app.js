@@ -14,7 +14,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let S,nav=[{v:'shelf'}],ui={},lastN=null;
 
 function blank(){return {day:0,people:[],seq:1,customTags:{},notifs:[],readBell:false,accepted:false,verdictN:7,seenInfo:{},firstWrite:true}}
-function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(p&&Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}});if(drop)save()}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}});if(drop)save()}
 function kstDay(){return Math.floor((Date.now()+9*3600e3)/864e5)+S.day}
 function earnPt(id){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[id]===d)return false;S.ptLog[id]=d;S.pts=(S.pts||0)+1;return true}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
@@ -64,7 +64,7 @@ function seed(){S=blank();const d=0;
  add({name:'정은주 차장',phone:'010-****-7781',grade:1,persona:6,ratedDay:-20,rep:['답장 냉동 보관','핑계 양념']});
  add({name:'최은정 이사',phone:'010-****-8890',grade:4,persona:5,ratedDay:-15,contacts:[{day:-5,t:'문자'}]});
  add({name:'서준호 대리',phone:'010-****-9012',grade:2,persona:4,ratedDay:-25,contacts:[{day:-20,t:'전화'}]});
- add({name:'한동욱 이사',phone:'010-****-1150',hold:true,cycle:180,ratedDay:-127});
+ add({name:'한동욱 이사',phone:'010-****-1150',hold:true,ratedDay:-127});
  add({name:'김민준 과장',phone:'010-****-2267',hold:true,ratedDay:-3});
  add({name:'윤기석 대표',phone:'010-****-3378',isNew:true,addedDay:0,ratedDay:null});
  add({name:'강태현 차장',phone:'010-****-4489',isNew:true,addedDay:-3,ratedDay:null});
@@ -261,7 +261,7 @@ function verdict(){let h=`<div class="vd"><div class="vtop"><button class="vback
 function pubVerdict(v){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">공개된 판정서</h1></div>${verdictBody(7,true)}<p class="note">부정 태그는 공개된 판정서에 보이지 않아요.</p></div>`}
 
 /* 사람 상세 */
-function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const hold=p.hold;
+function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
  const chips=(list,kind)=>`<span class="tlist">${list.length?list.map(t=>`<span class="ptag ${kind}${kind==='rep'&&REP_NEG.includes(t)?' neg':''}">${esc(t)}</span>`).join(''):'<span class="blank">빈칸</span>'}</span>`;
  let h=`<div class="scr pdetail"><div class="hd phd"><button type="button" class="pback" data-a="back" aria-label="뒤로가기"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M 11 5 L 4 12 L 11 19 M 4 12 H 21" fill="none" stroke="#252525" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="sp"></span></div>
  <div class="ph-head">${!hold&&!S.gintro?'<div class="gintro">캐릭터를 쓰다듬거나,<br>두 번 톡톡 꿀밤을 줘 보세요</div>':''}<div class="gz${hold?' nog':''}" ${hold?'':`data-gid="${p.id}"`}>${!hold&&!S.gintro?'<span class="gh gh-l" aria-hidden="true">👆<br>⟷</span><span class="gh gh-r" aria-hidden="true">((👆</span>':''}<div class="av"><span class="face">${!hold&&p.persona!=null&&organic(p)?`<img class="${fbn('o'+p.persona)}" src="emoji/o${p.persona}.svg" alt="유기농">`:emo(p,'')}<i class="fx"></i></span>${hold||p.grade==null||p.persona==null?'':`<button class="stampbtn" data-a="pgsheet" data-id="${p.id}" aria-label="성격·등급 고르기">${stamp(p.grade,true)}</button>`}</div>${hold?'':`<button class="sr" data-a="gpat" data-id="${p.id}">쓰담쓰담</button><button class="sr" data-a="gkkul" data-id="${p.id}">꿀밤 콩콩</button>`}</div><button class="plabel" data-a="pgsheet" data-id="${p.id}">${hold?'판정 보류':(p.grade==null||p.persona==null)?'아직 판정 없음':PERS[p.persona]+' · '+GR[p.grade][0]+'등급'} ›</button><h1>${esc(p.name)} ${hold&&organic(p)?'<span class="org" data-a="orgtip">유기농</span>':''}</h1><div class="small">${p.phone}</div></div>`;
@@ -270,8 +270,9 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const s=stage(p);const 
  h+=`<h2>내 평가</h2><div class="card">`;
  h+=`<div class="kv kvtags" data-a="edit" data-f="memo" data-id="${p.id}"><span class="k">메모 태그<span class="phsub"> · 나만 봐요</span></span><span class="v tchips">${chips(p.memo,'memo')}</span></div>`;
  if(!hold)h+=`<div class="kv kvtags" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그<span class="phsub"> · 익명으로 모여요</span></span><span class="v tchips">${chips(p.rep,'rep')}</span></div><div class="kvsec"><span class="k">다시 맡기기</span><div class="chips">${AGAIN.map(a=>`<button class="chip ${p.again===a?'on':''}" data-a="qset" data-f="again" data-x="${a}" data-id="${p.id}" aria-pressed="${p.again===a}">${a}</button>`).join('')}</div></div><div class="kv" data-a="edit" data-f="priv" data-id="${p.id}"><span class="k">판정서 반영</span><span class="v">${p.priv?'나만 보기':'익명으로 반영'}</span></div>`;
- h+=`</div><h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${cycLabel(p)} 주기 · 마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${hold?'판정 보류':s.t}</span></div></div>
- <h2>연락 기록</h2><div class="card">${p.contacts.slice().reverse().map(c=>`<div class="kv ro"><span>${md(c.day)} ${c.t}</span></div>`).join('')||'<div class="kv ro"><span class="k">아직 없어요</span></div>'}</div>`;
+ h+=`</div>`;
+ if(!hold){const s=stage(p);h+=`<h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${cycLabel(p)} 주기 · 마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${s.t}</span></div></div>`}
+ h+=`<h2>연락 기록</h2><div class="card">${p.contacts.slice().reverse().map(c=>`<div class="kv ro"><span>${md(c.day)} ${c.t}</span></div>`).join('')||'<div class="kv ro"><span class="k">아직 없어요</span></div>'}</div>`;
  if(p.pub)h+=`<button class="btn-g" style="margin-top:14px" data-a="pubv">공개된 판정서 보기 <span class="badge test">테스트용 예시</span></button>`;
  h+=p.hidden?`<button class="btn-g" style="margin-top:14px" data-a="unhide" data-id="${p.id}">다시 보이기</button>`:`<button class="btn-g" style="margin-top:14px" data-a="hide" data-id="${p.id}">냉장고에서 숨기기</button>`;
  h+=`<button class="link-red" data-a="del" data-id="${p.id}">${hold?'이 기록 지우기':'이 평가 지우기'}</button></div>`;
@@ -282,8 +283,8 @@ function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||
  let h=`<div class="scr nonav"><div class="hd"><button class="back" data-a="back">‹</button><div style="flex:1"><div style="font-weight:800;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
  <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div>
  <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>
- <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>
- <h2>연락 주기</h2>${hold?'<div class="note" style="margin:-4px 0 8px">판정 보류는 자동으로 1개월 주기예요.</div>':''}<div class="chips">${CYC.map(c=>`<button class="chip ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
+ <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>`;
+ if(!hold)h+=`<h2>연락 주기</h2><div class="chips">${CYC.map(c=>`<button class="chip ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
  h+=memoBox(w.memo)+`<div class="box ${hold?'dim':''}"><div class="boxh">평판 태그<span class="phsub">&nbsp;· 익명으로 모여요</span></div>${hold?'<div class="note wrepnote">성격과 등급을 고르면 평판 태그를 달 수 있어요.</div>':writeRep(w.rep)}</div>`;
  if(!hold)h+=`<h2>다시 거래를 맡기겠다?<span class="opt">선택</span></h2><div class="chips">${AGAIN.map(a=>`<button class="chip ${w.again===a?'on':''}" data-a="w" data-f="again" data-x="${a}">${a}</button>`).join('')}</div><div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${w.priv?'on':''}" data-a="w" data-f="priv"></button></div>`;
  h+=`</div>
@@ -369,7 +370,7 @@ function drawEdit(){const e=ui.ed,p=P(e.id);let b='';const T={grade:'등급',per
  if(e.f=='memo')b=memoBox(e.val);
  if(e.f=='rep')b=repChips(e.val,'edx','x');
  sheet(`<h3>${T}</h3>${b}<div style="height:16px"></div><button class="btn-r" data-a="edsave">저장</button>`)}
-function confirmDel(id){const p=P(id);sheet(p.hold?`<h3>이 기록을 지울까요?</h3><p>연락 주기와 메모 태그가 지워져요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="delok" data-id="${id}">지우기</button></div>`:`<h3>이 평가를 지울까요?</h3><p>지운 평가는 다음 토요일 오전 9시 갱신부터 빠져요. 이미 열린 지난 판정서에는 남을 수 있어요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="delok" data-id="${id}">지우기</button></div>`,true)}
+function confirmDel(id){const p=P(id);sheet(p.hold?`<h3>이 기록을 지울까요?</h3><p>메모와 태그가 지워져요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="delok" data-id="${id}">지우기</button></div>`:`<h3>이 평가를 지울까요?</h3><p>지운 평가는 다음 토요일 오전 9시 갱신부터 빠져요. 이미 열린 지난 판정서에는 남을 수 있어요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="delok" data-id="${id}">지우기</button></div>`,true)}
 
 function testMenu(){sheet(`<h3>테스트 메뉴</h3><div class="small">지금 날짜: ${mdw(S.day)}</div><div style="display:grid;gap:8px;margin-top:12px">
  <button class="btn-g" data-a="t" data-x="1">하루 넘기기</button><button class="btn-g" data-a="t" data-x="7">7일 넘기기</button><button class="btn-g" data-a="t" data-x="newc">새 연락처 들어오게 하기</button>
@@ -429,12 +430,12 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'hide':p.hidden=true;save();back();toast('냉장고에서 숨겼어요');break;
  case 'del':confirmDel(id);break;
  case 'delok':S.people=S.people.filter(x=>x.id!=id);save();closeSheet();nav=[{v:'shelf'}];render('back');toast('지웠어요');break;
- case 'edit':editSheet(id,el.dataset.f);break;
+ case 'edit':if(el.dataset.f==='cycle'&&p&&p.hold)break;editSheet(id,el.dataset.f);break;
  case 'edx':{const e2=ui.ed,x=el.dataset.x;if(e2.f=='grade'||e2.f=='persona')e2.val=+x;else if(e2.f=='cycle')e2.val=x=='auto'?'auto':+x;else if(e2.f=='priv')e2.val=!e2.val;else if(e2.f=='rep'){const i=e2.val.indexOf(x);if(i>=0)e2.val.splice(i,1);else if(!(REP_NEG.includes(x)&&e2.val.filter(t=>REP_NEG.includes(t)).length>=3))e2.val.push(x)}else e2.val=e2.val===x?null:x;drawEdit();break}
  case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}q[e2.f]=e2.val;if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
  case 'hsx':{const h=ui.hs;if(el.dataset.f=='hold'){h.hold=!h.hold;if(h.hold){h.grade=null;h.persona=null}}else{h[el.dataset.f]=+el.dataset.x;h.hold=false}drawHold();break}
  case 'pgsheet':holdSheet(id);break;
- case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){const was=q.hold;Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,ratedDay:S.day});delete q.rel;if(!was)q.cycle='auto'}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
+ case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,cycle:'auto',ratedDay:S.day});delete q.rel}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
  case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0)ui.tagSel.splice(i,1);else{ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
  case 'tsearch':{if(!tagMatch().length)break;tagRemember();drawTagSheet();break}
