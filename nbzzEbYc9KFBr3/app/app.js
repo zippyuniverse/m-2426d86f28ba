@@ -7,7 +7,7 @@ const CYC=[[7,'1주'],[30,'1개월'],[90,'3개월'],[180,'6개월'],[0,'연락 �
 const AGAIN=['무조건','상황 봐서','절대 안 함'];
 const REP_POS=['숫자에 강함','약속 칼같음','인맥왕','말발 좋음','디테일 장인'];
 const REP_NEG=['답장 냉동 보관','약속 해동 중','말만 투뿔','뒷심 부족','생색 마블링','숟가락 얹기','밀당 장인','회식 전용','핑계 양념','읽고 숙성'];
-const GROUPS=[['사는 곳','#834AF4',['여의도','마포']],['가족 구성','#75C895',['1남1녀','무자녀']],['생년','#88CBF0',['50년대','60년대','70년대','80년대','90년대','00년대']],['취미·관심사','#89D16F',['골프','등산']],['고향','#F4A259',['서울','부산','대구']],['출신 대학','#3F89F6',['연세대','고려대','서울대']]];
+const GROUPS=[['사는 곳','#834AF4',['여의도','마포']],['가족 구성','#75C895',['1남1녀','무자녀']],['생년','#88CBF0',['50s','60s','70s','80s','90s','00s']],['취미·관심사','#89D16F',['골프','등산']],['고향','#F4A259',['서울','부산','대구']],['출신 대학','#3F89F6',['연세대','고려대','서울대']]];
 const BASE=new Date(2026,9,27);
 const $=s=>document.querySelector(s);
 const BACK='<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M 11 5 L 4 12 L 11 19 M 4 12 H 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -15,14 +15,16 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let S,nav=[{v:'shelf'}],ui={},lastN=null;
 
 function blank(){return {day:0,people:[],seq:1,customTags:{},notifs:[],readBell:false,accepted:false,verdictN:7,seenInfo:{},firstWrite:true}}
-function isBirthDecade(t){return /^(50|60|70|80|90|00)년대$/.test(t)}
+function isBirthDecade(t){return /^(50|60|70|80|90|00)s$/.test(t)}
+function oldDecade(t){return /^(50|60|70|80|90|00)년대$/.test(String(t))}
 function isBirthYear(t){return /^(0[0-9]|[5-9]\d)$/.test(t)}
-function decadeOfYear(yy){const n=+yy;return (n<10?'00':String(Math.floor(n/10))+'0')+'년대'}
+function decadeOfYear(yy){const n=+yy;return (n<10?'00':String(Math.floor(n/10))+'0')+'s'}
 function yearsOfDecade(dec){const n=+dec.slice(0,2);return Array.from({length:10},(_,i)=>String(n+i).padStart(2,'0'))}
 function isFullBirth(t){return /^(19[5-9]\d|200\d)$/.test(String(t))}
-function decadeOfFull(y){y=+y;return y>=2000?'00년대':String(y).slice(2,3)+'0년대'}
-function migrateBirthList(arr){if(!Array.isArray(arr)||!arr.some(isFullBirth))return arr;let dec=null,yy=null;const rest=[];arr.forEach(t=>{if(isFullBirth(t)){dec=decadeOfFull(t);yy=String(+t).slice(-2)}else if(!isBirthDecade(t)&&!isBirthYear(t))rest.push(t)});if(dec)rest.push(dec);if(yy)rest.push(yy);return rest}
-function migrateBirth(){let drop=false;(S.people||[]).forEach(p=>{if(!p||!p.memo)return;const next=migrateBirthList(p.memo);if(next!==p.memo){p.memo=next;drop=true}});if(Array.isArray(S.tagRecent)){const next=migrateBirthList(S.tagRecent);if(next!==S.tagRecent){S.tagRecent=next;drop=true}}if(Array.isArray(S.tagGone)){const next=S.tagGone.filter(t=>!isFullBirth(t));if(next.length!==S.tagGone.length){S.tagGone=next;drop=true}}if(S.tagMove)Object.keys(S.tagMove).forEach(t=>{if(isFullBirth(t)){delete S.tagMove[t];drop=true}});if(S.customTags)Object.keys(S.customTags).forEach(g=>{const a=S.customTags[g];if(!Array.isArray(a))return;const next=a.filter(t=>!isFullBirth(t));if(next.length!==a.length){S.customTags[g]=next;drop=true}});return drop}
+function decadeOfFull(y){y=+y;return y>=2000?'00s':String(y).slice(2,3)+'0s'}
+function migrateBirthList(arr){if(!Array.isArray(arr)||!arr.some(t=>isFullBirth(t)||oldDecade(t)))return arr;if(!arr.some(isFullBirth))return arr.map(t=>oldDecade(t)?t.replace('년대','s'):t);let dec=null,yy=null;const rest=[];arr.forEach(t=>{if(isFullBirth(t)){dec=decadeOfFull(t);yy=String(+t).slice(-2)}else if(!isBirthDecade(t)&&!oldDecade(t)&&!isBirthYear(t))rest.push(t)});if(dec)rest.push(dec);if(yy)rest.push(yy);return rest}
+function mapStoredTag(t){if(isFullBirth(t))return null;return oldDecade(t)?t.replace('년대','s'):t}
+function migrateBirth(){let drop=false;(S.people||[]).forEach(p=>{if(!p||!p.memo)return;const next=migrateBirthList(p.memo);if(next!==p.memo){p.memo=next;drop=true}});if(Array.isArray(S.tagRecent)){const next=migrateBirthList(S.tagRecent);if(next!==S.tagRecent){S.tagRecent=next;drop=true}}if(Array.isArray(S.tagGone)){const next=[];S.tagGone.forEach(t=>{const n=mapStoredTag(t);if(n!=null&&!next.includes(n))next.push(n)});if(next.length!==S.tagGone.length||next.some((t,i)=>t!==S.tagGone[i])){S.tagGone=next;drop=true}}if(S.tagMove)Object.keys(S.tagMove).forEach(t=>{if(isFullBirth(t)){delete S.tagMove[t];drop=true}else if(oldDecade(t)){const n=t.replace('년대','s');if(S.tagMove[n]==null)S.tagMove[n]=S.tagMove[t];delete S.tagMove[t];drop=true}});if(S.customTags)Object.keys(S.customTags).forEach(g=>{const a=S.customTags[g];if(!Array.isArray(a))return;const next=[];a.forEach(t=>{const n=mapStoredTag(t);if(n!=null&&!next.includes(n))next.push(n)});if(next.length!==a.length||next.some((t,i)=>t!==a[i])){S.customTags[g]=next;drop=true}});return drop}
 function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}else if(!p.hold&&p.cycle==='auto'&&p.grade!=null){p.cycle=DEFC[p.grade];drop=true}});if(migrateBirth())drop=true;if(drop)save()}
 function kstDay(){return Math.floor((Date.now()+9*3600e3)/864e5)+S.day}
 function earnPt(id){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[id]===d)return false;S.ptLog[id]=d;S.pts=(S.pts||0)+1;return true}
@@ -77,7 +79,7 @@ function seed(){S=blank();const d=0;
  const add=o=>S.people.push(mk(o));
  add({name:'박철호 부장',phone:'010-****-1234',grade:5,persona:2,ratedDay:-60,contacts:[{day:-7,t:'전화'}],rep:['숫자에 강함','약속 칼같음'],memo:['여의도','골프'],pats:[-8,-2],pub:true});
  add({name:'김형준 대표',phone:'010-****-2231',grade:4,persona:5,ratedDay:-120,contacts:[{day:-51,t:'문자'}]});
- add({name:'이서연 과장',phone:'010-****-3412',grade:3,persona:0,ratedDay:-100,contacts:[{day:-93,t:'연락했어요'}],memo:['80년대']});
+ add({name:'이서연 과장',phone:'010-****-3412',grade:3,persona:0,ratedDay:-100,contacts:[{day:-93,t:'연락했어요'}],memo:['80s']});
  add({name:'윤지현 팀장',phone:'010-****-5520',grade:4,persona:1,cycle:7,ratedDay:-40,contacts:[{day:-9,t:'전화'}],pats:[-9,-3]});
  add({name:'최영수 상무',phone:'010-****-6604',grade:2,persona:3,ratedDay:-30,contacts:[{day:-10,t:'전화'}],rep:['말만 투뿔']});
  add({name:'정은주 차장',phone:'010-****-7781',grade:1,persona:6,ratedDay:-20,rep:['답장 냉동 보관','핑계 양념']});
@@ -170,7 +172,7 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
 function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 태그 필터 없앰(태그 탭이 따로 있음) */const sq=(ui.fs||'').trim().toLowerCase();let L=sq?searchAll(sq):searchPeople();
  if(f.st.length)L=L.filter(p=>!p.hold&&f.st.includes(stage(p).k));
  if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));
- if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
+ if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(isBirthDecade(t)&&p.memo.some(m=>isFullBirth(m)&&decadeOfFull(m)===t))));
  L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;const none=!L.length||!all;
  const note=!all?`<div class="door-note"><div class="door-card"><i class="door-tape" aria-hidden="true"></i><p class="door-title">냉장고가 비어 있어요.</p><p class="door-body">진열대에서 연락처를 찾아 첫 평가를 써&nbsp;보세요.</p><button class="btn-red-sm" data-a="tab" data-v="shelf">진열대로 가기</button></div></div>`:(none?`<div class="door-note"><div class="door-card"><i class="door-tape" aria-hidden="true"></i><p class="door-title">맞는 사람이 없어요</p>${f.gr.length||f.st.length?'<button class="btn-o" data-a="fall">전체 보기</button>':''}</div></div>`:'');
  let h=`<div class="scr"><div class="hd"><h1>냉장고</h1><span class="sp"></span></div>
