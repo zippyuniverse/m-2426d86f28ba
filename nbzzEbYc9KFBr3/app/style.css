@@ -71,8 +71,8 @@ nav.tab button.on b{opacity:1;filter:none}
 .box .chip.sm{height:30px;min-height:30px;padding:0 10px;font-size:13px;font-weight:400}
 .box .chip.sm.on{background:var(--selfill,color-mix(in srgb,var(--sel,#1A1A1A) 20%,#fff));color:#1A1A1A;box-shadow:inset 0 0 0 2px var(--sel,#1A1A1A)}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.tile{border:1px solid #D4D4D4;border-radius:var(--r);height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:0.8235rem;background:#fff}
-.tile img{width:34px;height:34px;object-fit:contain}
+.tile{border:1px solid #D4D4D4;border-radius:var(--r);height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:0.8235rem;background:#fff}
+.tile img{width:51px;height:51px;object-fit:contain}
 .tile.on{border:2px solid var(--red);background:#FFF5F5;font-weight:700}
 .grades{display:flex;justify-content:space-between;gap:4px}
 .grades button{min-height:44px;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:0.7647rem;font-weight:600;flex:1}
@@ -337,7 +337,7 @@ nav.tab.xslide.go button[data-v="fridge"] b{animation:tabIcoIn .3s linear forwar
 @keyframes tabIcoOut{0%,30%{color:var(--ink)}70%,100%{color:#9A9A9A}}
 @keyframes tabIcoIn{0%,30%{color:#9A9A9A}70%,100%{color:var(--ink)}}
 .bic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;color:#5E5E5E}.bic svg{width:30px;height:30px}
-/* v28 사람 상세 성격·등급 고르기만: 얼굴 51px·타일 88px, 판정 보류 30% / 저장 70% 한 줄 */
+/* v28 판정 보류 줄: 30% / 저장 70%. 성격 타일 얼굴 51px·칸 88px는 .tile */
 .hsheet .tile{height:88px}
 .hsheet .tile img{width:51px;height:51px}
 .hsheet .hint{margin-top:14px}
@@ -414,9 +414,9 @@ img.fbn-p1,img.fbn-p2,img.fbn-p9{image-rendering:pixelated;image-rendering:crisp
 .gz .face img.fbn-p1,.ph-head .av img.fbn-p1{transform-origin:90.764px 165.818px;transform:translateX(5.236px) scale(1.0571)}
 .gz .face img.fbn-p2,.ph-head .av img.fbn-p2{transform-origin:96px 163.2px;transform:translateX(0px) scale(1.0882)}
 .gz .face img.fbn-p9,.ph-head .av img.fbn-p9{transform-origin:97.309px 173.673px;transform:translateX(-1.309px) scale(1.1654)}
-.tile img.fbn-p1{transform-origin:16.073px 29.364px;transform:translateX(0.927px) scale(1.0571)}
-.tile img.fbn-p2{transform-origin:17px 28.9px;transform:translateX(0px) scale(1.0882)}
-.tile img.fbn-p9{transform-origin:17.232px 30.755px;transform:translateX(-0.232px) scale(1.1654)}
+.tile img.fbn-p1{transform-origin:24.109px 44.045px;transform:translateX(1.391px) scale(1.0571)}
+.tile img.fbn-p2{transform-origin:25.5px 43.35px;transform:translateX(0px) scale(1.0882)}
+.tile img.fbn-p9{transform-origin:25.848px 46.132px;transform:translateX(-0.348px) scale(1.1654)}
 .hsheet .tile img.fbn-p1{transform-origin:24.109px 44.045px;transform:translateX(1.391px) scale(1.0571)}
 .hsheet .tile img.fbn-p2{transform-origin:25.5px 43.35px;transform:translateX(0px) scale(1.0882)}
 .hsheet .tile img.fbn-p9{transform-origin:25.848px 46.132px;transform:translateX(-0.348px) scale(1.1654)}
