@@ -43,17 +43,12 @@ h2 small{font-weight:500;color:var(--sub);font-size:0.8824rem;margin-left:4px}
 .btn-r[data-a=hssave][disabled]{background:var(--red);color:#fff;opacity:.4}
 .btn-g{height:50px;border-radius:var(--r);background:var(--bg2);font-weight:600;width:100%}
 .btn-red-sm{height:44px;border-radius:var(--r);background:var(--red);color:#fff;font-weight:700;padding:0 18px}
-.stamp{position:relative;flex:none;width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 0 0 2.5px #fff,0 1px 2px rgba(0,0,0,.18),0 2px 6px rgba(0,0,0,.14);display:inline-flex;align-items:center;justify-content:center}
-/* v16 도장: 두꺼운 테·글씨, 잉크 질감(index.html의 SVG 필터 ink-s/ink-l), 바깥 흰 테+그림자, -6° 기울기, 등급별 색 --sc */
+.stamp{position:relative;flex:none;width:40px;height:40px;background:transparent;display:inline-flex;line-height:0}
+.stamp svg{display:block;width:40px;height:40px}
 .g5{--sc:#D52934}.g4{--sc:#C0434B}.g3{--sc:#AE5359}.g2{--sc:#995E62}.g1{--sc:#7D6B6C}
-.stamp .ink,.vstamp .ink{position:absolute;border-radius:50%;border-style:solid;border-color:var(--sc);color:var(--sc);display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;transform:rotate(-6deg)}
-.stamp .ink{inset:2px;border-width:3.5px;font-size:1rem;letter-spacing:-.8px;-webkit-text-stroke:.9px var(--sc);filter:url(#ink-s)}
-.stamp.g1 .ink{font-size:.8rem}
-.stamp.big{width:66px;height:66px}
-.stamp.big .ink{inset:3px;border-width:4.5px;box-shadow:inset 0 0 0 3px #fff,inset 0 0 0 6px var(--sc);font-size:1.45rem;-webkit-text-stroke:1.1px var(--sc);filter:url(#ink-l)}
-.stamp.big.g1 .ink{font-size:1.12rem}
-
-.stamp.hold{background:transparent;box-shadow:none;border:2px dashed #BDBDBD}
+.vstamp .ink{position:absolute;border-radius:50%;border-style:solid;border-color:var(--sc);color:var(--sc);display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;transform:rotate(-6deg)}
+.stamp.big{width:60px;height:60px}
+.stamp.big svg{width:60px;height:60px}
 .em{width:24px;height:24px;object-fit:contain;flex:none}
 .org{display:inline-block;background:var(--org);color:#fff;font-size:0.5882rem;font-weight:700;border-radius:3px;padding:1px 3px}
 .empty{text-align:center;color:var(--sub);padding:34px 10px;line-height:1.6}
@@ -79,10 +74,10 @@ nav.tab button.on b{opacity:1;filter:none}
 .tile img{width:51px;height:51px;object-fit:contain}
 .tile.on{border:2px solid var(--red);background:#FFF5F5;font-weight:700}
 .grades{display:flex;justify-content:space-between;gap:4px}
-.grades button{min-height:44px;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:0.7647rem;font-weight:600;flex:1}
+.grades button{min-height:44px;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 2px 2px;font-size:0.7647rem;font-weight:600;flex:1;border-radius:var(--r)}
 .grades button .gcy{margin-top:-4px;font-size:10px;font-weight:400;line-height:1.2;color:#525252;white-space:nowrap}
+.grades button.on{background:color-mix(in srgb,var(--sc) 16%,#fff);box-shadow:inset 0 0 0 2px var(--sc)}
 .grades button.on .gcy{color:#1A1A1A}
-.grades button.on .stamp .ink{background:var(--sc);color:#fff;box-shadow:inset 0 0 0 2px var(--sc),inset 0 0 0 3.5px #fff}
 .holdbtn{width:100%;margin-top:14px;height:46px;border:1.5px dashed #BDBDBD;border-radius:var(--r);font-weight:600}
 .holdbtn.on{border:2px solid var(--ink);background:var(--bg2)}
 .req{color:var(--red-t);font-size:0.7059rem;margin-left:6px;font-weight:600}
@@ -224,7 +219,7 @@ button[disabled]{cursor:default;pointer-events:none}
 .gz{width:216px;height:216px}
 .ph-head .av,.gz .av .face{width:192px;height:192px}
 .ph-head .av img{width:192px;height:192px}
-.stampbtn{right:-12px;bottom:-3px;width:66px;height:66px;min-width:66px;min-height:66px;line-height:0;z-index:3}
+.stampbtn{right:-11px;bottom:-3px;width:60px;height:60px;min-width:60px;min-height:60px;line-height:0;z-index:3}
 
 .gh{font-size:26px}.gh-l{left:-62px}.gh-r{right:-62px}
 .gz.r-pat .face:after{background:radial-gradient(ellipse 18px 12px at 25% 60%,rgba(247,140,165,.85),rgba(247,140,165,0)),radial-gradient(ellipse 18px 12px at 75% 60%,rgba(247,140,165,.85),rgba(247,140,165,0))}
@@ -304,9 +299,8 @@ html.vlock,html.vlock body{overflow:hidden}
 /* v23 오늘 손질할 고기: 소 얼굴(도장보다 크게) + 도장 배지 오른쪽 아래 */
 .tav{position:relative;flex:none;width:52px;height:52px;margin-right:10px}
 .tav>img{width:52px;height:52px;object-fit:contain;display:block}
-.tav .stamp{position:absolute;right:-12px;bottom:-8px;width:32px;height:32px;box-shadow:0 0 0 2px #fff,0 1px 3px rgba(0,0,0,.2)}
-.tav .stamp .ink{inset:1.5px;border-width:2.6px;font-size:.74rem;letter-spacing:-.6px;-webkit-text-stroke:.35px var(--sc);filter:none}
-.tav .stamp.g1 .ink{font-size:.56rem}
+.tav .stamp{position:absolute;right:-8px;bottom:-5px;width:20px;height:20px}
+.tav .stamp svg{width:20px;height:20px}
 /* A: 한 줄 — 얼굴 | 이름·주기·상태 | 📞 | 연락했어요 */
 .tdrow{display:grid!important;grid-template-columns:64px 1fr auto auto;grid-template-rows:auto auto;column-gap:8px;row-gap:3px;align-items:center;padding:10px 12px 10px 12px;min-height:0}
 .tdrow .tav{grid-row:1/3;grid-column:1;margin-right:4px}
@@ -391,7 +385,7 @@ button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .secsheet .sline{padding:12px 0}
 .secsheet .sline .who .grow{gap:6px}
 .secsheet .sline .meta{margin-top:0}
-.secsheet .tav .stamp{bottom:-20px;right:-14px}
+.secsheet .tav .stamp{bottom:-13px;right:-9px}
 .xpush{position:fixed;z-index:4;top:0;left:0;right:0;bottom:calc(58px + var(--sab));background:#fff;overflow:hidden}
 .xrail{position:relative;height:100%;max-width:480px;margin:0 auto;overflow:hidden}
 .xpane{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;transition:transform .3s ease-out}
