@@ -10,6 +10,7 @@ const REP_NEG=['답장 냉동 보관','약속 해동 중','말만 투뿔','뒷�
 const GROUPS=[['사는 곳','#834AF4',['여의도','마포']],['가족 구성','#75C895',['1남1녀','무자녀']],['생년','#88CBF0',['50년대','60년대','70년대','80년대','90년대','00년대']],['취미·관심사','#89D16F',['골프','등산']],['고향','#F4A259',['서울','부산','대구']],['출신 대학','#3F89F6',['연세대','고려대','서울대']]];
 const BASE=new Date(2026,9,27);
 const $=s=>document.querySelector(s);
+const BACK='<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M 11 5 L 4 12 L 11 19 M 4 12 H 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let S,nav=[{v:'shelf'}],ui={},lastN=null;
 
@@ -246,7 +247,7 @@ function tagRenameGroup(key){ui.renameG=key;const nm=(memoGroupList().find(g=>g.
 function secSheetWrap(inner){sheet(inner);const sh=$('#sheet-root .sheet');if(sh){sh.classList.add('secsheet');sh.setAttribute('role','dialog');sh.setAttribute('aria-modal','true');sh.tabIndex=-1}const b=$('#sheet-root .secx');if(b)b.focus({focusVisible:false})}
 const SECX='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
 function tagPeople(v){const L=visible().filter(p=>p.memo.includes(v.t)||p.rep.includes(v.t));const isRep=REP_POS.includes(v.t)||REP_NEG.includes(v.t);
- return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">${esc(v.t)}</h1></div>${isRep?`<div class="small">내 연락처 ${L.length}명</div>`:''}<div class="card" style="margin-top:10px">${L.map(p=>`<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)}</div></div></div>`).join('')||'<div class="empty">아직 없어요</div>'}</div></div>`}
+ return `<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">${esc(v.t)}</h1></div>${isRep?`<div class="small">내 연락처 ${L.length}명</div>`:''}<div class="card" style="margin-top:10px">${L.map(p=>`<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)}</div></div></div>`).join('')||'<div class="empty">아직 없어요</div>'}</div></div>`}
 
 /* 판정서 (테스트용 예시) */
 function fakeRaters(n){const out=[];const g=[5,4,4,5,3,4,5,4,2,4];const pe=[2,2,5,1,2,0,2,5,2,3];const reps=[['숫자에 강함','답장 냉동 보관'],['숫자에 강함'],['약속 칼같음','답장 냉동 보관'],['숫자에 강함','인맥왕'],['답장 냉동 보관','뒷심 부족'],['약속 칼같음'],['인맥왕','뒷심 부족'],['약속 칼같음'],[],['디테일 장인']];
@@ -262,14 +263,14 @@ function verdictBody(n,pub){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe
 function verdictCert(n){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe=mode(R.map(r=>r.p));const c={};R.forEach(r=>new Set(r.r).forEach(t=>c[t]=(c[t]||0)+1));
  const tg=Object.keys(c).filter(t=>c[t]>=3);const sat=S.day-((dateOf(S.day).getDay()+1)%7);
  return `<div class="cert"><div class="tb2">테스트용 예시</div><div class="when">${mdw(sat)} 기준 · 평가 5명 이상 · 익명 종합</div><div class="rule"></div><div class="hero"><div class="halo"></div><img src="emoji/p${pe}.svg" alt=""><div class="vstamp g${g}"><i class="ink">${GR[g][0]}</i></div></div><div class="grade">${GR[g][0]} ${GR[g][1]}</div><div class="pers">사람들이 꼽은 대표 성격 · <b>${PERS[pe]} 타입</b></div><div class="chips">${tg.map(t=>`<span class="chip sm ${REP_NEG.includes(t)?'neg':''}">${esc(t)}</span>`).join('')}</div><div class="upd">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>`}
-function verdict(){let h=`<div class="vd"><div class="vtop"><button class="vback" data-a="vback" aria-label="뒤로">‹</button><h1>내 판정서</h1>${info('verdict')}</div><div class="testbar">테스트용 예시 · 휴대폰 번호 인증은 건너뛰어요</div>`;
+function verdict(){let h=`<div class="vd"><div class="vtop"><button type="button" class="vback" data-a="vback" aria-label="뒤로가기">${BACK}</button><h1>내 판정서</h1>${info('verdict')}</div><div class="testbar">테스트용 예시 · 휴대폰 번호 인증은 건너뛰어요</div>`;
  if(!S.accepted)return h+`<h2 style="margin-top:20px">내 판정서 받기</h2><p class="note" style="font-size:0.8824rem;color:var(--ink)">평가가 5명 이상 모이면 익명 종합 결과만 볼 수 있어요. 누가 평가했는지는 알 수 없어요.</p>${S.reopen?'<p class="note">평가자들이 남긴 예전 평가까지 모두 다시 모여요.</p>':''}
   <label class="inp">이 번호를 언제부터 쓰셨나요?<input value="2019년 3월" readonly></label><div class="small" style="margin-top:6px">이 날짜 전에 쌓인 평가는 판정서에 넣지 않아요.</div><div style="height:20px"></div><button class="btn-r" data-a="accept">판정서 받기 시작</button></div>`;
  if(S.verdictN<5)h+=`<div class="vcard" style="margin-top:12px"><p style="line-height:1.6;margin:0 0 14px">판정 대기 중이에요. 등급 평가가 5명 미만이라 아직 보여드릴 수 없어요. 여의도 정육점을 주변에 알려주면 더 빨리 판정돼요!</p><button class="btn-r" data-a="invite">초대 링크 보내기</button><div class="small" style="margin-top:8px">링크에는 내 번호·계정 정보가 담기지 않아요.</div><div class="small" style="margin-top:12px">결과는 매주 토요일 오전 9시에 갱신돼요</div></div>
   <div class="sw" style="margin-top:16px"><div class="grow"><b>판정서 공개</b><span>판정서가 열리면 공개할 수 있어요.</span></div><span class="tog" style="opacity:.4"></span></div>`;
  else h+=`<div style="margin-top:12px">${verdictCert(S.verdictN)}</div><div class="sw" style="margin-top:16px"><div class="grow"><b>판정서 공개</b><span>${S.pub?'내 번호를 아는 앱 사용자에게 보여지고 있어요. 누가 봤는지는 알려드리지 않아요.':'켜면 내 번호를 아는 앱 사용자가 이 판정서를 볼 수 있어요.'}</span></div><button class="tog ${S.pub?'on':''}" data-a="pubtog"></button></div>`;
  return h+`<button class="link-red" data-a="closev">판정서 닫기</button></div>`}
-function pubVerdict(v){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">공개된 판정서</h1></div>${verdictBody(7,true)}<p class="note">부정 태그는 공개된 판정서에 보이지 않아요.</p></div>`}
+function pubVerdict(v){return `<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">공개된 판정서</h1></div>${verdictBody(7,true)}<p class="note">부정 태그는 공개된 판정서에 보이지 않아요.</p></div>`}
 
 /* 사람 상세 */
 function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
@@ -291,7 +292,7 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
 
 /* 평가 쓰기 */
 function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||(w.grade!=null&&w.persona!=null);
- let h=`<div class="scr nonav"><div class="hd"><button class="back" data-a="back">‹</button><div style="flex:1"><div style="font-weight:800;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
+ let h=`<div class="scr nonav"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><div style="flex:1"><div style="font-weight:800;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
  <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div>
  <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="g${g} ${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}<span class="gcy">${defCycleLine(g)}</span></button>`).join('')}</div>
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>`;
@@ -305,16 +306,16 @@ function selStyle(g){const pair={'#834AF4':['#E6DBFD','#834AF4'],'#75C895':['#D2
 function memoBox(sel){return `<div class="box"><div class="boxh">메모 태그<span class="phsub">&nbsp;· 나만 봐요</span></div>${memoGroupList().map(g=>{const birth=g.key==='생년';const ts=birth?(g.base||[]).filter(t=>!(S.tagGone||[]).includes(t)&&groupOf(t)==='생년'):tagsIn(g);const bsel=birth?sel.find(t=>groupOf(t)==='생년'):null;return `<div class="grp" style="${selStyle(g)}"><div class="gn"><span class="gdot" style="background:${g.color}"></span>${esc(g.name)}${birth&&bsel?` <span class="chip sm on" data-a="memo" data-t="${esc(bsel)}" style="margin-left:auto">${esc(bsel)}</span>`:''}</div><div class="chips">${ts.map(t=>`<button class="chip sm ${sel.includes(t)?'on':''}" data-a="memo" data-t="${esc(t)}">${esc(t)}</button>`).join('')}${birth?`<button class="chip sm dash" data-a="year">연도</button>`:`<button class="chip sm dash" data-a="memoadd" data-g="${esc(g.key)}">+ 추가</button>`}</div></div>`}).join('')}</div>`}
 
 function notifs(){S.readBell=true;save();const g={};S.notifs.forEach(n=>(g[n.day]=g[n.day]||[]).push(n));
- let h=`<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">알림</h1><span class="sp"></span><button class="chip sm" data-a="readall" ${S.notifs.length?'':'disabled'}>모두 읽음</button><button class="ib" data-a="settings">⚙️</button></div>`;
+ let h=`<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">알림</h1><span class="sp"></span><button class="chip sm" data-a="readall" ${S.notifs.length?'':'disabled'}>모두 읽음</button><button class="ib" data-a="settings">⚙️</button></div>`;
  if(!S.notifs.length)return h+'<div class="empty">아직 알림이 없어요.</div></div>';
  Object.keys(g).sort((a,b)=>b-a).forEach(d=>{d=+d;h+=`<h2 style="font-size:0.8824rem">${d==S.day?'오늘':d==S.day-1?'어제':mdw(d)}</h2>`+g[d].map((n,i)=>`<div class="ntf row tap" data-a="ntf" data-i="${S.notifs.indexOf(n)}"><span class="d ${n.read?'off':''}"></span><div class="grow"><div class="t">${n.kind} · ${d==S.day?'방금':'오전 9:00'} ${n.test?'<span class="badge test">테스트용 예시</span>':''}</div><div>${esc(n.text)}</div></div></div>`).join('')});
  return h+'</div>'}
-function settings(){const hid=S.people.filter(p=>p.hidden);return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">설정</h1></div>
+function settings(){const hid=S.people.filter(p=>p.hidden);return `<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">설정</h1></div>
  <div class="testbar">테스트용 예시 · 알림 스위치는 실제로 보내지 않아요</div>
  <div class="kv" id="ptrow"><b>포인트</b><span><span id="pts">${S.pts||0}</span>점 · 테스트 값</span></div>
  ${[['아침 장보기 알림','오전 9:00',1],['주간 조회 알림','',1],['월간 조회 권유 알림','',0],['판정서 변화 알림','토요일 갱신 때 내 판정서가 바뀌면 알려드려요.',1],['쓰다듬기 알림','누군가 쓰담쓰담 하면 토요일에 모아서 알려드려요.',1],['이벤트 알림','',0]].map((x,i)=>{const on=(S.sets||{})[i]??x[2];return `<div class="sw srow"><div class="grow"><b>${x[0]}</b><span>${x[1]}</span></div><button class="tog ${on?'on':''}" data-a="settog" data-i="${i}"></button></div>`}).join('')}
  <h2>숨긴 연락처</h2><div class="card">${hid.map(p=>`<div class="row"><div class="grow nm">${esc(p.name)}</div><button class="chip sm" data-a="unhide" data-id="${p.id}">다시 보이기</button></div>`).join('')||'<div class="empty">숨긴 연락처가 없어요.</div>'}</div></div>`}
-function addContact(){return `<div class="scr"><div class="hd"><button class="back" data-a="back">‹</button><h1 style="font-size:1.1765rem">새 연락처</h1></div><div class="testbar">테스트용: 실제 앱은 폰 연락처를 읽어요</div>
+function addContact(){return `<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">새 연락처</h1></div><div class="testbar">테스트용: 실제 앱은 폰 연락처를 읽어요</div>
  <label class="inp">이름<input id="cn" maxlength="20" value="${esc(ui.q||'')}"></label><label class="inp">번호<input id="cp" inputmode="numeric" placeholder="010-0000-0000" maxlength="13"></label><div style="height:20px"></div><button class="btn-r" data-a="addsave">저장</button></div>`}
 
 /* sheets */
