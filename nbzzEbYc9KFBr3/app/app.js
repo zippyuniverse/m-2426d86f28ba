@@ -285,8 +285,8 @@ function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>
  <h2>연락 주기</h2>${hold?'<div class="note" style="margin:-4px 0 8px">판정 보류는 자동으로 1개월 주기예요.</div>':''}<div class="chips">${CYC.map(c=>`<button class="chip ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
  h+=memoBox(w.memo)+`<div class="box ${hold?'dim':''}"><div class="boxh">평판 태그<span class="phsub">&nbsp;· 익명으로 모여요</span></div>${hold?'<div class="note wrepnote">성격과 등급을 고르면 평판 태그를 달 수 있어요.</div>':writeRep(w.rep)}</div>`;
- if(!hold)h+=`<h2>다시 거래를 맡기겠다?<span class="opt">선택</span></h2><div class="chips">${AGAIN.map(a=>`<button class="chip ${w.again===a?'on':''}" data-a="w" data-f="again" data-x="${a}">${a}</button>`).join('')}</div>`;
- h+=`<div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${w.priv?'on':''}" data-a="w" data-f="priv"></button></div></div>
+ if(!hold)h+=`<h2>다시 거래를 맡기겠다?<span class="opt">선택</span></h2><div class="chips">${AGAIN.map(a=>`<button class="chip ${w.again===a?'on':''}" data-a="w" data-f="again" data-x="${a}">${a}</button>`).join('')}</div><div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button class="tog ${w.priv?'on':''}" data-a="w" data-f="priv"></button></div>`;
+ h+=`</div>
  <div class="bar">${ok?'':'<div class="hint">성격·등급을 고르면 저장할 수 있어요</div>'}<button class="btn-r" data-a="wsave" ${ok?'':'disabled'}>저장</button></div>`;
  return h}
 function selStyle(g){const pair={'#834AF4':['#E6DBFD','#834AF4'],'#75C895':['#D2E5DA','#207F45'],'#88CBF0':['#D0E3EE','#1575AA'],'#89D16F':['#D7E5D2','#397E20'],'#F4A259':['#EFDECE','#AE580C'],'#3F89F6':['#CEE1FC','#0B67EF']};const c=String(g.color||'').toUpperCase();const p=pair[c];if(p)return `--selfill:${p[0]};--sel:${p[1]}`;return /^#[0-9A-F]{6}$/.test(c)?`--sel:${c}`:'--sel:#1A1A1A'}
