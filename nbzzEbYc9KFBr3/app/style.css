@@ -79,7 +79,10 @@ nav.tab button.on b{opacity:1;filter:none}
 .req{color:var(--red-t);font-size:0.7059rem;margin-left:6px;font-weight:600}
 .opt{color:var(--sub);font-size:0.7059rem;margin-left:6px;font-weight:500}
 .box{border:1px solid #DADADA;border-radius:14px;padding:14px;margin-top:12px}
-.box.dim{opacity:.45}
+.box.dim{border-color:color-mix(in srgb,#DADADA 45%,#fff)}
+.box.dim .boxh{opacity:.45}
+.wrep .tpill.rep:disabled{color:#8A8A8A}
+.wrep .tpill.rep:disabled:before{background:#F4F4F4;box-shadow:none}
 .boxh{display:flex;align-items:center;justify-content:flex-start;font-weight:700;margin-bottom:10px}
 .badge{font-size:0.7059rem;font-weight:700;background:#FFD447;border-radius:10px;padding:3px 8px}
 .badge.test{background:#E8E3FF;color:#3B2A99}
@@ -496,7 +499,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .tgh h2{margin:0;min-width:0;font-size:13px;font-weight:700;color:#1A1A1A;line-height:17px;max-height:34px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:keep-all;overflow-wrap:anywhere;overflow:hidden}
 .tcard>.tpills{gap:0 6px;min-width:0}
 .tpills{gap:8px}
-.tagpage .thint+.chips.tpills{gap:0 8px}
+.tagpage .thint+.chips.tpills,.wrep.tpills{gap:0 8px}
 .tpill{position:relative;z-index:0;height:44px;padding:0 14px;border:0;background:transparent;color:#1A1A1A;font-size:13px;font-weight:600;line-height:1;display:inline-flex;align-items:center}
 .tpill:before{content:"";position:absolute;left:0;right:0;top:6px;height:32px;border-radius:16px;background:color-mix(in srgb,var(--gc,#F4F4F4) 16%,#fff);z-index:-1}
 .tpill.on{color:#fff}
