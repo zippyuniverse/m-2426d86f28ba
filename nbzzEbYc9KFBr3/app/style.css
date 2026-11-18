@@ -559,3 +559,16 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .tempty p{margin:0;font-weight:700;font-size:16px;color:#1A1A1A}
 .tempty .sub{margin-top:8px;font-weight:400;font-size:14px;color:#525252}
 .tzero{margin-top:16px;height:44px;padding:0 18px;border-radius:22px;background:#1A1A1A;color:#fff;font-weight:700}
+#flist .frz-room{
+  background:
+    url(art/frz-frost-top.svg) 0 0/64px 16px repeat-x,
+    linear-gradient(90deg,rgba(255,255,255,.7),rgba(255,255,255,0) 16px),
+    linear-gradient(270deg,rgba(255,255,255,.7),rgba(255,255,255,0) 16px),
+    #E5F3FC url(art/frz-snow.svg) 0 14px/230px 200px repeat;
+  padding-top:10px;
+}
+#flist .frz-room::after{
+  content:"";position:absolute;left:10px;bottom:10px;width:14px;height:18px;
+  background:url(art/frz-crystal.svg) center/contain no-repeat;
+  image-rendering:pixelated;pointer-events:none;z-index:5;
+}
