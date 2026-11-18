@@ -23,7 +23,7 @@ function md(d){const x=dateOf(d);return (x.getMonth()+1)+'월 '+x.getDate()+'일
 function mdw(d){return md(d)+' ('+'일월화수목금토'[dateOf(d).getDay()]+')'}
 function P(id){return S.people.find(p=>p.id==id)}
 function rated(p){return p.grade!=null}
-function cycleDays(p){if(p.hold)return p.cycle==='auto'?30:p.cycle;return p.cycle==='auto'?DEFC[p.grade]:p.cycle}
+function cycleDays(p){if(p.hold)return 0;return p.cycle==='auto'?DEFC[p.grade]:p.cycle}
 function lastC(p){return p.contacts.length?p.contacts[p.contacts.length-1].day:p.ratedDay}
 function stage(p){const c=cycleDays(p);if(!c)return {k:'none',t:'연락 안 함',o:99};const diff=S.day-(lastC(p)+c);
  if(diff<0)return {k:'fresh',t:'신선 D-'+(-diff),o:3,d:diff};if(diff==0)return {k:'today',t:'오늘 손질',o:2,d:0};
@@ -45,7 +45,8 @@ function searchFlags(p){let h='';if(!rated(p)&&!p.hold)h+='<span class="pill st-
 function todayList(){return visible().filter(p=>rated(p)&&!p.hold&&['today','aging','spoil'].includes(stage(p).k)).sort(sortFn)}
 function holdList(){return visible().filter(p=>p.hold).sort((a,b)=>(a.ratedDay??0)-(b.ratedDay??0)||a.id-b.id)}
 function byStage(k){return visible().filter(p=>rated(p)&&!p.hold&&stage(p).k==k).sort((a,b)=>(stage(b).d||0)-(stage(a).d||0))}
-function sortFn(a,b){const x=stage(a),y=stage(b);if(x.o!=y.o)return x.o-y.o;return x.o<=1?y.d-x.d:(x.d||0)-(y.d||0)}
+function holdStage(p){const c=p.cycle==='auto'?30:p.cycle;if(!c)return {o:99,d:0};const diff=S.day-(lastC(p)+c);if(diff<0)return {o:3,d:diff};if(diff==0)return {o:2,d:0};if(diff<14)return {o:1,d:diff};return {o:0,d:diff}}
+function sortFn(a,b){if(!!a.hold!==!!b.hold)return a.hold?1:-1;const x=a.hold?holdStage(a):stage(a),y=b.hold?holdStage(b):stage(b);if(x.o!=y.o)return x.o-y.o;return x.o<=1?y.d-x.d:(x.d||0)-(y.d||0)}
 function countN(){return todayList().length}
 
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2000)}
@@ -150,7 +151,7 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
  return h+'</div>'}
 
 function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 태그 필터 없앰(태그 탭이 따로 있음) */const sq=(ui.fs||'').trim().toLowerCase();let L=sq?searchAll(sq):searchPeople();
- if(f.st.length)L=L.filter(p=>f.st.includes(stage(p).k));
+ if(f.st.length)L=L.filter(p=>!p.hold&&f.st.includes(stage(p).k));
  if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));
  if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)||(t.endsWith('년대')&&p.memo.some(m=>/^\d{4}$/.test(m)&&(m.slice(2,3)+'0년대'==t)))));
  L.sort(sortFn);const all=visible().filter(p=>rated(p)||p.hold).length;const none=!L.length||!all;
@@ -492,7 +493,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
   if(x=='newc'){const n=['남궁민 과장','도현우 차장','변소라 대리'][S.seq%3];const np=mk({name:n,phone:'010-****-'+(2000+S.seq*53%7000),isNew:true,addedDay:S.day,ratedDay:null});S.people.push(np);save();closeSheet();ui.fresh=np.id;tab('shelf');setTimeout(()=>ui.fresh=null,500)}break}
  }});
 function filterSheet(keep){if(!keep)ui.ff2=JSON.parse(JSON.stringify(ui.ff||{st:[],gr:[],tg:[]}));const f=ui.ff2;f.tg=[];
- const base=visible().filter(p=>rated(p)||p.hold);let L=base;if(f.st.length)L=L.filter(p=>f.st.includes(stage(p).k));if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)));
+ const base=visible().filter(p=>rated(p)||p.hold);let L=base;if(f.st.length)L=L.filter(p=>!p.hold&&f.st.includes(stage(p).k));if(f.gr.length)L=L.filter(p=>f.gr.includes(p.hold?'hold':String(p.grade)));if(f.tg.length)L=L.filter(p=>f.tg.every(t=>p.memo.includes(t)||p.rep.includes(t)));
  const c=(k,x,l)=>`<button class="chip sm ${f[k].includes(x)?'on':''}" data-a="ffx" data-k="${k}" data-x="${esc(x)}">${esc(l)}</button>`;
  sheet(`<h3>골라 보기</h3><div class="gn" style="font-weight:700;margin:6px 0">상태</div><div class="chips">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>c('st',x[0],x[1])).join('')}</div>
  <div style="font-weight:700;margin:14px 0 6px">등급</div><div class="chips">${[5,4,3,2,1].map(g=>c('gr',String(g),GR[g][0])).join('')}${c('gr','hold','판정 보류')}</div>
