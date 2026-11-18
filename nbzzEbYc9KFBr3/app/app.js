@@ -3,7 +3,7 @@ const KEY='yjp-app-v1';
 const PERS=['무던무던','친절한','믿을만한','능글능글','소심이','똑부러지는','심한허세','멍충이','고집불통','불같은','꼰대','DOG'];
 const GR={5:['1++','투뿔 마블링'],4:['1+','원뿔 등심'],3:['1','무난한 1등급'],2:['2','국거리용'],1:['반품','촉수엄금']};
 const DEFC={5:7,4:30,3:90,2:180,1:0};
-const CYC=[['auto','등급 따라 자동'],[7,'1주'],[30,'1개월'],[90,'3개월'],[180,'6개월'],[0,'연락 안 함']];
+const CYC=[[7,'1주'],[30,'1개월'],[90,'3개월'],[180,'6개월'],[0,'연락 안 함']];
 const AGAIN=['무조건','상황 봐서','절대 안 함'];
 const REP_POS=['숫자에 강함','약속 칼같음','인맥왕','말발 좋음','디테일 장인'];
 const REP_NEG=['답장 냉동 보관','약속 해동 중','말만 투뿔','뒷심 부족','생색 마블링','숟가락 얹기','밀당 장인','회식 전용','핑계 양념','읽고 숙성'];
@@ -14,7 +14,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 let S,nav=[{v:'shelf'}],ui={},lastN=null;
 
 function blank(){return {day:0,people:[],seq:1,customTags:{},notifs:[],readBell:false,accepted:false,verdictN:7,seenInfo:{},firstWrite:true}}
-function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}});if(drop)save()}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}else if(!p.hold&&p.cycle==='auto'&&p.grade!=null){p.cycle=DEFC[p.grade];drop=true}});if(drop)save()}
 function kstDay(){return Math.floor((Date.now()+9*3600e3)/864e5)+S.day}
 function earnPt(id){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[id]===d)return false;S.ptLog[id]=d;S.pts=(S.pts||0)+1;return true}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
@@ -28,7 +28,8 @@ function lastC(p){return p.contacts.length?p.contacts[p.contacts.length-1].day:p
 function stage(p){const c=cycleDays(p);if(!c)return {k:'none',t:'연락 안 함',o:99};const diff=S.day-(lastC(p)+c);
  if(diff<0)return {k:'fresh',t:'신선 D-'+(-diff),o:3,d:diff};if(diff==0)return {k:'today',t:'오늘 손질',o:2,d:0};
  if(diff<14)return {k:'aging',t:'숙성 중 D+'+diff,o:1,d:diff};return {k:'spoil',t:'상하기 직전 D+'+diff,o:0,d:diff}}
-function cycLabel(p){const c=cycleDays(p);const x=CYC.find(z=>z[0]===c);return x?x[1]:'등급 따라 자동'}
+function cycLabel(p){const c=cycleDays(p);const x=CYC.find(z=>z[0]===c);return x?x[1]:''}
+function defCycleLine(g){const n=cycLabel({hold:false,grade:g,cycle:'auto'});return n==='연락 안 함'?n:n+' 주기'}
 function fbn(id){return id==='p1'||id==='o1'?'fbn-p1':id==='p2'||id==='o2'?'fbn-p2':id==='p9'||id==='o9'?'fbn-p9':''}
 function emo(p,cls='em'){const id=p.hold||p.persona==null?'hold':'p'+p.persona;const src=id==='hold'?'emoji/hold.svg':'emoji/'+id+'.svg';const c=[cls,fbn(id)].filter(Boolean).join(' ');return `<img class="${c}" src="${src}" alt="">`}
 function stamp(g,big){if(g==null)return `<span class="stamp hold ${big?'big':''}"></span>`;return `<span class="stamp g${g} ${big?'big':''}"><i class="ink">${GR[g][0]}</i></span>`}
@@ -78,6 +79,7 @@ function seed(){S=blank();const d=0;
  add({name:'오나라 팀장',phone:'010-****-8803',hold:true,ratedDay:-10});
  add({name:'백승우 대리',phone:'010-****-8804',hold:true,ratedDay:-1});
  add({name:'오승민 대리',phone:'010-****-5591',grade:3,persona:0,ratedDay:-50,hidden:true});
+ S.people.forEach(p=>{if(p.hold)p.cycle='auto';else if(p.cycle==='auto'&&p.grade!=null)p.cycle=DEFC[p.grade]});
  S.installDay=-30;S.firstWrite=true;morning();save()}
 function morning(){const t=todayList(),sp=t.filter(p=>stage(p).k=='spoil').length;let s='오늘 손질할 고기 '+t.length+'개';if(sp)s+=' · 상하기 직전 '+sp+'개';const n=newOnes().length;if(n)s+=' · 새로 들어온 고기 '+n+'개';const h=holdList().length;if(h)s+=' · 판정 보류 '+h+'개';
  const re=visible().filter(p=>(rated(p)||p.hold)&&p.ratedDay!=null&&S.day-p.ratedDay>=90).length;if(re)s+=' · 다시 맛볼 고기 '+re+'개';
@@ -158,7 +160,7 @@ function fridge(){const f=ui.ff||{st:[],gr:[],tg:[]};f.tg=[];/* v18: 냉장고 �
  <div class="chips frow gst" style="margin:6px 0 8px"><button class="gsb gall ${f.gr.length||f.st.length?'':'on'}" data-a="fall" aria-pressed="${!(f.gr.length||f.st.length)}" aria-label="전체(등급·상태 선택 해제)">전체</button>${[5,4,3,2,1].map(g=>[String(g),GR[g][0],'g'+g]).concat([['hold','보류','ghd']]).map(x=>`<button class="gsb ${x[2]} ${f.gr.includes(x[0])?'on':''}" data-a="fq" data-k="gr" data-x="${x[0]}" aria-pressed="${f.gr.includes(x[0])}" aria-label="${x[0]=='hold'?'판정 보류':x[1]+' 등급'}">${esc(x[1])}</button>`).join('')}</div>
  <div class="fstatus"><div class="chips frow fst">${[['fresh','신선'],['today','오늘 손질'],['aging','숙성 중'],['spoil','상하기 직전']].map(x=>`<button class="chip sm ${f.st.includes(x[0])?'on':''}" data-a="fq" data-k="st" data-x="${x[0]}">${esc(x[1])}</button>`).join('')}</div><span class="sortlbl"${none?' hidden':''}>연락 임박순</span></div>`;
  const cell=p=>{const s=p.hold?{k:'none',t:'판정 보류'}:stage(p);const mt=sq?personTags(p).filter(t=>t.toLowerCase().includes(sq)):[];const org=!p.hold&&p.persona!=null&&organic(p);const bare=!rated(p)&&!p.hold;
-  const meta=p.hold?(mt.length?mt.map(esc).join(' · '):''):`${cycLabel(p)} 주기${mt.length?' · '+mt.map(esc).join(' · '):''}`;
+  const lab=p.hold?'':cycLabel(p);const meta=p.hold?(mt.length?mt.map(esc).join(' · '):''):`${lab?lab+' 주기':''}${mt.length?(lab?' · ':'')+mt.map(esc).join(' · '):''}`;
   return `<div class="row tap frrow" data-a="${searchAct(p)}" data-id="${p.id}"><div class="tav">${emo(p,'').replace('src="emoji/p'+p.persona,org?'src="emoji/o'+p.persona:'src="emoji/p'+p.persona)}${bare||p.grade==null?'':stamp(p.grade)}</div><div class="grow"><div class="nm"><span class="nmt">${esc(p.name)}</span>${org?'<span class="org">유기농</span>':''}</div>${meta?`<div class="meta">${meta}</div>`:''}</div><div class="frchips">${bare?'':`<span class="pill st-${s.k}">${s.t}</span>`}${searchFlags(p)}</div></div>`};
  let tiers='';
  if(!none)for(let i=0;i<L.length;i+=2)tiers+=`<div class="frtier${L[i+1]?'':' solo'}">${cell(L[i])}${L[i+1]?cell(L[i+1]):'<div class="frpad"></div>'}</div>`;
@@ -271,7 +273,7 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
  h+=`<div class="kv kvtags" data-a="edit" data-f="memo" data-id="${p.id}"><span class="k">메모 태그<span class="phsub"> · 나만 봐요</span></span><span class="v tchips">${chips(p.memo,'memo')}</span></div>`;
  if(!hold)h+=`<div class="kv kvtags" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그<span class="phsub"> · 익명으로 모여요</span></span><span class="v tchips">${chips(p.rep,'rep')}</span></div><div class="kvsec"><span class="k">다시 맡기기</span><div class="chips">${AGAIN.map(a=>`<button class="chip ${p.again===a?'on':''}" data-a="qset" data-f="again" data-x="${a}" data-id="${p.id}" aria-pressed="${p.again===a}">${a}</button>`).join('')}</div></div><div class="kv" data-a="edit" data-f="priv" data-id="${p.id}"><span class="k">판정서 반영</span><span class="v">${p.priv?'나만 보기':'익명으로 반영'}</span></div>`;
  h+=`</div>`;
- if(!hold){const s=stage(p);h+=`<h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${cycLabel(p)} 주기 · 마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${s.t}</span></div></div>`}
+ if(!hold){const s=stage(p);const lab=cycLabel(p);h+=`<h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${lab?lab+' 주기 · ':''}마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${s.t}</span></div></div>`}
  h+=`<h2>연락 기록</h2><div class="card">${p.contacts.slice().reverse().map(c=>`<div class="kv ro"><span>${md(c.day)} ${c.t}</span></div>`).join('')||'<div class="kv ro"><span class="k">아직 없어요</span></div>'}</div>`;
  if(p.pub)h+=`<button class="btn-g" style="margin-top:14px" data-a="pubv">공개된 판정서 보기 <span class="badge test">테스트용 예시</span></button>`;
  h+=p.hidden?`<button class="btn-g" style="margin-top:14px" data-a="unhide" data-id="${p.id}">다시 보이기</button>`:`<button class="btn-g" style="margin-top:14px" data-a="hide" data-id="${p.id}">냉장고에서 숨기기</button>`;
@@ -282,7 +284,7 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
 function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||(w.grade!=null&&w.persona!=null);
  let h=`<div class="scr nonav"><div class="hd"><button class="back" data-a="back">‹</button><div style="flex:1"><div style="font-weight:800;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
  <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div>
- <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}</button>`).join('')}</div>
+ <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}<span class="gcy">${defCycleLine(g)}</span></button>`).join('')}</div>
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>`;
  if(!hold)h+=`<h2>연락 주기</h2><div class="chips">${CYC.map(c=>`<button class="chip ${w.cycle===c[0]?'on':''}" data-a="w" data-f="cycle" data-x="${c[0]}">${c[1]}</button>`).join('')}</div>`;
  h+=memoBox(w.memo)+`<div class="box ${hold?'dim':''}"><div class="boxh">평판 태그<span class="phsub">&nbsp;· 익명으로 모여요</span></div>${hold?'<div class="note wrepnote">성격과 등급을 고르면 평판 태그를 달 수 있어요.</div>':writeRep(w.rep)}</div>`;
@@ -400,15 +402,15 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'sec':openSec(el.dataset.k,el);break;
  case 'sheetmore':ui.sheetMore=true;drawSec();break;
  case 'open':closeSheet();go({v:'person',id});break;
- case 'write':closeSheet();ui.w={grade:null,persona:null,hold:false,cycle:'auto',again:null,memo:p&&p.hold?(p.memo||[]).slice():[],rep:[],priv:false};go({v:'write',id});break;
+ case 'write':closeSheet();ui.w={grade:null,persona:null,hold:false,cycle:null,again:null,memo:p&&p.hold?(p.memo||[]).slice():[],rep:[],priv:false};go({v:'write',id});break;
  case 'add':go({v:'addContact'});break;
  case 'addsave':{const n=$('#cn').value.trim();if(!n){toast('이름을 넣어 주세요');break}const ph=$('#cp').value.trim()||'010-****-'+String(1000+S.seq*37%9000);
   const np=mk({name:n,phone:ph,isNew:true,addedDay:S.day,ratedDay:null});S.people.push(np);save();ui.q='';ui.fresh=np.id;tab('shelf');toast('새로 들어온 고기에 넣었어요');setTimeout(()=>ui.fresh=null,500);break}
  case 'w':{const w=ui.w,f=el.dataset.f,x=el.dataset.x;
   if(f=='hold'){w.hold=!w.hold;if(w.hold){w._g=w.grade;w._p=w.persona;w.grade=null;w.persona=null}else{w.grade=w._g??null;w.persona=w._p??null}}
   else if(f=='priv')w.priv=!w.priv;
-  else if(f=='persona'||f=='grade'){w[f]=+x;if(w.hold){w.hold=false;if(f=='grade')w.persona=w._p??null;else w.grade=w._g??null}}
-  else if(f=='cycle')w.cycle=x=='auto'?'auto':+x;
+  else if(f=='persona'||f=='grade'){w[f]=+x;if(f=='grade')w.cycle=DEFC[+x];if(w.hold){w.hold=false;if(f=='grade')w.persona=w._p??null;else w.grade=w._g??null}}
+  else if(f=='cycle')w.cycle=+x;
   else if(f!=='rel')w[f]=w[f]===x?null:x;render('same');break}
  case 'memo':{const arr=$('#sheet-root .sheet')?ui.ed.val:ui.w.memo;const t=el.dataset.t;const i=arr.indexOf(t);
   if(i>=0)arr.splice(i,1);else{if(groupOf(t)=='생년'){for(let k=arr.length-1;k>=0;k--)if(groupOf(arr[k])=='생년')arr.splice(k,1)}arr.push(t)}
@@ -432,10 +434,10 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'delok':S.people=S.people.filter(x=>x.id!=id);save();closeSheet();nav=[{v:'shelf'}];render('back');toast('지웠어요');break;
  case 'edit':if(el.dataset.f==='cycle'&&p&&p.hold)break;editSheet(id,el.dataset.f);break;
  case 'edx':{const e2=ui.ed,x=el.dataset.x;if(e2.f=='grade'||e2.f=='persona')e2.val=+x;else if(e2.f=='cycle')e2.val=x=='auto'?'auto':+x;else if(e2.f=='priv')e2.val=!e2.val;else if(e2.f=='rep'){const i=e2.val.indexOf(x);if(i>=0)e2.val.splice(i,1);else if(!(REP_NEG.includes(x)&&e2.val.filter(t=>REP_NEG.includes(t)).length>=3))e2.val.push(x)}else e2.val=e2.val===x?null:x;drawEdit();break}
- case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}q[e2.f]=e2.val;if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
+ case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}const prevG=q.grade;q[e2.f]=e2.val;if(e2.f==='grade'&&prevG!==e2.val)q.cycle=DEFC[e2.val];if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
  case 'hsx':{const h=ui.hs;if(el.dataset.f=='hold'){h.hold=!h.hold;if(h.hold){h.grade=null;h.persona=null}}else{h[el.dataset.f]=+el.dataset.x;h.hold=false}drawHold();break}
  case 'pgsheet':holdSheet(id);break;
- case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,cycle:'auto',ratedDay:S.day});delete q.rel}else{const was=q.hold;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was)q.cycle='auto'}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
+ case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,cycle:'auto',ratedDay:S.day});delete q.rel}else{const was=q.hold,prev=q.grade;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was||prev!==hs.grade)q.cycle=DEFC[hs.grade]}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
  case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0)ui.tagSel.splice(i,1);else{ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
  case 'tsearch':{if(!tagMatch().length)break;tagRemember();drawTagSheet();break}
