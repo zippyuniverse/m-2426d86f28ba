@@ -222,8 +222,8 @@ function tags(){tagInit();const sel=ui.tagSel;const n=tagMatch(sel).length;const
  const chips=sel.map(t=>`<button type="button" class="tschip" data-a="tsel" data-t="${esc(t)}" aria-label="${esc(t)} 빼기">${esc(t)} <span aria-hidden="true">×</span></button>`).join('');
  const recent=S.tagRecent.filter(t=>!S.tagGone.includes(t)&&(isRepTag(t)||tagMine(t)));
  let h=`<div class="scr tagpage${sel.length?' hasbar':''}"><div class="hd"><h1>태그</h1>${info('tags')}<span class="phsub thlead">여러 개 고르면 모두 붙은 사람만 찾아요</span></div>
- <div class="trecent"><b>최근 검색 태그</b><button type="button" class="tclearh" data-a="treclear" ${S.tagRecent.length?'':'disabled'}>최근 기록 삭제</button></div>
- ${S.tagRecent.length?`<div class="chips tpills">${recent.map(t=>pill(t)).join('')}</div>`:'<p class="thint">아직 검색한 태그가 없어요</p>'}`;
+ <div class="trecent"><b>최근 검색 태그</b><button type="button" class="tclearh" data-a="treclear" ${recent.length?'':'disabled'}>최근 기록 삭제</button></div>
+ ${recent.length?`<div class="chips tpills">${recent.map(t=>pill(t)).join('')}</div>`:'<p class="thint">아직 검색한 태그가 없어요</p>'}`;
  h+=`<div class="tsec"><b>메모 태그</b><span class="phsub"> · 나만 봐요</span></div>`;
  if(edit)h+=`<p class="thint">메모 태그를 누르면 이름을 바꾸거나 지울 수 있어요. ⋯를 누르면 그룹을 바꿀 수 있어요.</p>`;
  memoGroupList().forEach(g=>{let ts=g.key==='생년'?presentDecades().filter(tagMine):tagsIn(g).filter(tagMine);const more=edit?`<button type="button" class="t7more" data-a="tmore" data-g="${esc(g.key)}" aria-label="그룹 메뉴">⋯</button>`:'';
