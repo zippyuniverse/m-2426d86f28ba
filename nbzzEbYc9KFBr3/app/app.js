@@ -77,8 +77,10 @@ function countN(){return todayList().length}
 
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2000)}
 function go(v,dir){nav.push(v);render(dir||'fwd')}
-function back(){if(nav.length>1)nav.pop();render('back')}
-function tab(v){if(v=='verdict'){openVerdict();return}nav=[{v}];render('fade')}
+function shelfSec(k){return k==='trim'||k==='nw'||k==='hold'}
+function reopenSec(){const k=ui.backSec;if(!k||!(nav.length===1&&nav[0].v==='shelf'))return;ui.backSec=null;ui.sec=k;ui.sheetMore=false;ui.secFocus=null;drawSec()}
+function back(){if(nav.length>1)nav.pop();render('back');reopenSec()}
+function tab(v){if(v=='verdict'){openVerdict();return}ui.backSec=null;nav=[{v}];render('fade')}
 
 /* seed */
 function mk(o){return Object.assign({id:S.seq++,name:'',phone:'',isNew:false,addedDay:S.day,grade:null,persona:null,hold:false,cycle:'auto',again:null,memo:[],rep:[],priv:false,contacts:[],ratedDay:S.day,hidden:false,kkul:[],pats:[]},o)}
@@ -343,7 +345,7 @@ function addContact(){return `<div class="scr"><div class="hd"><button type="but
 
 /* sheets */
 function sheet(html,center){const r=$('#sheet-root');r.innerHTML=`<div class="dim ${center?'center':''}" data-a="sclose">${center?`<div class="dialog">${html}</div>`:`<div class="sheet">${html}</div>`}</div>`}
-function closeSheet(){const back=ui.secFocus;ui.sec=null;ui.secFocus=null;const d=$('#sheet-root .dim');if(!d)return;d.classList.add('out');setTimeout(()=>{$('#sheet-root').innerHTML='';if(nav[nav.length-1]&&nav[nav.length-1].v=='shelf'&&back&&document.contains(back))back.focus()},matchMedia('(prefers-reduced-motion:reduce)').matches?0:200)}
+function closeSheet(){const back=ui.secFocus;ui.sec=null;ui.secFocus=null;const d=$('#sheet-root .dim');if(!d)return;d.classList.add('out');setTimeout(()=>{if(!d.isConnected)return;d.remove();if(nav[nav.length-1]&&nav[nav.length-1].v=='shelf'&&back&&document.contains(back))back.focus()},matchMedia('(prefers-reduced-motion:reduce)').matches?0:200)}
 function openSec(k,el){if(k=='fresh'||k=='aging'||k=='spoil'){goFridge(k,el);return}ui.sec=k;ui.sheetMore=false;ui.secFocus=el&&el.closest?el.closest('button.sec')||el:el;drawSec()}
 function drawSec(){const k=ui.sec;if(!k)return;const title={trim:'손질할 고기',nw:'새로 들어온 고기',hold:'판정 보류'}[k];
  const L=k=='trim'?todayList():k=='nw'?newOnes():holdList();let body='';
@@ -434,8 +436,8 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'unhide':p.hidden=false;save();render('same');toast('냉장고에 다시 보여요.');break;
  case 'sec':openSec(el.dataset.k,el);break;
  case 'sheetmore':ui.sheetMore=true;drawSec();break;
- case 'open':closeSheet();go({v:'person',id});break;
- case 'write':closeSheet();ui.w={grade:null,persona:null,hold:false,cycle:null,again:null,memo:p&&p.hold?(p.memo||[]).slice():[],rep:[],priv:false};go({v:'write',id});break;
+ case 'open':{const k=ui.sec;closeSheet();if(shelfSec(k))ui.backSec=k;else ui.backSec=null;go({v:'person',id});break}
+ case 'write':{const k=ui.sec;closeSheet();if(shelfSec(k))ui.backSec=k;ui.w={grade:null,persona:null,hold:false,cycle:null,again:null,memo:p&&p.hold?(p.memo||[]).slice():[],rep:[],priv:false};go({v:'write',id});break}
  case 'add':go({v:'addContact'});break;
  case 'addsave':{const n=$('#cn').value.trim();if(!n){toast('이름을 넣어 주세요');break}const ph=$('#cp').value.trim()||'010-****-'+String(1000+S.seq*37%9000);
   const np=mk({name:n,phone:ph,isNew:true,addedDay:S.day,ratedDay:null});S.people.push(np);save();ui.q='';ui.fresh=np.id;tab('shelf');toast('새로 들어온 고기에 넣었어요');setTimeout(()=>ui.fresh=null,500);break}
@@ -453,7 +455,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'wrep':{const t=el.dataset.t,r=ui.w.rep,i=r.indexOf(t);if(i>=0)r.splice(i,1);else if(!(REP_NEG.includes(t)&&r.filter(x=>REP_NEG.includes(x)).length>=3))r.push(t);render('same');break}
  case 'wsave':{const v=nav[nav.length-1],q=P(v.id),w=ui.w;
   Object.assign(q,{hold:w.hold,grade:w.hold?null:w.grade,persona:w.hold?null:w.persona,cycle:w.hold?'auto':w.cycle,again:w.hold?null:w.again,memo:w.memo,rep:w.hold?[]:w.rep,priv:w.hold?false:w.priv,isNew:false,ratedDay:S.day});delete q.rel;
-  S.firstWrite=false;save();nav.pop();nav.push({v:'person',id:q.id});render('fade');toast(w.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
+  S.firstWrite=false;save();const direct=shelfSec(ui.backSec)&&nav.length===2&&nav[0].v==='shelf'&&nav[1].v==='write';nav.pop();if(direct){render('back');reopenSec()}else{nav.push({v:'person',id:q.id});render('fade')}toast(w.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
  case 'call':{const t=el.dataset.t;const row=document.getElementById('r'+id);const sec=ui.sec;
   const doit=()=>{p.contacts.push({day:S.day,t});const got=t=='전화'&&earnPt(p.id);save();render('same');toast(t=='연락했어요'?'연락을 기록했어요':t+' 기록을 남겼어요'+(got?' · 포인트 +1':''));if(sec){ui.sec=sec;drawSec()}};
   if(row&&nav[nav.length-1].v=='shelf'&&!sec){row.classList.add('out');setTimeout(doit,matchMedia('(prefers-reduced-motion:reduce)').matches?0:280)}else doit();break}
@@ -463,7 +465,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'stillok':p.ratedDay=S.day;save();render('same');break;
  case 'hide':p.hidden=true;save();back();toast('냉장고에서 숨겼어요');break;
  case 'del':confirmDel(id);break;
- case 'delok':S.people=S.people.filter(x=>x.id!=id);save();closeSheet();nav=[{v:'shelf'}];render('back');toast('지웠어요');break;
+ case 'delok':S.people=S.people.filter(x=>x.id!=id);save();closeSheet();ui.backSec=null;nav=[{v:'shelf'}];render('back');toast('지웠어요');break;
  case 'edit':if(el.dataset.f==='cycle'&&p&&p.hold)break;editSheet(id,el.dataset.f);break;
  case 'edx':{const e2=ui.ed,x=el.dataset.x;if(e2.f=='grade'||e2.f=='persona')e2.val=+x;else if(e2.f=='cycle')e2.val=x=='auto'?'auto':+x;else if(e2.f=='priv')e2.val=!e2.val;else if(e2.f=='rep'){const i=e2.val.indexOf(x);if(i>=0)e2.val.splice(i,1);else if(!(REP_NEG.includes(x)&&e2.val.filter(t=>REP_NEG.includes(t)).length>=3))e2.val.push(x)}else e2.val=e2.val===x?null:x;drawEdit();break}
  case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}const prevG=q.grade;q[e2.f]=e2.val;if(e2.f==='grade'&&prevG!==e2.val)q.cycle=DEFC[e2.val];if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
