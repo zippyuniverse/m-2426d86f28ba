@@ -78,7 +78,7 @@ function countN(){return todayList().length}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2000)}
 function go(v,dir){nav.push(v);render(dir||'fwd')}
 function shelfSec(k){return k==='trim'||k==='nw'||k==='hold'}
-function reopenSec(){const k=ui.backSec;if(!k||!(nav.length===1&&nav[0].v==='shelf'))return;ui.backSec=null;ui.sec=k;ui.sheetMore=false;ui.secFocus=null;drawSec()}
+function reopenSec(){const k=ui.backSec;if(!k||!(nav.length===1&&nav[0].v==='shelf'))return;ui.backSec=null;ui.sec=k;ui.secFocus=null;drawSec()}
 function back(){if(nav.length>1)nav.pop();render('back');reopenSec()}
 function tab(v){if(v=='verdict'){openVerdict();return}ui.backSec=null;nav=[{v}];render('fade')}
 
@@ -346,15 +346,13 @@ function addContact(){return `<div class="scr"><div class="hd"><button type="but
 /* sheets */
 function sheet(html,center){const r=$('#sheet-root');r.innerHTML=`<div class="dim ${center?'center':''}" data-a="sclose">${center?`<div class="dialog">${html}</div>`:`<div class="sheet">${html}</div>`}</div>`}
 function closeSheet(){const back=ui.secFocus;ui.sec=null;ui.secFocus=null;const d=$('#sheet-root .dim');if(!d)return;d.classList.add('out');setTimeout(()=>{if(!d.isConnected)return;d.remove();if(nav[nav.length-1]&&nav[nav.length-1].v=='shelf'&&back&&document.contains(back))back.focus()},matchMedia('(prefers-reduced-motion:reduce)').matches?0:200)}
-function openSec(k,el){if(k=='fresh'||k=='aging'||k=='spoil'){goFridge(k,el);return}ui.sec=k;ui.sheetMore=false;ui.secFocus=el&&el.closest?el.closest('button.sec')||el:el;drawSec()}
+function openSec(k,el){if(k=='fresh'||k=='aging'||k=='spoil'){goFridge(k,el);return}ui.sec=k;ui.secFocus=el&&el.closest?el.closest('button.sec')||el:el;drawSec()}
 function drawSec(){const k=ui.sec;if(!k)return;const title={trim:'손질할 고기',nw:'새로 들어온 고기',hold:'판정 보류'}[k];
  const L=k=='trim'?todayList():k=='nw'?newOnes():holdList();let body='';
  if(!L.length)body='<div class="empty">아직 없어요</div>';
  else if(k=='trim')body=L.map(p=>{const s=stage(p);const org=!p.hold&&p.persona!=null&&organic(p);const src=org?'emoji/o'+p.persona+'.svg':'emoji/p'+p.persona+'.svg';
   return `<div class="sline"><button type="button" class="who" data-a="open" data-id="${p.id}"><span class="tav"><img class="${fbn(org?'o'+p.persona:'p'+p.persona)}" src="${src}" alt="">${p.grade==null?'':stamp(p.grade)}</span><span class="grow"><span class="nm"><span class="nmt">${esc(p.name)}</span>${org?'<span class="org">유기농</span>':''}</span><span class="meta"><span class="pill st-${s.k}">${s.t}</span></span></span></button><button type="button" class="rb" data-a="call" data-t="전화" data-id="${p.id}">전화걸기</button><button type="button" class="btn-o" data-a="call" data-t="연락했어요" data-id="${p.id}">연락했어요</button></div>`}).join('');
- else if(k=='nw'){const show=ui.sheetMore?L:L.slice(0,5);
-  body=show.map(p=>`<div class="sline"><button type="button" class="who" data-a="write" data-id="${p.id}"><span class="grow"><span class="meta"><b>NEW</b> · ${S.day==p.addedDay?'오늘':(S.day-p.addedDay)+'일 전'}</span><span class="nm"><span class="nmt">${esc(p.name)}</span></span></span></button><button type="button" class="go" data-a="write" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
-  if(!ui.sheetMore&&L.length>5)body+=`<button type="button" class="row more" data-a="sheetmore">${L.length-5}명 더 보기</button>`}
+ else if(k=='nw')body=L.map(p=>`<div class="sline"><button type="button" class="who" data-a="write" data-id="${p.id}"><span class="grow"><span class="meta"><b>NEW</b> · ${S.day==p.addedDay?'오늘':(S.day-p.addedDay)+'일 전'}</span><span class="nm"><span class="nmt">${esc(p.name)}</span></span></span></button><button type="button" class="go" data-a="write" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
  else body=L.map(p=>`<div class="sline"><button type="button" class="who" data-a="write" data-id="${p.id}"><img class="hface" src="emoji/hold.svg" alt=""><span class="grow"><span class="nm"><span class="nmt">${esc(p.name)}</span></span><span class="meta">${md(p.ratedDay)} 판정 보류</span></span></button><button type="button" class="go" data-a="write" data-id="${p.id}">등급 매기기 →</button></div>`).join('');
  const x='<button type="button" class="secx" data-a="sclose2" aria-label="닫기"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
  sheet(`<div class="sechead"><div class="sectitle"><h3 id="sec-title">${title} ${L.length}명</h3>${x}</div></div><div class="seclist">${body}</div>`);
@@ -435,7 +433,6 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'settog':S.sets=S.sets||{};const i=el.dataset.i;S.sets[i]=!(S.sets[i]??[1,1,0,1,1,0][i]);save();render('same');break;
  case 'unhide':p.hidden=false;save();render('same');toast('냉장고에 다시 보여요.');break;
  case 'sec':openSec(el.dataset.k,el);break;
- case 'sheetmore':ui.sheetMore=true;drawSec();break;
  case 'open':{const k=ui.sec;closeSheet();if(shelfSec(k))ui.backSec=k;else ui.backSec=null;go({v:'person',id});break}
  case 'write':{const k=ui.sec;closeSheet();if(shelfSec(k))ui.backSec=k;ui.w={grade:null,persona:null,hold:false,cycle:null,again:null,memo:p&&p.hold?(p.memo||[]).slice():[],rep:[],priv:false};go({v:'write',id});break}
  case 'add':go({v:'addContact'});break;
