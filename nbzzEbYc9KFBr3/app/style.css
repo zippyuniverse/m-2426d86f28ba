@@ -5,7 +5,8 @@
 :root{--red:#D93A44;--red-t:#C8333D;--ink:#1A1A1A;--sub:#525252;--ph:#6B6B6B;--blank:#595959;--line:#E5E5E5;--bg2:#F4F4F4;--org:#12843A;--r:22px;--sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font:-apple-system-body;font-size:17px}@supports (font:-apple-system-body){html{font:-apple-system-body}}
-html,body{margin:0;background:#fff;color:var(--ink);font-family:P,-apple-system,sans-serif;font-size:0.8824rem;-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+html,body{margin:0;background:#fff;color:var(--ink);font-family:P,-apple-system,sans-serif;-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{font-size:0.8824rem}
 button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
 input{font:inherit}
 #app{max-width:480px;margin:0 auto;min-height:100vh}
@@ -581,3 +582,8 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
   image-rendering:pixelated;pointer-events:none;z-index:5;
 }
 .secsheet .sline .pill{display:inline-flex;align-items:center;line-height:1.2;}
+.secsheet .sline{gap:6px}
+.secsheet .rb,.secsheet .btn-o{padding:0 8px}
+.sline .who .nm,#flist .frrow .nm{flex-wrap:wrap;row-gap:2px}
+.sline .who .nm .nmt,#flist .frrow .nm .nmt{flex:0 1 auto;max-width:100%}
+.pdetail .kvtags{column-gap:12px}
