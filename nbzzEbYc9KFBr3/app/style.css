@@ -299,8 +299,6 @@ html.vlock,html.vlock body{overflow:hidden}
 .fst>.chip.sm:before{content:"";position:absolute;left:0;right:0;top:4px;height:32px;border-radius:16px;background:var(--bg2);z-index:-1}
 .fst>.chip.sm.on{background:transparent;color:#fff}
 .fst>.chip.sm.on:before{background:var(--ink)}
-.row.more{width:100%;justify-content:center;color:var(--ink2,#555);font-size:.8824rem;font-weight:600;min-height:48px;background:none;border:0}
-.row.more{border-top:1px solid var(--line)}
 /* v23 오늘 손질할 고기: 소 얼굴(도장보다 크게) + 도장 배지 오른쪽 아래 */
 .tav{position:relative;flex:none;width:52px;height:52px;margin-right:10px}
 .tav>img{width:52px;height:52px;object-fit:contain;display:block}
