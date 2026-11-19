@@ -591,7 +591,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 #flist .frrow .pill{font-size:12px}
 .secsheet .sline .meta .pill{font-size:12px}
 .secsheet:not(.tagres) .rb,.secsheet:not(.tagres) .btn-o{font-size:12px;font-weight:400}
-.pdetail .kvsec{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pdetail .kvsec{display:flex;align-items:center;justify-content:space-between;gap:8px;height:50px;padding:2px 14px 3px}
 .pdetail .kvsec .k{margin-bottom:0;flex:none;white-space:nowrap}
 .pdetail .kvsec .chips{flex-wrap:nowrap;justify-content:flex-end;margin-left:auto;gap:4px}
 .pdetail .kvsec .chip.c32{padding:0 8px}
