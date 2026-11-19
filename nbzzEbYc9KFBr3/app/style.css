@@ -595,7 +595,10 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .pdetail .kvsec .k{margin-bottom:0;flex:none;white-space:nowrap}
 .pdetail .kvsec .chips{flex-wrap:nowrap;justify-content:flex-end;margin-left:auto;gap:4px}
 .pdetail .kvsec .chip.c32{padding:0 8px}
-.pdetail .kvtags .blank{font-size:0.7059rem}
+.pdetail .kvtags .phsub{font-size:11px}
+.pdetail .kvtags .blank{font-size:11px;background:transparent;border-radius:0;padding:0}
+.pdetail .kv:not(.kvtags) .v{font-size:calc(0.8824rem - 1px);font-weight:400}
+.pdetail .kv:not(.kvtags) .v:after{font-weight:600}
 .pdetail .kv .v{display:flex;align-items:center;justify-content:flex-end}
 .pdetail .kv .v:after{color:#6B6B6B;font-size:20px;line-height:1}
 .pdetail .kvtags .v.tchips{align-items:center}
