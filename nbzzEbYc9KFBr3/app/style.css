@@ -579,3 +579,4 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
   background:url(art/frz-crystal.svg) center/contain no-repeat;
   image-rendering:pixelated;pointer-events:none;z-index:5;
 }
+.secsheet .sline .pill{display:inline-flex;align-items:center;line-height:1.2;}
