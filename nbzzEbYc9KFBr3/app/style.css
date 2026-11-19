@@ -603,3 +603,8 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .pdetail .kv .v{display:flex;align-items:center;justify-content:flex-end}
 .pdetail .kv .v:after{color:#6B6B6B;font-size:20px;line-height:1}
 .pdetail .kvtags .v.tchips{align-items:center}
+.saltchip{position:relative;box-sizing:border-box;flex:none;display:inline-flex;align-items:center;justify-content:center;height:44px;min-width:44px;min-height:44px;padding:0;margin:0;border:0;background:transparent;color:#1A1A1A}
+.saltchip .saltpill{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 8px;border-radius:16px;background:#F3EFE6;border:1px solid #C9BEB0;box-sizing:border-box;white-space:nowrap;line-height:1}
+.saltchip img,.saltchip svg{display:block;width:24px;height:24px;flex:none;image-rendering:pixelated}
+.saltchip .salt-n{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;color:#1A1A1A}
+.hd .saltchip + .ib[data-a="bell"]{margin-left:2px}

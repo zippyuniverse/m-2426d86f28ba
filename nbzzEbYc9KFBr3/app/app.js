@@ -34,7 +34,10 @@ function mapStoredTag(t){if(isFullBirth(t))return null;return oldDecade(t)?t.rep
 function migrateBirth(){let drop=false;(S.people||[]).forEach(p=>{if(!p||!p.memo)return;const next=migrateBirthList(p.memo);if(next!==p.memo){p.memo=next;drop=true}});if(Array.isArray(S.tagRecent)){const next=migrateBirthList(S.tagRecent);if(next!==S.tagRecent){S.tagRecent=next;drop=true}}if(Array.isArray(S.tagGone)){const next=[];S.tagGone.forEach(t=>{const n=mapStoredTag(t);if(n!=null&&!next.includes(n))next.push(n)});if(next.length!==S.tagGone.length||next.some((t,i)=>t!==S.tagGone[i])){S.tagGone=next;drop=true}}if(S.tagMove)Object.keys(S.tagMove).forEach(t=>{if(isFullBirth(t)){delete S.tagMove[t];drop=true}else if(oldDecade(t)){const n=t.replace('년대','s');if(S.tagMove[n]==null)S.tagMove[n]=S.tagMove[t];delete S.tagMove[t];drop=true}});if(S.customTags)Object.keys(S.customTags).forEach(g=>{const a=S.customTags[g];if(!Array.isArray(a))return;const next=[];a.forEach(t=>{const n=mapStoredTag(t);if(n!=null&&!next.includes(n))next.push(n)});if(next.length!==a.length||next.some((t,i)=>t!==a[i])){S.customTags[g]=next;drop=true}});return drop}
 function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(Object.prototype.hasOwnProperty.call(p,'rel')){delete p.rel;drop=true}if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}else if(!p.hold&&p.cycle==='auto'&&p.grade!=null){p.cycle=DEFC[p.grade];drop=true}});if(migrateBirth())drop=true;if(drop)save()}
 function kstDay(){return Math.floor((Date.now()+9*3600e3)/864e5)+S.day}
-function earnPt(id){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[id]===d)return false;S.ptLog[id]=d;S.pts=(S.pts||0)+1;return true}
+function giveSalt(n){n=n|0;if(n<=0)return 0;const d=kstDay();if(!S.saltDay||S.saltDay.d!==d)S.saltDay={d:d,n:0};const got=Math.min(n,Math.max(0,30-S.saltDay.n));if(!got)return 0;S.pts=(S.pts||0)+got;S.saltDay.n+=got;return got}
+function callSalt(p){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[p.id]===d)return 0;let n=3;if(!p.hold){const k=stage(p).k;if(k==='aging')n+=1;else if(k==='spoil')n+=2}S.ptLog[p.id]=d;return giveSalt(n)}
+function firstEvalSalt(p){if(!((p.isNew&&!rated(p)&&!p.hold)||p.hold))return 0;S.firstEval=S.firstEval||{};if(S.firstEval[p.id])return 0;S.firstEval[p.id]=1;return giveSalt(1)}
+function saltBit(n){return n?' · 소금 +'+n:''}
 function save(){localStorage.setItem(KEY,JSON.stringify(S))}
 function dateOf(d){const x=new Date(BASE);x.setDate(x.getDate()+d);return x}
 function md(d){const x=dateOf(d);return (x.getMonth()+1)+'월 '+x.getDate()+'일'}
@@ -144,7 +147,8 @@ function info(k){return `<button class="info" data-a="info" data-k="${k}">i</but
 
 function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fresh'),ag=byStage('aging'),sp=byStage('spoil');const q=ui.q||'';
  const unread=S.notifs.some(x=>!x.read)&&!S.readBell;
- let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span><button class="ib" data-a="bell"><span class="bic">🔔</span>${unread?'<span class="dot"></span>':''}</button></div>
+ const saltN=S.pts||0;
+ let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span><span class="saltchip" role="img" aria-label="소금 ${saltN}"><span class="saltpill"><img src="art/salt.svg" alt="" aria-hidden="true"><span class="salt-n">${saltN}</span></span></span><button class="ib" data-a="bell"><span class="bic">🔔</span>${unread?'<span class="dot"></span>':''}</button></div>
  <div class="search"><span class="sic">🔍</span><input id="q" type="search" placeholder="이름 / 태그 로 검색" value="${esc(q)}" autocomplete="off" enterkeyhint="search"></div>`;
  if(q.trim()){const r=searchAll(q);
   h+=`<div class="card" style="margin-top:10px">${r.map(p=>`<div class="row tap" data-a="${searchAct(p)}" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${esc(p.name)}</div>${searchFlags(p)?`<div class="sflags">${searchFlags(p)}</div>`:''}<div class="meta">${p.phone}</div></div><span class="go">${rated(p)||p.hold?'›':'평가 쓰기 →'}</span></div>`).join('')}
@@ -338,7 +342,7 @@ function notifs(){S.readBell=true;save();const g={};S.notifs.forEach(n=>(g[n.day
  return h+'</div>'}
 function settings(){const hid=S.people.filter(p=>p.hidden);return `<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">설정</h1></div>
  <div class="testbar">테스트용 예시 · 알림 스위치는 실제로 보내지 않아요</div>
- <div class="kv" id="ptrow"><b>포인트</b><span><span id="pts">${S.pts||0}</span>점 · 테스트 값</span></div>
+ <div class="kv" id="ptrow"><b>소금</b><span><span id="pts">${S.pts||0}</span>개 · 테스트 값</span></div>
  ${[['아침 장보기 알림','오전 9:00',1],['주간 조회 알림','',1],['월간 조회 권유 알림','',0],['판정서 변화 알림','토요일 갱신 때 내 판정서가 바뀌면 알려드려요.',1],['쓰다듬기 알림','누군가 쓰담쓰담 하면 토요일에 모아서 알려드려요.',1],['이벤트 알림','',0]].map((x,i)=>{const on=(S.sets||{})[i]??x[2];return `<div class="sw srow"><div class="grow"><b>${x[0]}</b><span>${x[1]}</span></div><button class="tog ${on?'on':''}" data-a="settog" data-i="${i}"></button></div>`}).join('')}
  <h2>숨긴 연락처</h2><div class="card">${hid.map(p=>`<div class="row"><div class="grow nm">${esc(p.name)}</div><button class="chip sm" data-a="unhide" data-id="${p.id}">다시 보이기</button></div>`).join('')||'<div class="empty">숨긴 연락처가 없어요.</div>'}</div></div>`}
 function addContact(){return `<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">새 연락처</h1></div><div class="testbar">테스트용: 실제 앱은 폰 연락처를 읽어요</div>
@@ -452,10 +456,11 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'bdelok':{if(!isBirthDecade(el.dataset.t))break;deleteDecade(el.dataset.t);save();closeSheet();render('same');break}
  case 'wrep':{const t=el.dataset.t,r=ui.w.rep,i=r.indexOf(t);if(i>=0)r.splice(i,1);else if(!(REP_NEG.includes(t)&&r.filter(x=>REP_NEG.includes(x)).length>=3))r.push(t);render('same');break}
  case 'wsave':{const v=nav[nav.length-1],q=P(v.id),w=ui.w;
+  const salt=!w.hold&&w.grade!=null?firstEvalSalt(q):0;
   Object.assign(q,{hold:w.hold,grade:w.hold?null:w.grade,persona:w.hold?null:w.persona,cycle:w.hold?'auto':w.cycle,again:w.hold?null:w.again,memo:w.memo,rep:w.hold?[]:w.rep,priv:w.hold?false:w.priv,isNew:false,ratedDay:S.day});delete q.rel;
-  S.firstWrite=false;save();const direct=shelfSec(ui.backSec)&&nav.length===2&&nav[0].v==='shelf'&&nav[1].v==='write';nav.pop();if(direct){render('back');reopenSec()}else{nav.push({v:'person',id:q.id});render('fade')}toast(w.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
+  S.firstWrite=false;save();const direct=shelfSec(ui.backSec)&&nav.length===2&&nav[0].v==='shelf'&&nav[1].v==='write';nav.pop();if(direct){render('back');reopenSec()}else{nav.push({v:'person',id:q.id});render('fade')}toast((w.hold?'판정 보류로 저장했어요':'평가를 저장했어요')+saltBit(salt));break}
  case 'call':{const t=el.dataset.t;const row=document.getElementById('r'+id);const sec=ui.sec;
-  const doit=()=>{p.contacts.push({day:S.day,t});const got=t=='전화'&&earnPt(p.id);save();render('same');toast(t=='연락했어요'?'연락을 기록했어요':t+' 기록을 남겼어요'+(got?' · 포인트 +1':''));if(sec){ui.sec=sec;drawSec()}};
+  const doit=()=>{const got=t=='전화'?callSalt(p):0;p.contacts.push({day:S.day,t});save();render('same');toast(t=='연락했어요'?'연락을 기록했어요':t+' 기록을 남겼어요'+saltBit(got));if(sec){ui.sec=sec;drawSec()}};
   if(row&&nav[nav.length-1].v=='shelf'&&!sec){row.classList.add('out');setTimeout(doit,matchMedia('(prefers-reduced-motion:reduce)').matches?0:280)}else doit();break}
  case 'gpat':doGesture(id,'pat');break;
  case 'gkkul':doGesture(id,'kkul');break;
@@ -466,16 +471,16 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'delok':S.people=S.people.filter(x=>x.id!=id);save();closeSheet();ui.backSec=null;nav=[{v:'shelf'}];render('back');toast('지웠어요');break;
  case 'edit':if(el.dataset.f==='cycle'&&p&&p.hold)break;editSheet(id,el.dataset.f);break;
  case 'edx':{const e2=ui.ed,x=el.dataset.x;if(e2.f=='grade'||e2.f=='persona')e2.val=+x;else if(e2.f=='cycle')e2.val=x=='auto'?'auto':+x;else if(e2.f=='priv')e2.val=!e2.val;else if(e2.f=='rep'){const i=e2.val.indexOf(x);if(i>=0)e2.val.splice(i,1);else if(!(REP_NEG.includes(x)&&e2.val.filter(t=>REP_NEG.includes(t)).length>=3))e2.val.push(x)}else e2.val=e2.val===x?null:x;drawEdit();break}
- case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}const prevG=q.grade;q[e2.f]=e2.val;if(e2.f==='grade'&&prevG!==e2.val)q.cycle=DEFC[e2.val];if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요');break}
+ case 'edsave':{const e2=ui.ed,q=P(e2.id);if(e2.f==='rel'){closeSheet();break}const salt=e2.f==='grade'&&e2.val!=null?firstEvalSalt(q):0;const prevG=q.grade;q[e2.f]=e2.val;if(e2.f==='grade'&&prevG!==e2.val)q.cycle=DEFC[e2.val];if(e2.f=='grade'||e2.f=='persona')q.ratedDay=S.day;save();closeSheet();render('same');toast('저장했어요'+saltBit(salt));break}
  case 'hsx':{const h=ui.hs;if(el.dataset.f=='hold'){h.hold=!h.hold;if(h.hold){h.grade=null;h.persona=null}}else{h[el.dataset.f]=+el.dataset.x;h.hold=false}drawHold();break}
  case 'pgsheet':holdSheet(id);break;
- case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;if(hs.hold){Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,cycle:'auto',ratedDay:S.day});delete q.rel}else{const was=q.hold,prev=q.grade;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was||prev!==hs.grade)q.cycle=DEFC[hs.grade]}save();closeSheet();render('same');toast(hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요');break}
+ case 'hssave':{const q=P(ui.hs.id),hs=ui.hs;const salt=!hs.hold&&hs.grade!=null?firstEvalSalt(q):0;if(hs.hold){Object.assign(q,{hold:true,grade:null,persona:null,again:null,rep:[],priv:false,cycle:'auto',ratedDay:S.day});delete q.rel}else{const was=q.hold,prev=q.grade;Object.assign(q,{hold:false,grade:hs.grade,persona:hs.persona,ratedDay:S.day});delete q.rel;if(was||prev!==hs.grade)q.cycle=DEFC[hs.grade]}save();closeSheet();render('same');toast((hs.hold?'판정 보류로 저장했어요':'평가를 저장했어요')+saltBit(salt));break}
  case 'tagp':go({v:'tagPeople',t:el.dataset.t});break;
  case 'tsel':{if(ui._lp)break;tagInit();const t=el.dataset.t;if(ui.tagEdit&&el.dataset.k==='memo'){tagEditMenu(t);break}if(ui.tagEdit&&el.dataset.k==='rep')break;const i=ui.tagSel.indexOf(t);if(i>=0){ui.tagSel.splice(i,1);if(isBirthDecade(t))ui.tagSel=ui.tagSel.filter(x=>!isBirthYear(x)||decadeOfYear(x)!==t)}else{ui.tagSel.push(t);ui.tagScroll=1}save();render('same');break}
  case 'tsearch':{if(!tagMatch().length)break;tagRemember();drawTagSheet();break}
  case 'tx':{tagInit();const tx=el.dataset.t;ui.tagSel=ui.tagSel.filter(t=>t!==tx);if(isBirthDecade(tx))ui.tagSel=ui.tagSel.filter(t=>!isBirthYear(t)||decadeOfYear(t)!==tx);if(!ui.tagSel.length){closeSheet();render('same');break}render('same');drawTagSheet();break}
  case 'tclear':{ui.tagSel=[];closeSheet();render('same');break}
- case 'tcall':{p.contacts.push({day:S.day,t:'전화'});const got=earnPt(p.id);save();toast('전화 기록을 남겼어요'+(got?' · 포인트 +1':''));break}
+ case 'tcall':{const got=callSalt(p);p.contacts.push({day:S.day,t:'전화'});save();toast('전화 기록을 남겼어요'+saltBit(got));break}
  case 'treclear':S.tagRecent=[];save();render('same');break;
  case 'tmenu':ui.tagMenu=!ui.tagMenu;render('same');break;
  case 'tadd':ui.tagMenu=0;ui.tagNewGroup=(memoGroupList()[0]||{}).key||'';openTagAdd();break;
