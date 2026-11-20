@@ -608,5 +608,15 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .saltchip img,.saltchip svg{display:block;width:24px;height:24px;flex:none;image-rendering:pixelated}
 .saltchip .salt-n{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;color:#1A1A1A}
 .hd .saltchip + .ib[data-a="bell"]{margin-left:2px}
-.chip,.tpill,.tschip,.ptag{white-space:nowrap;flex-shrink:0;min-width:max-content}
+.chip,.tpill,.tschip,.ptag{white-space:nowrap;flex-shrink:0;min-width:max(44px,max-content)}
+.relrow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+.relrow .k{flex:none}
+.relrow .chips{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;justify-content:flex-end;margin-left:auto;gap:8px}
+.pdetail .k.diml{opacity:.45}
+.pdetail .box>.kv,.pdetail .box>.kvsec,.pdetail .box>.relrow{padding-left:0;padding-right:0}
+.pdetail .box>.relrow{border-top:0}
+@media (max-width:320px){
+ .box>.relrow,.pdetail .box>.kv.kvtags,.pdetail .box>.kvsec{flex-direction:column;align-items:stretch}
+ .box>.relrow .chips,.pdetail .box .kvtags .v.tchips,.pdetail .box>.kvsec .chips{width:100%;max-width:none;margin-left:0;justify-content:flex-start}
+}
 .pdetail .kvtags .v.tchips{flex-wrap:nowrap;width:max-content;flex:0 1 auto}
