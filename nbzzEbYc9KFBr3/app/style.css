@@ -161,8 +161,9 @@ fieldset.box.mine>.kv{border-top:0}
 .testbar{background:#E8E3FF;color:#3B2A99;font-size:0.7059rem;font-weight:700;text-align:center;padding:6px;border-radius:8px;margin:8px 0}
 #sheet-root .dim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:flex;align-items:flex-end;justify-content:center}
 #sheet-root .dim.center{align-items:center}
-.sheet{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 18px calc(var(--sab) + 16px);max-height:88vh;overflow:auto}
-.dialog{background:#fff;width:86%;max-width:340px;border-radius:16px;padding:22px 18px 14px}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 18px calc(var(--sab) + 16px);max-height:88vh;overflow:auto;overscroll-behavior:contain}
+body.sheetlock{overflow:hidden}
+.dialog{background:#fff;width:86%;max-width:340px;border-radius:16px;padding:22px 18px 14px;overscroll-behavior:contain}
 .sheet h3,.dialog h3{margin:0 0 12px;font-size:1.0588rem}
 .sheet ul{padding-left:18px;margin:0 0 16px;line-height:1.7}
 .dialog p{margin:0 0 16px;color:var(--sub);line-height:1.5}
@@ -388,7 +389,7 @@ button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .secx{position:absolute;right:12px;top:4px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#4A4A4A;border-radius:22px}
 .secx:active{transform:none;filter:none}
 .secx:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
-.secsheet .seclist{overflow-y:auto;flex:1 1 auto;min-height:0;padding:0 18px calc(16px + var(--sab));-webkit-overflow-scrolling:touch}
+.secsheet .seclist{overflow-y:auto;flex:1 1 auto;min-height:0;padding:0 18px calc(16px + var(--sab));-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .secsheet .seclist>.empty{height:96px;margin:0;padding:0 8px;display:flex;align-items:center;justify-content:center}
 .sline{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
 .seclist .sline:first-child{border-top:0}
