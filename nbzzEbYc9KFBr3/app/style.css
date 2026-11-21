@@ -634,5 +634,6 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .pdetail fieldset.box.mine>.kv{min-height:0;padding-top:8px;padding-bottom:8px}
 .pdetail fieldset.box.mine>.kv.kvtags .v.tchips{margin-left:0;width:auto;max-width:none;flex:1 1 auto;justify-content:flex-start}
 .pdetail fieldset.box.mine>.kv.kvtags .v.tchips:after{margin-left:auto}
+.pdetail fieldset.box.mine>.kv.kvtags .v.tchips>.blank{margin-left:auto}
+.pdetail fieldset.box.mine>.kv.kvtags .v.tchips:has(>.blank):after{margin-left:0}
 .pdetail fieldset.box.mine+.kv{border-top:0}
-.pdetail [data-f="again"]+.sw{margin-top:12px}
