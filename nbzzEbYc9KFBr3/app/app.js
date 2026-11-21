@@ -316,9 +316,10 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
  const sw=`<div class="sw"><div class="grow"><b>이 평가는 나만 보기</b><span>끄면 상대가 평가 받기를 시작할 때 익명으로 반영돼요</span></div><button type="button" class="tog ${p.priv?'on':''}" data-a="ptog" data-id="${p.id}"></button></div>`;
  const rep=hold?`<div class="kv kvtags"><span class="k diml">평판 태그</span></div><div class="note wrepnote">성격과 등급을 고르면 평판 태그를 달 수 있어요.</div>`:`<div class="kv kvtags" data-a="edit" data-f="rep" data-id="${p.id}"><span class="k">평판 태그</span><span class="v tchips">${chips(p.rep,'rep')}</span></div>`;
  h+=`<h2>태그</h2><fieldset class="box mine"><legend class="leg">${LOCK}나만 봐요</legend><div class="kv kvtags" data-a="edit" data-f="memo" data-id="${p.id}"><span class="v tchips">${mine}</span></div></fieldset>`;
- h+=rep+(hold?'':again+sw);
+ h+=rep+(hold?'':again);
  if(!hold){const s=stage(p);const lab=cycLabel(p);h+=`<h2>신선도</h2><div class="card"><div class="kv" data-a="edit" data-f="cycle" data-id="${p.id}"><span class="k">${lab?lab+' 주기 · ':''}마지막 연락 ${lastC(p)!=null?md(lastC(p)):'없음'}</span><span class="pill st-${s.k}">${s.t}</span></div></div>`}
  h+=`<h2>연락 기록</h2><div class="card">${p.contacts.slice().reverse().map(c=>`<div class="kv ro"><span>${md(c.day)} ${c.t}</span></div>`).join('')||'<div class="kv ro"><span class="k">아직 없어요</span></div>'}</div>`;
+ if(!hold)h+=sw;
  if(p.pub)h+=`<button class="btn-g" style="margin-top:14px" data-a="pubv">공개된 판정서 보기 <span class="badge test">테스트용 예시</span></button>`;
  h+=p.hidden?`<button class="btn-g" style="margin-top:14px" data-a="unhide" data-id="${p.id}">다시 보이기</button>`:`<button class="btn-g" style="margin-top:14px" data-a="hide" data-id="${p.id}">냉장고에서 숨기기</button>`;
  h+=`<button class="link-red" data-a="del" data-id="${p.id}">${hold?'이 기록 지우기':'이 평가 지우기'}</button></div>`;
