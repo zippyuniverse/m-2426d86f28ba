@@ -161,7 +161,16 @@ fieldset.box.mine>.kv{border-top:0}
 .testbar{background:#E8E3FF;color:#3B2A99;font-size:0.7059rem;font-weight:700;text-align:center;padding:6px;border-radius:8px;margin:8px 0}
 #sheet-root .dim{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:flex;align-items:flex-end;justify-content:center}
 #sheet-root .dim.center{align-items:center}
-.sheet{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 18px calc(var(--sab) + 16px);max-height:88vh;overflow:auto;overscroll-behavior:contain}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px 18px calc(var(--sab) + 16px);max-height:88vh;max-height:88dvh;overflow:auto;overscroll-behavior:contain}
+.sheet:has(> .sfoot){display:flex;flex-direction:column;overflow:hidden;height:auto}
+.sheet:has(> .sfoot)>h3{flex:none;margin:0 0 12px}
+.sheet:has(> .sfoot)>.sbody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:16px}
+.sheet:has(> .sfoot)>.sfoot{flex:none}
+.sheet:has(.hsheet){display:flex;flex-direction:column;overflow:hidden;height:auto}
+.hsheet{display:flex;flex-direction:column;min-height:0;flex:1 1 auto;max-height:100%}
+.hsheet>h3{flex:none}
+.hsheet>.sbody{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.hsheet>.hsrow{flex:none}
 body.sheetlock{overflow:hidden}
 .dialog{background:#fff;width:86%;max-width:340px;border-radius:16px;padding:22px 18px 14px;overscroll-behavior:contain}
 .sheet h3,.dialog h3{margin:0 0 12px;font-size:1.0588rem}
@@ -563,6 +572,10 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 #sheet-root .srow .gsw{margin-left:auto;margin-right:4px;width:16px;height:16px;border-radius:4px;background:var(--gc);flex:0 0 auto}
 #sheet-root .srow[data-a="tdelg"]{color:var(--red-t)}
 .sheet.secsheet:has(.tform){display:block;overflow:auto;height:auto}
+.sheet.secsheet:has(.tform .btn-r){display:flex;flex-direction:column;overflow:hidden;height:auto;max-height:88vh;max-height:88dvh}
+.sheet.secsheet:has(.tform .btn-r) .tform{display:flex;flex-direction:column;min-height:0;flex:1 1 auto;overflow:hidden}
+.sheet.secsheet:has(.tform .btn-r) .tform .sbody{overflow-y:auto;min-height:0;flex:1 1 auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.sheet.secsheet:has(.tform .btn-r) .tform .btn-r{flex:none}
 .tfab{position:fixed;right:16px;bottom:calc(var(--sab) + 179px);width:56px;height:56px;border-radius:28px;background:var(--red);color:#fff;font-size:34px;font-weight:400;z-index:6;display:flex;align-items:center;justify-content:center;line-height:1}
 .btn-r.teditend{position:fixed;left:max(16px,calc(50% - 224px));right:max(16px,calc(50% - 224px));width:auto;margin:0;bottom:calc(var(--sab) + 70px);height:50px;z-index:6}
 .tmenu{position:fixed;right:16px;bottom:calc(var(--sab) + 243px);z-index:7;background:#fff;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.16);min-width:168px;overflow:hidden}
