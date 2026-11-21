@@ -638,4 +638,6 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .pdetail fieldset.box.mine>.kv.kvtags .v.tchips>.blank{margin-left:auto}
 .pdetail fieldset.box.mine>.kv.kvtags .v.tchips:has(>.blank):after{margin-left:0}
 .pdetail fieldset.box.mine+.kv{border-top:0}
+.pdetail .kv.kvtags:has(+ .kv.kvtags){padding-bottom:10px}
+.pdetail .kv.kvtags + .kv.kvtags{border-top:0;padding-top:10px;min-height:44px}
 .pdetail .card+.sw{margin-top:24px}
