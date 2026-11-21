@@ -481,7 +481,8 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'gkkul':doGesture(id,'kkul');break;
  case 'orgtip':toast('2주 연속 쓰담쓰담한 사람이에요. 4주 동안 안 하면 떼요.');break;
  case 'stillok':p.ratedDay=S.day;save();render('same');break;
- case 'hide':p.hidden=true;save();back();toast('냉장고에서 숨겼어요');break;
+ case 'hide':sheet(`<h3>냉장고에서 숨길까요?</h3><p>냉장고, 진열대, 아침 장보기에서 빠져요. 진열대 검색으로는 찾을 수 있고, 설정의 숨긴 연락처에서 되돌릴 수 있어요.</p><div class="dbtn"><button data-a="sclose2">취소</button><button class="r" data-a="hideok" data-id="${id}">숨기기</button></div>`,true);break;
+ case 'hideok':p.hidden=true;save();closeSheet();back();toast('냉장고에서 숨겼어요');break;
  case 'del':confirmDel(id);break;
  case 'delok':S.people=S.people.filter(x=>x.id!=id);save();closeSheet();ui.backSec=null;nav=[{v:'shelf'}];render('back');toast('지웠어요');break;
  case 'edit':if(el.dataset.f==='priv'||(el.dataset.f==='cycle'&&p&&p.hold))break;editSheet(id,el.dataset.f);break;
