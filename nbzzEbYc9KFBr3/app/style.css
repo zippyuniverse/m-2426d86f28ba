@@ -91,6 +91,16 @@ nav.tab button.on b{opacity:1;filter:none}
 .req{color:var(--red-t);font-size:0.7059rem;margin-left:6px;font-weight:600}
 .opt{color:var(--sub);font-size:0.7059rem;margin-left:6px;font-weight:500}
 .box{border:1px solid #DADADA;border-radius:14px;padding:14px;margin-top:12px}
+fieldset.box.mine{width:100%;min-inline-size:0;margin-top:18px}
+fieldset.box.mine>legend.leg{display:inline-flex;align-items:center;gap:4px;padding:0 6px;margin-left:8px;background:#fff;color:var(--ink);font-weight:700;line-height:1.2}
+fieldset.box.mine>legend.leg svg{width:16px;height:16px;display:block;flex:none}
+.relhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-weight:700;margin:2px 0 8px}
+.relhead b{font-weight:700}
+.relhead span{font-weight:400}
+.chips.relone{flex-wrap:nowrap}
+.subh{font-weight:700;margin:18px 0 8px}
+.subh.diml{opacity:.45}
+fieldset.box.mine>.kv{border-top:0}
 .box.dim{border-color:color-mix(in srgb,#DADADA 45%,#fff)}
 .box.dim .boxh{opacity:.45}
 .wrep .tpill{font-weight:400}
