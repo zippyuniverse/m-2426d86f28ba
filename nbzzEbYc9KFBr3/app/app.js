@@ -327,7 +327,7 @@ function person(v){const p=P(v.id);if(!p){return shelf()}const hold=p.hold;
 
 /* 평가 쓰기 */
 function write(v){const p=P(v.id);const w=ui.w;const hold=w.hold;const ok=hold||(w.grade!=null&&w.persona!=null);
- let h=`<div class="scr nonav"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><div style="flex:1"><div style="font-weight:800;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
+ let h=`<div class="scr nonav"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><div style="flex:1"><div style="font-weight:700;font-size:1.1765rem">${esc(p.name)}</div><div class="small">${p.phone}</div>${S.firstWrite?'<div class="small">이름은 이 폰에서만 읽어요</div>':''}</div>${info('write')}</div>
  <h2>한마디로 어떤 사람?<span class="req">필수</span></h2><div class="grid3">${PERS.map((n,i)=>`<button class="tile ${w.persona===i?'on':''}" data-a="w" data-f="persona" data-x="${i}"><img class="${fbn('p'+i)}" src="emoji/p${i}.svg">${n}</button>`).join('')}</div>
  <h2>등급 판정<span class="req">필수</span></h2><div class="grades">${[5,4,3,2,1].map(g=>`<button class="g${g} ${w.grade===g?'on':''}" data-a="w" data-f="grade" data-x="${g}">${stamp(g)}${GR[g][1]}<span class="gcy">${defCycleLine(g)}</span></button>`).join('')}</div>
  <button class="holdbtn ${hold?'on':''}" data-a="w" data-f="hold">아직 판정 보류 · 성격·등급 없이 저장</button>`;
