@@ -150,7 +150,7 @@ function saltChip(){const n=S.pts||0;return `<span class="saltchip" role="img" a
 
 function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fresh'),ag=byStage('aging'),sp=byStage('spoil');const q=ui.q||'';
  const unread=S.notifs.some(x=>!x.read)&&!S.readBell;
- let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span>${saltChip()}<button class="ib" data-a="bell"><span class="bic">🔔</span>${unread?'<span class="dot"></span>':''}</button></div>
+ let h=`<div class="scr"><div class="hd"><h1 data-a="secret">진열대</h1>${info('shelf')}<span class="sp"></span><button class="ib" data-a="bell"><span class="bic">🔔</span>${unread?'<span class="dot"></span>':''}</button>${saltChip()}</div>
  <div class="search"><span class="sic">🔍</span><input id="q" type="search" placeholder="이름 / 태그 로 검색" value="${esc(q)}" autocomplete="off" enterkeyhint="search"></div>`;
  if(q.trim()){const r=searchAll(q);
   h+=`<div class="card" style="margin-top:10px">${r.map(p=>`<div class="row tap" data-a="${searchAct(p)}" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${esc(p.name)}</div>${searchFlags(p)?`<div class="sflags">${searchFlags(p)}</div>`:''}<div class="meta">${p.phone}</div></div><span class="go">${rated(p)||p.hold?'›':'평가 쓰기 →'}</span></div>`).join('')}
