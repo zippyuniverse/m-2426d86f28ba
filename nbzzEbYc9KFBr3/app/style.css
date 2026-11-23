@@ -99,7 +99,9 @@ fieldset.box.mine>legend.leg{display:inline-flex;align-items:center;gap:4px;padd
 fieldset.box.mine>legend.leg svg{width:16px;height:16px;display:block;flex:none}
 .relhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-weight:700;margin:2px 0 8px}
 .relhead b{font-weight:700}
-.relhead span{font-weight:400}
+.relhead span{font-size:12px;font-weight:400;color:#6B6B6B}
+.sheet .sbody>.relhead:first-child{margin-bottom:0}
+.sheet .sbody>.relhead+.chips+.relhead{margin-top:8px}
 .chips.relone{flex-wrap:nowrap}
 .subh{font-weight:700;margin:18px 0 8px}
 .subh.diml{opacity:.45}
