@@ -102,6 +102,8 @@ fieldset.box.mine>legend.leg svg{width:16px;height:16px;display:block;flex:none}
 .relhead span{font-size:12px;font-weight:400;color:#6B6B6B}
 .sheet .sbody>.relhead:first-child{margin-bottom:0}
 .sheet .sbody>.relhead+.chips+.relhead{margin-top:8px}
+.scr.nonav fieldset.box.mine>.relhead:first-of-type{margin-bottom:0}
+.scr.nonav fieldset.box.mine>.relhead+.chips+.relhead{margin-top:8px}
 .chips.relone{flex-wrap:nowrap}
 .subh{font-weight:700;margin:18px 0 8px}
 .subh.diml{opacity:.45}
