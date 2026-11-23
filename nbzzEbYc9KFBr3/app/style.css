@@ -149,7 +149,7 @@ fieldset.box.mine>.kv{border-top:0}
 .pdetail .bigb.red{border-color:transparent}
 .pdetail .bigb .callsalt{display:inline-flex;align-items:center;gap:2px;height:28px;padding:0 6px;border:0;border-radius:14px;background:#F3EFE6;box-sizing:border-box;flex:none}
 .pdetail .bigb .callsalt span{font-size:13px;font-weight:700;line-height:1;color:#1A1A1A}
-.pdetail .bigb .callsalt img{display:block;width:24px;height:24px;flex:none;image-rendering:pixelated}
+.pdetail .bigb .callsalt img{display:block;width:16px;height:16px;flex:none;image-rendering:pixelated}
 .bigb .bico{width:20px;height:20px;vertical-align:-4px;margin-right:4px;image-rendering:pixelated;flex:none}
 .ptag{display:inline-flex;align-items:center;min-height:30px;padding:0 10px;border-radius:20px;font-size:13px;font-weight:400;line-height:1.2}
 .ptag.memo{background:#F4F4F4;color:#1A1A1A}
@@ -636,7 +636,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .pdetail .kvtags .v.tchips{align-items:center}
 .saltchip{position:relative;box-sizing:border-box;flex:none;display:inline-flex;align-items:center;justify-content:center;height:44px;min-width:44px;min-height:44px;padding:0;margin:0;border:0;background:transparent;color:#1A1A1A}
 .saltchip .saltpill{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 8px;border-radius:16px;background:#F3EFE6;border:1px solid #C9BEB0;box-sizing:border-box;white-space:nowrap;line-height:1}
-.saltchip img,.saltchip svg{display:block;width:24px;height:24px;flex:none;image-rendering:pixelated}
+.saltchip img,.saltchip svg{display:block;width:16px;height:16px;flex:none;image-rendering:pixelated}
 .saltchip .salt-n{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;color:#1A1A1A}
 .hd .saltchip + .ib[data-a="bell"]{margin-left:2px}
 .chip,.tpill,.tschip,.ptag{white-space:nowrap;flex-shrink:0;min-width:44px}
