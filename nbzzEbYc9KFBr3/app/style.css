@@ -145,8 +145,11 @@ fieldset.box.mine>.kv{border-top:0}
 .three{display:flex;gap:8px;margin-top:12px}
 .three>*{flex:1}
 .bigb{height:48px;border-radius:var(--r);background:var(--bg2);font-weight:600}
-.pdetail .bigb{height:44px;background:#fff;border:1.5px solid #CFCFCF}
+.pdetail .bigb{height:44px;background:#fff;border:1.5px solid #CFCFCF;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
 .pdetail .bigb.red{border-color:transparent}
+.pdetail .bigb .callsalt{display:inline-flex;align-items:center;gap:2px;height:28px;padding:0 6px;border:0;border-radius:14px;background:#F3EFE6;box-sizing:border-box;flex:none}
+.pdetail .bigb .callsalt span{font-size:13px;font-weight:700;line-height:1;color:#1A1A1A}
+.pdetail .bigb .callsalt img{display:block;width:24px;height:24px;flex:none;image-rendering:pixelated}
 .bigb .bico{width:20px;height:20px;vertical-align:-4px;margin-right:4px;image-rendering:pixelated;flex:none}
 .ptag{display:inline-flex;align-items:center;min-height:30px;padding:0 10px;border-radius:20px;font-size:13px;font-weight:400;line-height:1.2}
 .ptag.memo{background:#F4F4F4;color:#1A1A1A}
