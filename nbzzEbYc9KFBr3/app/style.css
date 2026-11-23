@@ -648,8 +648,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .saltchip .saltpill{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 8px;border-radius:16px;background:#F3EFE6;border:1px solid #C9BEB0;box-sizing:border-box;white-space:nowrap;line-height:1}
 .saltchip img,.saltchip svg{display:block;width:16px;height:16px;flex:none;image-rendering:pixelated}
 .saltchip .salt-n{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;color:#1A1A1A}
-.hd .saltchip + .ib[data-a="bell"]{margin-left:2px}
-.hd>.saltchip:last-child{margin-right:52px}
+.hd .ib[data-a="bell"] + .saltchip{margin-left:2px}
 .tagpage>.thlead{margin:4px 0 0;font-size:12px;font-weight:400;line-height:1.3;color:#6B6B6B}
 .chip,.tpill,.tschip,.ptag{white-space:nowrap;flex-shrink:0;min-width:44px}
 .chip.sm,.ptag{min-width:0}
