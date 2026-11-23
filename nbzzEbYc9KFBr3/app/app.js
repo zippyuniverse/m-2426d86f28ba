@@ -123,7 +123,7 @@ function morning(){const t=todayList(),sp=t.filter(p=>stage(p).k=='spoil').lengt
 
 /* render */
 function render(dir){const v=nav[nav.length-1];if(v.v=='verdict'){$('#vlayer').innerHTML=verdict();return}const app=$('#app');let h='';
- const f={shelf,fridge,tags,verdict,person,write,notifs,settings,tagPeople,pubVerdict,addContact}[v.v];h=f(v);
+ const f={shelf,fridge,tags,verdict,person,write,notifs,settings,tagPeople,pubVerdict,addContact,salt:saltPage}[v.v];h=f(v);
  const tabs=['shelf','fridge','tags','verdict'];
  if(tabs.includes(v.v))h+=navBar(v.v);
  app.innerHTML=h;const sc=app.querySelector('.scr');if(sc&&dir){sc.classList.add('enter');if(dir=='back')sc.classList.add('back');if(dir=='fade')sc.classList.add('fade')}
@@ -146,7 +146,14 @@ function fitFridge(){if(!nav[nav.length-1]||nav[nav.length-1].v!='fridge')return
 function navBar(c){const t=[['shelf','진열대','🥩'],['fridge','냉장고','🧊'],['tags','태그','🏷️'],['verdict','내 판정서','📋']];
  return `<nav class="tab">${t.map(x=>x[0]=='verdict'?`<button type="button" class="vt" data-a="tab" data-v="verdict" aria-label="내 판정서"></button>`:`<button type="button" data-a="tab" data-v="${x[0]}" class="${c==x[0]?'on':''}" aria-label="${x[1]}"><b data-ic="${x[0]}">${x[2]}</b><span>${x[1]}</span></button>`).join('')}</nav>`}
 function info(k){return `<button class="info" data-a="info" data-k="${k}">i</button>`}
-function saltChip(){const n=S.pts||0;return `<span class="saltchip" role="img" aria-label="소금 ${n}"><span class="saltpill"><img src="art/salt.svg" alt="" aria-hidden="true"><span class="salt-n">${n}</span></span></span>`}
+function saltChip(){const n=S.pts||0;return `<span class="saltchip" role="img" data-a="salt" aria-label="소금 ${n}"><span class="saltpill"><img src="art/salt.svg" alt="" aria-hidden="true"><span class="salt-n">${n}</span></span></span>`}
+function saltTodayN(){const d=kstDay();return S.saltDay&&S.saltDay.d===d?Math.min(30,S.saltDay.n|0):0}
+function saltCallLeft(){const d=kstDay();S.ptLog=S.ptLog||{};return todayList().filter(p=>S.ptLog[p.id]!==d)}
+function saltFirstLeft(){S.firstEval=S.firstEval||{};return newOnes().concat(holdList()).filter(p=>!S.firstEval[p.id])}
+const SALT_CHECK='<svg class="px" width="24" height="24" viewBox="0 0 12 12" shape-rendering="crispEdges" aria-hidden="true">'+[[8,1],[9,1],[7,2],[8,2],[6,3],[7,3],[1,4],[5,4],[6,4],[0,5],[1,5],[4,5],[5,5],[1,6],[2,6],[3,6],[4,6],[2,7],[3,7]].map(p=>`<rect x="${p[0]}" y="${p[1]}" width="1" height="1" fill="#12843A"/>`).join('')+'</svg>';
+function saltMission(title,sub,right,kind,go){const ico=kind==='done'?SALT_CHECK:'<img src="art/salt.svg" alt="" width="24" height="24">';const cls=kind==='open'?'mrow':'mrow '+kind;const rcls=kind==='later'?'right later':'right';return `<button type="button" class="${cls}" data-a="saltgo" data-k="${go}"><span class="ico">${ico}</span><span class="mid"><span class="t">${title}</span><span class="s">${sub}</span></span><span class="${rcls}">${right}<span class="chev" aria-hidden="true">›</span></span></button>`}
+function saltPage(){const n=saltTodayN(),full=n>=30,held=S.pts||0;const cells=Array.from({length:30},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('');const msg=full?'<p class="today-msg">오늘 30개를 다 모았어요. 미션이 남아 있어도 오늘은 더 모이지 않아요. 전화와 평가는 할 수 있어요.</p>':'';const calls=saltCallLeft(),aging=calls.filter(p=>stage(p).k==='aging').length;const call=saltMission('전화걸기',`오늘 받을 수 있는 사람 ${calls.length}명 · 숙성 중 ${aging}명`,full?'내일 다시':'+3',full?'later':'open','call');const left=saltFirstLeft();let first;if(!left.length&&Object.keys(S.firstEval||{}).length)first=saltMission('첫 평가','새로 들어온 고기·판정 보류를 다 평가했어요','완료','done','first');else if(!left.length)first=saltMission('첫 평가','지금은 대상 없음','','empty','first');else{const nw=left.filter(p=>!p.hold).length,hd=left.length-nw;const bits=[];if(nw)bits.push('새로 들어온 고기 '+nw+'명');if(hd)bits.push('판정 보류 '+hd+'명');first=saltMission('첫 평가',bits.join(' · '),full?'내일 다시':'+1',full?'later':'open','first')}const yeo=saltMission('여의도 인증','계정당 한 번','+100','open','yeo');return `<div class="scr saltpage"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1>소금</h1><span class="sp"></span>${info('salt')}</div><section class="card hold" aria-label="보유"><p class="today-lab${full?' full':''}">오늘 ${n} / 30</p><div class="todaybar${full?' full':''}" role="img" aria-label="오늘 ${n} / 30">${cells}</div>${msg}<div class="bal"><img src="art/salt.svg" alt="" width="36" height="36"><span class="n">${held}</span><span class="u">소금</span></div></section><h2>미션</h2><div class="missions">${call}${first}${yeo}</div><h2>구입</h2><div class="card buy">${LOCK}<p>지금은 이 앱에서 살 수 없어요</p></div></div>`}
+function saltInfo(){const nw=s=>`<span class="nw">${s}</span>`;const items=[`${nw('전화걸기')}는 하루 한 번 소금 <b>3</b>개예요.<br>${nw('숙성 중')}이면 <b>+1</b>, ${nw('상하기 직전')}이면 <b>+2</b>예요.`,`${nw('첫 평가')}는 <b>1</b>개예요. ‘${nw('연락했어요')}’로는 모이지 않아요.`,`하루에 <b>30</b>개까지 모을 수 있어요.<br>${nw('여의도 인증')} <b>100</b>개는 따로예요.`,'모은 소금과 산 소금은 구분 없이 열람과 Pro에 써요.'];sheet(`<h3>소금은 이렇게 모여요</h3><ul class="saltinfo">${items.map(x=>`<li>${x}</li>`).join('')}</ul><button class="btn-r" data-a="sclose2">알겠어요</button>`)}
 
 function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fresh'),ag=byStage('aging'),sp=byStage('spoil');const q=ui.q||'';
  const unread=S.notifs.some(x=>!x.read)&&!S.readBell;
@@ -459,7 +466,9 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
  case 'vopen':openVerdict();break;
  case 'vback':closeVerdict();break;
  case 'back':back();break;
- case 'info':infoSheet(el.dataset.k);break;
+ case 'info':if(el.dataset.k==='salt'){saltInfo();break}infoSheet(el.dataset.k);break;
+ case 'salt':go({v:'salt'});break;
+ case 'saltgo':{const k=el.dataset.k;if(k==='call'){nav=[{v:'shelf'}];render();openSec('trim');break}if(k==='first'){S.firstEval=S.firstEval||{};const nw=newOnes().filter(x=>!S.firstEval[x.id]).length,hd=holdList().filter(x=>!S.firstEval[x.id]).length;nav=[{v:'shelf'}];render();openSec(nw||!hd?'nw':'hold');break}if(k==='yeo')go({v:'settings'});break}
  case 'sclose':case 'sclose2':{const backEdit=ui.birthAdd==='edit'&&ui.ed;const drop=!!($('#sheet-root .sheet>.sfoot [data-a="edsave"]')&&ui.ed&&ui.ed.f==='memo');ui.birthAdd=null;closeSheet();if(backEdit)drawEdit();else{if(drop){ui.ed.drafts=[];ui.gadd=null;ui.memoAdd=null;ui.memoAddFresh=null}if(ui.w&&nav[nav.length-1]&&nav[nav.length-1].v=='write')render('same')}break}
  case 'secret':taps=taps.filter(t=>Date.now()-t<1500);taps.push(Date.now());if(taps.length>=5){taps=[];testMenu()}break;
  case 'bell':go({v:'notifs'});break;
