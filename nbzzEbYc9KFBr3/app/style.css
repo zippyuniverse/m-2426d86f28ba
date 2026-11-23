@@ -651,6 +651,8 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .saltchip .salt-n{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;color:#1A1A1A}
 .hd .saltchip + .ib[data-a="bell"]{margin-left:2px}
 .chip,.tpill,.tschip,.ptag{white-space:nowrap;flex-shrink:0;min-width:44px}
+.chip.sm,.ptag{min-width:0}
+.chip.sm.dash,.recard .chip.sm,.fst .chip.sm,.hd .chip.sm,.row .chip.sm{min-width:44px}
 .relrow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
 .relrow .k{flex:none}
 .relrow .chips{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;justify-content:flex-end;margin-left:auto;gap:8px}
