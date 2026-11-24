@@ -165,7 +165,6 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
   return h+'</div>'}
  if(!nw.length&&!td.length&&!hd.length&&!fr.length&&!ag.length&&!sp.length)h+=`<div class="empty">오늘은 손질할 고기가 없어요.<br>이름이나 태그로 찾아 평가를 써 보세요.</div>`;
  /* sprite positions from build_base_c2.py / build_n1e.py (390 canvas, crop origin 8,136) */
- const FB={hold:[9,26,211,192],p0:[11,30,208,189],p1:[10,33,209,190],p2:[9,33,210,187],p3:[11,27,211,193],p4:[12,31,210,189],p5:[11,29,209,192],p6:[11,29,209,190],p7:[12,16,211,203],p8:[11,29,209,191],p9:[10,22,210,199],p10:[11,12,211,206],p11:[11,23,209,196]};
  const SLOT={trim:{cx:[66,130,194,258],bottom:172,width:52},hold:{cx:[238,297],bottom:322,width:50},fresh:{cx:[82],bottom:466,width:50},aging:{cx:[186],bottom:466,width:50},spoil:{cx:[290],bottom:466,width:50}};
  const LAB={trim:{cx:187,cy:217},nw:{cx:108,cy:361},hold:{cx:266,cy:361},fresh:{cx:82,cy:505},aging:{cx:186,cy:505},spoil:{cx:290,cy:505}};
  const TW={trim:65,nw:94,hold:53,fresh:24,aging:41,spoil:65};
@@ -173,8 +172,8 @@ function shelf(){const nw=newOnes(),td=todayList(),hd=holdList(),fr=byStage('fre
  const ADV=[0,14,17,17,17,17,17,17,17,17,22,19,22,22,22,22,22,22,22,22,25,22,25,25,25];
  const BOX={trim:[0,96,376,150],nw:[0,255,188,125],hold:[188,255,188,125],fresh:[0,378,124,152],aging:[124,378,126,152],spoil:[250,378,126,152]};
  const art=(name,w,ht,style,alt,cls)=>`<img class="${cls||'px'}" src="art/${name}.png" srcset="art/${name}.png 1x, art/${name}@2x.png 2x, art/${name}@3x.png 3x" width="${w}" height="${ht}" alt="${alt||''}" draggable="false" style="${style}">`;
- const FM={p1:{m:1.0625,ax:104,ay:190},p2:{m:1.1047,ax:110,ay:187},p9:{m:1.1771,ax:111.5,ay:199}};
- const face=(p,slot,i,box)=>{const id=p.hold||p.persona==null?'hold':'p'+p.persona;const b=FB[id];const n=FM[id];const m=n?n.m:1;const ax=n?n.ax:(b[0]+b[2])/2;const ay=n?n.ay:b[3];const cssW=slot.width*220/(b[2]-b[0])*m;const left=slot.cx[i]-box[0]-cssW*ax/220;const top=slot.bottom-box[1]-cssW*ay/220;const src=id==='hold'?'emoji/hold.svg':((!p.hold&&p.persona!=null&&organic(p))?'emoji/o'+p.persona+'.svg':'emoji/'+id+'.svg');const st=`left:${left.toFixed(1)}px;top:${top.toFixed(1)}px;width:${cssW.toFixed(1)}px;height:${cssW.toFixed(1)}px`;const ols=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].map(([x,y])=>`<img alt="" draggable="false" style="transform:translate(${x}px,${y}px)" src="${src}">`).join('');return `<span class="fc-ol" style="${st}">${ols}</span><img class="fc" src="${src}" alt="" draggable="false" style="${st}">`};
+ const FA={hold:[29.5,52],p0:[29.5,52],p1:[31,52],p2:[29,52],p3:[29.5,52],p4:[30,52],p5:[29.5,52],p6:[29.5,52],p7:[29.5,52],p8:[29.5,52],p9:[29.5,53],p10:[29.5,52],p11:[29.5,52]};
+ const face=(p,slot,i,box)=>{const id=p.hold||p.persona==null?'hold':'p'+p.persona;const a=FA[id];const left=Math.round(slot.cx[i]-box[0]-a[0]);const top=Math.round(slot.bottom-box[1]-a[1]);const src=id==='hold'?'emoji/hold.svg':((!p.hold&&p.persona!=null&&organic(p))?'emoji/o'+p.persona+'.svg':'emoji/'+id+'.svg');return `<img class="fc" src="${src}" alt="" draggable="false" style="left:${left}px;top:${top}px;width:60px;height:60px">`};
  const sec=(k,title,list,n,inner)=>{const over=Math.max(0,list.length-n);const aria=over?`${title}, ${over}명 더 보기`:`${title}, ${list.length}명`;const m=LAB[k],box=BOX[k];
   const paper=TW[k]+PAD[k]*2;let left=m.cx-paper/2,chip='';
   if(over){const nch=Math.min(over,24);const wc=ADV[nch]+10;const gl=m.cx-Math.floor((paper+2+wc+2)/2);left=gl;const cL=gl+paper+3-box[0];const cT=m.cy-10-box[1];chip=`<span class="schip" style="left:${cL}px;top:${cT}px;width:${wc}px">+${nch}</span>`}
