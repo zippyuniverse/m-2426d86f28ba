@@ -427,7 +427,7 @@ button.sec:active .labg{transform:translateY(1px)}
 button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .pan,.labg{position:absolute;inset:0}
 .labg{transition:transform .06s linear}
-.px,.fc,.fc-ol img{image-rendering:pixelated;image-rendering:crispEdges}
+.px,.fc,.fc-ol img,img.em,img.em-big,.tile img,.cert .hero img,img.hface,.tav>img,.gz .face>img{image-rendering:crisp-edges;image-rendering:pixelated}
 .fc,.stk,.ch,.pk{position:absolute;pointer-events:none}
 .fc{z-index:2}
 .fc-ol{position:absolute;z-index:1;pointer-events:none;overflow:visible}
