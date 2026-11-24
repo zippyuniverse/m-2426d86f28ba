@@ -274,8 +274,11 @@ button[disabled]{cursor:default;pointer-events:none}
 .gz .fx img.blush{width:13px;height:6.5px;top:93.8px}
 .fx .blush.bl{left:53px}
 .fx .blush.br{left:126px}
-.fx .bcover{position:absolute;left:70px;top:35px;width:52px;height:7.5px;background:#F4BF9C;visibility:hidden;pointer-events:none;z-index:2}
-.gz .fx img.bump{width:52px;height:27px;left:70px;top:15.5px;z-index:3}
+.fx .bcover{position:absolute;left:70.5px;top:46px;width:39px;height:8px;background:#F3BE9C;visibility:hidden;pointer-events:none;z-index:2}
+.gz .fx img.bump{width:39px;height:20.5px;left:70.5px;top:33.5px;z-index:3}
+.gz.bump7 .fx img.bump{width:39px;height:27px;left:70.5px;top:26.5px}
+.gz.bumplive .fx .bcover{left:70px;top:35px;width:52px;height:7.5px;background:#F4BF9C}
+.gz.bumplive .fx img.bump{width:52px;height:27px;left:70px;top:15.5px}
 .gz.r-pat .pf{animation:fxup 1s ease-out}
 .gz.r-kkul .kf{animation:fxup .9s ease-out}
 @keyframes fxup{from{transform:translateY(6px)}to{transform:translateY(-12px)}}
