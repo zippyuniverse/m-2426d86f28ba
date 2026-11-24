@@ -90,7 +90,9 @@ nav.tab button.on b{opacity:1;filter:none}
 .tile img{width:60px;height:60px;object-fit:contain}
 .tile.on{border:2px solid var(--red);background:#FFF5F5;font-weight:700}
 .grades{display:flex;justify-content:space-between;gap:4px}
-.grades button{min-height:44px;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 2px 2px;font-size:0.7647rem;font-weight:400;flex:1;border-radius:var(--r);word-break:keep-all}
+.grades button{min-height:44px;min-width:44px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px 2px 2px;font-size:0.7647rem;font-weight:400;flex:1;border-radius:var(--r);word-break:keep-all;overflow-wrap:normal}
+.grades button .gd{display:block;max-width:100%;text-align:center;word-break:keep-all;overflow-wrap:normal;line-height:1.25}
+.grades button .gd .nw{white-space:nowrap}
 .grades button .gcy{margin-top:-4px;font-size:11px;font-weight:400;line-height:12px;color:#525252;white-space:nowrap}
 .grades button.on{background:color-mix(in srgb,var(--sc) 16%,#fff);box-shadow:inset 0 0 0 2px var(--sc)}
 .grades button.on .gcy{color:#1A1A1A}
