@@ -469,6 +469,7 @@ button.sec:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .secx:active{transform:none;filter:none}
 .secx:focus-visible{outline:2px solid #8E1F17;outline-offset:2px}
 .secsheet .seclist{overflow-y:auto;flex:1 1 auto;min-height:0;padding:0 18px calc(16px + var(--sab));-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.secsheet .seclist:has([data-fly="s"]){padding-top:16px}
 .secsheet .seclist>.empty{height:96px;margin:0;padding:0 8px;display:flex;align-items:center;justify-content:center}
 .sline{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
 .seclist .sline:first-child{border-top:0}
@@ -758,3 +759,14 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .sheet ul.saltinfo li{word-break:keep-all;overflow-wrap:normal}
 .sheet ul.saltinfo .nw{white-space:nowrap}
 .pdetail .card+.sw{margin-top:24px}
+/* v179 상하기 직전. 진열대 12×8, 상세 24×16, 냉장고 점 7×7 */
+.n96-fly{position:absolute;left:0;top:0;width:12px;height:8px;pointer-events:none;z-index:4;image-rendering:pixelated;image-rendering:crisp-edges;transform-origin:8px 5px}
+.n96-fly.is-lg{width:24px;height:16px}
+.n96-fly img{position:absolute;left:0;top:0;width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;pointer-events:none}
+.n96-fly .fr-b{visibility:hidden}
+.n96-fly.flap-b .fr-a{visibility:hidden}
+.n96-fly.flap-b .fr-b{visibility:visible}
+.flydots{position:absolute;left:38px;top:-8px;width:7px;height:7px;pointer-events:none;z-index:4;background:url("art/fly_dots.svg") 0 0 / 7px 7px no-repeat;image-rendering:pixelated;image-rendering:crisp-edges}
+@media (prefers-reduced-motion: reduce){
+  .n96-fly{transition:none}
+}
