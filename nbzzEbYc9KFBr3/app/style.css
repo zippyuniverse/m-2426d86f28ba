@@ -315,11 +315,11 @@ button[disabled]{cursor:default;pointer-events:none}
 .gz.r-kkul .bump,.gz.r-kkul .bcover{animation:kb .9s step-end both}
 @keyframes h7{0%{visibility:hidden}20%{visibility:visible}50%{visibility:hidden}100%{visibility:hidden}}
 @keyframes h5{0%{visibility:hidden}50%{visibility:visible}70%{visibility:hidden}100%{visibility:hidden}}
-@keyframes h3{0%{visibility:hidden}70%{visibility:visible}100%{visibility:visible}}
+@keyframes h3{0%{visibility:hidden}70%{visibility:visible}85%{visibility:hidden}100%{visibility:hidden}}
 @keyframes blus{0%{visibility:hidden}20%{visibility:visible}100%{visibility:visible}}
 @keyframes k1{0%{visibility:hidden}20%{visibility:visible}60%{visibility:hidden}100%{visibility:hidden}}
 @keyframes k2{0%{visibility:hidden}60%{visibility:visible}80%{visibility:hidden}100%{visibility:hidden}}
-@keyframes k3{0%{visibility:hidden}80%{visibility:visible}100%{visibility:visible}}
+@keyframes k3{0%{visibility:hidden}80%{visibility:visible}93.333333%{visibility:hidden}100%{visibility:hidden}}
 @keyframes kb{0%{visibility:hidden}20%{visibility:visible}100%{visibility:visible}}
 @media (prefers-reduced-motion:reduce){.gz .face{animation:none!important}.gz .fx .px,.gz .fx .bcover,.gz .fx .bl3{visibility:hidden!important}}
 /* v13: person detail 2x character, 1.5x stamp */
