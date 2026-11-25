@@ -574,7 +574,7 @@ document.addEventListener('click',e=>{if(ui._lp){ui._lp=0;e.preventDefault();e.s
 
 /* v7 제스처 */
 function doGesture(id,k){const p=P(id);if(!p||p.hold)return;const z=document.querySelector('.gz[data-gid="'+id+'"]');
- if(z){z.classList.remove('r-pat','r-kkul');void z.offsetWidth;z.classList.add('r-'+k);clearTimeout(z._t);z._t=setTimeout(()=>z.classList.remove('r-'+k),5000)}
+ if(z){z.classList.remove('r-pat','r-kkul');void z.offsetWidth;z.classList.add('r-'+k);clearTimeout(z._t);z._t=setTimeout(()=>z.classList.remove('r-'+k),k=='pat'?6000:5900)}
  if(!S.gintro){S.gintro=1;document.querySelectorAll('.gintro,.gh').forEach(x=>x.remove())}
  const t=S.day,arr=k=='pat'?(p.pats=p.pats||[]):(p.kkul=p.kkul||[]);let ok=!arr.includes(t);if(k=='kkul'&&arr.filter(d=>t-d<7&&d<=t).length>=3)ok=false;
  if(ok){arr.push(t);toast(k=='pat'?'쓰담쓰담이 오늘 한 번 기록되었어요':'꿀밤 콩콩이 오늘 한 번 기록되었어요')}save()}
