@@ -10,7 +10,9 @@ const AGAIN=['무조건','상황 봐서','절대 안 함'];
 const REL=['내가 갑','내가 을','동료','라이벌'];
 const LOCK='<svg class="lock" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>';
 const REP_POS=['숫자에 강함','약속 칼같음','인맥왕','말발 좋음','디테일 장인'];
-const REP_NEG=['답장 냉동 보관','약속 해동 중','말만 투뿔','뒷심 부족','생색 마블링','숟가락 얹기','밀당 장인','회식 전용','핑계 양념','읽고 숙성'];
+const REP_NEG=['답장 냉동꾼','말만 투뿔','뒷심 부족','생색 마블링','숫가락 얹기','밀당 장인','회식(업무X) 전문가','핑계 범벅'];
+const NEG_RENAME={'답장 냉동 보관':'답장 냉동꾼','회식 전용':'회식(업무X) 전문가','핑계 양념':'핑계 범벅','숟가락 얹기':'숫가락 얹기'};
+const NEG_DROP=new Set(['약속 해동 중','읽고 숙성']);
 const GROUPS=[['사는 곳','#834AF4',['여의도','마포']],['가족 구성','#75C895',['1남1녀','무자녀']],['생년','#88CBF0',['60s','70s','80s','90s','00s']],['취미·관심사','#89D16F',['골프','등산']],['고향','#F4A259',['서울','부산','대구']],['출신 대학','#3F89F6',['연세대','고려대','서울대']]];
 const BASE=new Date(2026,9,27);
 const $=s=>document.querySelector(s);
@@ -36,7 +38,10 @@ function decadeOfFull(y){y=+y;return y>=2000?'00s':String(y).slice(2,3)+'0s'}
 function migrateBirthList(arr){if(!Array.isArray(arr)||!arr.some(t=>isFullBirth(t)||oldDecade(t)))return arr;if(!arr.some(isFullBirth))return arr.map(t=>oldDecade(t)?t.replace('년대','s'):t);let dec=null,yy=null;const rest=[];arr.forEach(t=>{if(isFullBirth(t)){dec=decadeOfFull(t);yy=String(+t).slice(-2)}else if(!isBirthDecade(t)&&!oldDecade(t)&&!isBirthYear(t))rest.push(t)});if(dec)rest.push(dec);if(yy)rest.push(yy);return rest}
 function mapStoredTag(t){if(isFullBirth(t))return null;return oldDecade(t)?t.replace('년대','s'):t}
 function migrateBirth(){let drop=false;(S.people||[]).forEach(p=>{if(!p||!p.memo)return;const next=migrateBirthList(p.memo);if(next!==p.memo){p.memo=next;drop=true}});if(Array.isArray(S.tagRecent)){const next=migrateBirthList(S.tagRecent);if(next!==S.tagRecent){S.tagRecent=next;drop=true}}if(Array.isArray(S.tagGone)){const next=[];S.tagGone.forEach(t=>{const n=mapStoredTag(t);if(n!=null&&!next.includes(n))next.push(n)});if(next.length!==S.tagGone.length||next.some((t,i)=>t!==S.tagGone[i])){S.tagGone=next;drop=true}}if(S.tagMove)Object.keys(S.tagMove).forEach(t=>{if(isFullBirth(t)){delete S.tagMove[t];drop=true}else if(oldDecade(t)){const n=t.replace('년대','s');if(S.tagMove[n]==null)S.tagMove[n]=S.tagMove[t];delete S.tagMove[t];drop=true}});if(S.customTags)Object.keys(S.customTags).forEach(g=>{const a=S.customTags[g];if(!Array.isArray(a))return;const next=[];a.forEach(t=>{const n=mapStoredTag(t);if(n!=null&&!next.includes(n))next.push(n)});if(next.length!==a.length||next.some((t,i)=>t!==a[i])){S.customTags[g]=next;drop=true}});return drop}
-function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}else if(!p.hold&&p.cycle==='auto'&&p.grade!=null){p.cycle=DEFC[p.grade];drop=true}});if(migrateBirth())drop=true;if(drop)save()}
+function mapNegTag(t){if(NEG_DROP.has(t))return null;return NEG_RENAME[t]||t}
+function migrateNegList(arr){if(!Array.isArray(arr))return arr;let changed=false;const next=[];arr.forEach(t=>{const n=mapNegTag(t);if(n==null||n!==t)changed=true;if(n!=null&&!next.includes(n))next.push(n)});return changed?next:arr}
+function migrateNeg(){let drop=false;const apply=arr=>{const next=migrateNegList(arr);if(next===arr)return arr;drop=true;return next};(S.people||[]).forEach(p=>{if(!p)return;if(p.rep)p.rep=apply(p.rep);if(p.memo)p.memo=apply(p.memo)});if(Array.isArray(S.tagRecent))S.tagRecent=apply(S.tagRecent);if(Array.isArray(S.tagGone))S.tagGone=apply(S.tagGone);if(Array.isArray(ui.tagSel))ui.tagSel=apply(ui.tagSel);if(S.tagMove)Object.keys(S.tagMove).forEach(t=>{const n=mapNegTag(t);if(n===t)return;drop=true;if(n!=null&&S.tagMove[n]==null)S.tagMove[n]=S.tagMove[t];delete S.tagMove[t]});if(S.customTags)Object.keys(S.customTags).forEach(g=>{if(Array.isArray(S.customTags[g]))S.customTags[g]=apply(S.customTags[g])});return drop}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S)S=blank();let drop=false;(S.people||[]).forEach(p=>{if(!p)return;if(p.hold&&p.cycle!=='auto'){p.cycle='auto';drop=true}else if(!p.hold&&p.cycle==='auto'&&p.grade!=null){p.cycle=DEFC[p.grade];drop=true}});if(migrateBirth())drop=true;if(migrateNeg())drop=true;if(drop)save()}
 function kstDay(){return Math.floor((Date.now()+9*3600e3)/864e5)+S.day}
 function giveSalt(n){n=n|0;if(n<=0)return 0;const d=kstDay();if(!S.saltDay||S.saltDay.d!==d)S.saltDay={d:d,n:0};const got=Math.min(n,Math.max(0,30-S.saltDay.n));if(!got)return 0;S.pts=(S.pts||0)+got;S.saltDay.n+=got;return got}
 function callSalt(p){S.ptLog=S.ptLog||{};const d=kstDay();if(S.ptLog[p.id]===d)return 0;let n=3;if(!p.hold){const k=stage(p).k;if(k==='aging')n+=1;else if(k==='spoil')n+=2}S.ptLog[p.id]=d;return giveSalt(n)}
@@ -97,7 +102,7 @@ function seed(){S=blank();const d=0;
  add({name:'이서연 과장',phone:'010-****-3412',grade:3,persona:0,ratedDay:-100,contacts:[{day:-93,t:'연락했어요'}],memo:['80s']});
  add({name:'윤지현 팀장',phone:'010-****-5520',grade:4,persona:1,cycle:7,ratedDay:-40,contacts:[{day:-9,t:'전화'}],pats:[-9,-3]});
  add({name:'최영수 상무',phone:'010-****-6604',grade:2,persona:3,ratedDay:-30,contacts:[{day:-10,t:'전화'}],rep:['말만 투뿔']});
- add({name:'정은주 차장',phone:'010-****-7781',grade:1,persona:6,ratedDay:-20,rep:['답장 냉동 보관','핑계 양념']});
+ add({name:'정은주 차장',phone:'010-****-7781',grade:1,persona:6,ratedDay:-20,rep:['답장 냉동꾼','핑계 범벅']});
  add({name:'최은정 이사',phone:'010-****-8890',grade:4,persona:5,ratedDay:-15,contacts:[{day:-5,t:'문자'}]});
  add({name:'서준호 대리',phone:'010-****-9012',grade:2,persona:4,ratedDay:-25,contacts:[{day:-20,t:'전화'}]});
  add({name:'한동욱 이사',phone:'010-****-1150',hold:true,ratedDay:-127});
@@ -290,7 +295,7 @@ function tagPeople(v){const L=visible().filter(p=>p.memo.includes(v.t)||p.rep.in
  return `<div class="scr"><div class="hd"><button type="button" class="back" data-a="back" aria-label="뒤로가기">${BACK}</button><h1 style="font-size:1.1765rem">${esc(v.t)}</h1></div>${isRep?`<div class="small">내 연락처 ${L.length}명</div>`:''}<div class="card" style="margin-top:10px">${L.map(p=>`<div class="row tap" data-a="open" data-id="${p.id}">${stamp(p.grade)}<div class="grow"><div class="nm">${emo(p)} ${esc(p.name)}</div></div></div>`).join('')||'<div class="empty">아직 없어요</div>'}</div></div>`}
 
 /* 판정서 (테스트용 예시) */
-function fakeRaters(n){const out=[];const g=[5,4,4,5,3,4,5,4,2,4];const pe=[2,2,5,1,2,0,2,5,2,3];const reps=[['숫자에 강함','답장 냉동 보관'],['숫자에 강함'],['약속 칼같음','답장 냉동 보관'],['숫자에 강함','인맥왕'],['답장 냉동 보관','뒷심 부족'],['약속 칼같음'],['인맥왕','뒷심 부족'],['약속 칼같음'],[],['디테일 장인']];
+function fakeRaters(n){const out=[];const g=[5,4,4,5,3,4,5,4,2,4];const pe=[2,2,5,1,2,0,2,5,2,3];const reps=[['숫자에 강함','답장 냉동꾼'],['숫자에 강함'],['약속 칼같음','답장 냉동꾼'],['숫자에 강함','인맥왕'],['답장 냉동꾼','뒷심 부족'],['약속 칼같음'],['인맥왕','뒷심 부족'],['약속 칼같음'],[],['디테일 장인']];
  for(let i=0;i<n;i++)out.push({g:g[i%10],p:pe[i%10],r:reps[i%10]});return out}
 function mode(a){const c={};a.forEach(x=>c[x]=(c[x]||0)+1);return +Object.entries(c).sort((a,b)=>b[1]-a[1])[0][0]}
 function verdictBody(n,pub){const R=fakeRaters(n);const g=mode(R.map(r=>r.g)),pe=mode(R.map(r=>r.p));const c={};R.forEach(r=>new Set(r.r).forEach(t=>c[t]=(c[t]||0)+1));
