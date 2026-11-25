@@ -259,39 +259,60 @@ button[disabled]{cursor:default;pointer-events:none}
 .gh{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;line-height:1.1;text-align:center;filter:grayscale(1);pointer-events:none}.gh-l{left:-56px}.gh-r{right:-56px}
 #toast.on{opacity:1}#toast{width:350px;max-width:calc(100% - 24px);height:48px;padding:0 16px;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box}
 .gz.r-pat .face img{filter:saturate(1.15) brightness(1.05)}
-.gz.r-pat .face{animation:hap 1s ease}
-.gz.r-kkul .face{animation:sq .9s ease}
+.gz.r-pat .face{animation:hap 5s ease}
+.gz.r-kkul .face{animation:sq 5s ease}
 @keyframes hap{0%,100%{transform:none}30%{transform:translateY(-4px) scale(1.03)}}
 @keyframes sq{0%,100%{transform:none}20%{transform:scale(1.06,.9)}50%{transform:scale(.98,1.02)}}
 .fx .float{position:absolute;inset:0;pointer-events:none}
 .fx .px{position:absolute;visibility:hidden;image-rendering:pixelated;pointer-events:none}
-.gz .fx img.h7{width:45.5px;height:45.5px;left:150.35px;top:-25.65px}
-.gz .fx img.h5{width:32.5px;height:32.5px;left:156.85px;top:-19.15px}
-.gz .fx img.h3{width:19.5px;height:19.5px;left:163.35px;top:-12.65px}
+.gz .fx img.h7{width:45.5px;height:45.5px;left:130.5px;top:-26px}
+.gz .fx img.h5{width:32.5px;height:32.5px;left:137px;top:-19.5px}
+.gz .fx img.h3{width:19.5px;height:19.5px;left:143.5px;top:-13px}
 .gz .fx img.sa7{width:45.5px;height:45.5px;left:55.15px;top:-44.75px}
 .gz .fx img.sa5{width:32.5px;height:32.5px;left:61.65px;top:-38.25px}
 .gz .fx img.sa3{width:19.5px;height:19.5px;left:68.15px;top:-31.75px}
 .gz .fx img.sb5{width:32.5px;height:32.5px;left:107.05px;top:-51.95px}
 .gz .fx img.sb3{width:19.5px;height:19.5px;left:113.55px;top:-45.45px}
-.gz .fx img.blush{width:13px;height:6.5px;top:93.8px}
-.fx .blush.bl{left:53px}
-.fx .blush.br{left:126px}
+.gz .fx img.blush{width:13px;height:6.5px;top:99px}
+.fx .blush.bl{left:42px}
+.fx .blush.br{left:125px}
 .fx .bcover{position:absolute;left:70.5px;top:46px;width:39px;height:8px;background:#F3BE9C;visibility:hidden;pointer-events:none;z-index:2}
 .gz .fx img.bump{width:39px;height:20.5px;left:70.5px;top:33.5px;z-index:3}
-.gz.bump7 .fx img.bump{width:39px;height:27px;left:70.5px;top:26.5px}
-.gz.bumplive .fx .bcover{left:70px;top:35px;width:52px;height:7.5px;background:#F4BF9C}
-.gz.bumplive .fx img.bump{width:52px;height:27px;left:70px;top:15.5px}
-.gz.r-pat .pf{animation:fxup 1s ease-out}
-.gz.r-kkul .kf{animation:fxup .9s ease-out}
+.gz.gxf7 .fx img.bump{width:39px;height:27px;left:70.5px;top:26.5px}
+.gz.gxf10 .fx .bcover{left:70.5px;top:58px;width:39px;height:8px;background:#F3BE9C}
+.gz.gxf10 .fx img.bump{width:39px;height:20.5px;left:70.5px;top:45.5px}
+.gz.gxf1 .fx img.h7{left:140px;top:-32px}
+.gz.gxf1 .fx img.h5{left:146.5px;top:-25.5px}
+.gz.gxf1 .fx img.h3{left:153px;top:-19px}
+.gz.gxf1 .fx img.blush{top:108px}
+.gz.gxf5 .fx img.blush{top:108px}
+.gz.gxf6 .fx img.blush{top:102px}
+.gz.gxf7 .fx img.h7{left:138px;top:-26px}
+.gz.gxf7 .fx img.h5{left:144.5px;top:-19.5px}
+.gz.gxf7 .fx img.h3{left:151px;top:-13px}
+.gz.gxf9 .fx img.h7{left:148.5px;top:-40px}
+.gz.gxf9 .fx img.h5{left:155px;top:-33.5px}
+.gz.gxf9 .fx img.h3{left:161.5px;top:-27px}
+.gz.gxf10 .fx img.h7{left:148.5px;top:-26px}
+.gz.gxf10 .fx img.h5{left:155px;top:-19.5px}
+.gz.gxf10 .fx img.h3{left:161.5px;top:-13px}
+.fx .bl3{position:absolute;width:13px;height:3px;background:#F08AA0;visibility:hidden;pointer-events:none;z-index:3}
+.gz.gxf2.gxfo .fx .bl3{left:63px;top:99px}
+.gz.gxf9.gxfo .fx .bl3{left:54px;top:99px}
+.gz.gxf4.gxfo .blush.bl,.gz.gxf7.gxfo .blush.bl{left:45px}
+.gz.r-pat .pf{animation:fxup 5s ease-out}
+.gz.r-kkul .kf{animation:fxup 5s ease-out}
 @keyframes fxup{from{transform:translateY(6px)}to{transform:translateY(-12px)}}
-.gz.r-pat .h7{animation:h7 1s step-end both}
-.gz.r-pat .h5{animation:h5 1s step-end both}
-.gz.r-pat .h3{animation:h3 1s step-end both}
-.gz.r-pat .blush{animation:blus 1s step-end both}
-.gz.r-kkul .sa7,.gz.r-kkul .sb5{animation:k1 .9s step-end both}
-.gz.r-kkul .sa5,.gz.r-kkul .sb3{animation:k2 .9s step-end both}
-.gz.r-kkul .sa3{animation:k3 .9s step-end both}
-.gz.r-kkul .bump,.gz.r-kkul .bcover{animation:kb .9s step-end both}
+.gz.r-pat .h7{animation:h7 5s step-end both}
+.gz.r-pat .h5{animation:h5 5s step-end both}
+.gz.r-pat .h3{animation:h3 5s step-end both}
+.gz.r-pat .blush{animation:blus 5s step-end both}
+.gz.gxf2.gxfo.r-pat .blush.bl,.gz.gxf9.gxfo.r-pat .blush.bl{animation:none;visibility:hidden}
+.gz.gxf2.gxfo.r-pat .bl3,.gz.gxf9.gxfo.r-pat .bl3{animation:blus 5s step-end both}
+.gz.r-kkul .sa7,.gz.r-kkul .sb5{animation:k1 5s step-end both}
+.gz.r-kkul .sa5,.gz.r-kkul .sb3{animation:k2 5s step-end both}
+.gz.r-kkul .sa3{animation:k3 5s step-end both}
+.gz.r-kkul .bump,.gz.r-kkul .bcover{animation:kb 5s step-end both}
 @keyframes h7{0%{visibility:hidden}20%{visibility:visible}50%{visibility:hidden}100%{visibility:hidden}}
 @keyframes h5{0%{visibility:hidden}50%{visibility:visible}70%{visibility:hidden}100%{visibility:hidden}}
 @keyframes h3{0%{visibility:hidden}70%{visibility:visible}85%{visibility:hidden}100%{visibility:hidden}}
@@ -300,7 +321,7 @@ button[disabled]{cursor:default;pointer-events:none}
 @keyframes k2{0%{visibility:hidden}60%{visibility:visible}80%{visibility:hidden}100%{visibility:hidden}}
 @keyframes k3{0%{visibility:hidden}80%{visibility:visible}93.333333%{visibility:hidden}100%{visibility:hidden}}
 @keyframes kb{0%{visibility:hidden}20%{visibility:visible}80%{visibility:hidden}100%{visibility:hidden}}
-@media (prefers-reduced-motion:reduce){.gz .face{animation:none!important}.gz .fx .px,.gz .fx .bcover{visibility:hidden!important}}
+@media (prefers-reduced-motion:reduce){.gz .face{animation:none!important}.gz .fx .px,.gz .fx .bcover,.gz .fx .bl3{visibility:hidden!important}}
 /* v13: person detail 2x character, 1.5x stamp */
 .gz{width:216px;height:216px}
 .ph-head .av,.gz .av .face{width:180px;height:180px}
