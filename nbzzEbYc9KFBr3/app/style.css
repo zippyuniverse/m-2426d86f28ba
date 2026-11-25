@@ -259,8 +259,8 @@ button[disabled]{cursor:default;pointer-events:none}
 .gh{position:absolute;top:50%;transform:translateY(-50%);font-size:22px;line-height:1.1;text-align:center;filter:grayscale(1);pointer-events:none}.gh-l{left:-56px}.gh-r{right:-56px}
 #toast.on{opacity:1}#toast{width:350px;max-width:calc(100% - 24px);height:48px;padding:0 16px;display:flex;align-items:center;justify-content:center;white-space:nowrap;box-sizing:border-box}
 .gz.r-pat .face img{filter:saturate(1.15) brightness(1.05)}
-.gz.r-pat .face{animation:hap 5s ease}
-.gz.r-kkul .face{animation:sq 5s ease}
+.gz.r-pat .face{animation:hap 1s ease}
+.gz.r-kkul .face{animation:sq .9s ease}
 @keyframes hap{0%,100%{transform:none}30%{transform:translateY(-4px) scale(1.03)}}
 @keyframes sq{0%,100%{transform:none}20%{transform:scale(1.06,.9)}50%{transform:scale(.98,1.02)}}
 .fx .float{position:absolute;inset:0;pointer-events:none}
@@ -300,27 +300,27 @@ button[disabled]{cursor:default;pointer-events:none}
 .gz.gxf2.gxfo .fx .bl3{left:63px;top:99px}
 .gz.gxf9.gxfo .fx .bl3{left:54px;top:99px}
 .gz.gxf4.gxfo .blush.bl,.gz.gxf7.gxfo .blush.bl{left:45px}
-.gz.r-pat .pf{animation:fxup 5s ease-out}
-.gz.r-kkul .kf{animation:fxup 5s ease-out}
+.gz.r-pat .pf{animation:fxup 1s ease-out forwards}
+.gz.r-kkul .kf{animation:fxup .9s ease-out forwards}
 @keyframes fxup{from{transform:translateY(6px)}to{transform:translateY(-12px)}}
-.gz.r-pat .h7{animation:h7 5s step-end both}
-.gz.r-pat .h5{animation:h5 5s step-end both}
-.gz.r-pat .h3{animation:h3 5s step-end both}
-.gz.r-pat .blush{animation:blus 5s step-end both}
+.gz.r-pat .h7{animation:h7 1s step-end both}
+.gz.r-pat .h5{animation:h5 1s step-end both}
+.gz.r-pat .h3{animation:h3 1s step-end both}
+.gz.r-pat .blush{animation:blus 1s step-end both}
 .gz.gxf2.gxfo.r-pat .blush.bl,.gz.gxf9.gxfo.r-pat .blush.bl{animation:none;visibility:hidden}
-.gz.gxf2.gxfo.r-pat .bl3,.gz.gxf9.gxfo.r-pat .bl3{animation:blus 5s step-end both}
-.gz.r-kkul .sa7,.gz.r-kkul .sb5{animation:k1 5s step-end both}
-.gz.r-kkul .sa5,.gz.r-kkul .sb3{animation:k2 5s step-end both}
-.gz.r-kkul .sa3{animation:k3 5s step-end both}
-.gz.r-kkul .bump,.gz.r-kkul .bcover{animation:kb 5s step-end both}
+.gz.gxf2.gxfo.r-pat .bl3,.gz.gxf9.gxfo.r-pat .bl3{animation:blus 1s step-end both}
+.gz.r-kkul .sa7,.gz.r-kkul .sb5{animation:k1 .9s step-end both}
+.gz.r-kkul .sa5,.gz.r-kkul .sb3{animation:k2 .9s step-end both}
+.gz.r-kkul .sa3{animation:k3 .9s step-end both}
+.gz.r-kkul .bump,.gz.r-kkul .bcover{animation:kb .9s step-end both}
 @keyframes h7{0%{visibility:hidden}20%{visibility:visible}50%{visibility:hidden}100%{visibility:hidden}}
 @keyframes h5{0%{visibility:hidden}50%{visibility:visible}70%{visibility:hidden}100%{visibility:hidden}}
-@keyframes h3{0%{visibility:hidden}70%{visibility:visible}85%{visibility:hidden}100%{visibility:hidden}}
-@keyframes blus{0%{visibility:hidden}20%{visibility:visible}85%{visibility:hidden}100%{visibility:hidden}}
+@keyframes h3{0%{visibility:hidden}70%{visibility:visible}100%{visibility:visible}}
+@keyframes blus{0%{visibility:hidden}20%{visibility:visible}100%{visibility:visible}}
 @keyframes k1{0%{visibility:hidden}20%{visibility:visible}60%{visibility:hidden}100%{visibility:hidden}}
 @keyframes k2{0%{visibility:hidden}60%{visibility:visible}80%{visibility:hidden}100%{visibility:hidden}}
-@keyframes k3{0%{visibility:hidden}80%{visibility:visible}93.333333%{visibility:hidden}100%{visibility:hidden}}
-@keyframes kb{0%{visibility:hidden}20%{visibility:visible}80%{visibility:hidden}100%{visibility:hidden}}
+@keyframes k3{0%{visibility:hidden}80%{visibility:visible}100%{visibility:visible}}
+@keyframes kb{0%{visibility:hidden}20%{visibility:visible}100%{visibility:visible}}
 @media (prefers-reduced-motion:reduce){.gz .face{animation:none!important}.gz .fx .px,.gz .fx .bcover,.gz .fx .bl3{visibility:hidden!important}}
 /* v13: person detail 2x character, 1.5x stamp */
 .gz{width:216px;height:216px}
