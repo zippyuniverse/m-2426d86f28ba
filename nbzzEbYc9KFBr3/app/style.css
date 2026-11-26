@@ -768,6 +768,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .n96-fly.flap-b .fr-b{visibility:visible}
 .flydots{position:absolute;left:38px;top:-8px;width:7px;height:7px;pointer-events:none;z-index:4;background:url("art/fly_dots.svg") 0 0 / 7px 7px no-repeat;image-rendering:pixelated;image-rendering:crisp-edges}
 .n98-fly{position:absolute;left:0;top:0;width:20px;height:20px;pointer-events:none;z-index:4;image-rendering:pixelated;image-rendering:crisp-edges;background-repeat:no-repeat}
+.n98-fly10{position:absolute;left:0;top:0;width:14px;height:14px;pointer-events:none;z-index:4;image-rendering:pixelated;image-rendering:crisp-edges;background-repeat:no-repeat;background-image:url("art/fly_v10_sheet.png");background-size:224px 28px;transform-origin:0 0}
 @media (prefers-reduced-motion: reduce){
   .n96-fly{transition:none}
 }
