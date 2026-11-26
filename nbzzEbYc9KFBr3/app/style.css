@@ -62,7 +62,10 @@ h2 small{font-weight:500;color:var(--sub);font-size:0.8824rem;margin-left:4px}
 .org{display:inline-block;background:var(--org);color:#fff;font-size:0.5882rem;font-weight:700;border-radius:3px;padding:1px 3px}
 .empty{text-align:center;color:var(--sub);padding:34px 10px;line-height:1.6}
 nav.tab{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:var(--sab);z-index:5;max-width:480px;margin:0 auto}
-nav.tab button{flex:1;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 0;font-size:12px;color:#525252;position:relative}
+nav.tab button{flex:1;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;padding:15.68px 0 0;font-size:12px;color:#525252;position:relative}
+/* #104 A안: #1E1B19 in the sab strip under the corner only. width 74 = (96 - 6 inset) - 28 (art opaque / backboard start). height 0 when sab is 0. */
+nav.tab::after{content:"";position:absolute;right:0;bottom:0;width:74px;height:var(--sab);background:#1E1B19;pointer-events:none}
+nav.tab.nocorner::after{content:none}
 nav.tab button b{font-size:1.1765rem;font-weight:400;filter:grayscale(1);opacity:.6}
 nav.tab button.on{color:var(--ink);font-weight:700}nav.tab button.on:before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:var(--ink)}
 nav.tab button.on b{opacity:1;filter:none}
