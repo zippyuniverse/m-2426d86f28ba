@@ -29,10 +29,10 @@ function draw(tt,g){const rr=Math.min(1,tt*3),K=.5+.32*rr,A=A0,B=g.B;
  shade.setAttribute('d',kept.length&&rem.length?'M'+kept.map(q=>f(q[0])+' '+f(q[1])).join('L')+'Z':'');G(gP,M[0],M[1],M[0]-n[0]*(30+ext*.5),M[1]-n[1]*(30+ext*.5));
  return {kept,rem}}
 function placeCorner(){if(!corner)return;const g=geo();if(!g.nv)return;const sab=parseFloat(getComputedStyle(g.nv).paddingBottom)||0;const r=g.nv.getBoundingClientRect();
- corner.style.left=(r.right-96)+'px';corner.style.top=(r.bottom-sab-72)+'px'}
-function showCorner(on){if(!corner)return;if(!on){corner.style.display='none';stopBlink();return}placeCorner();const was=corner.style.display==='block';corner.style.display='block';if(!was){corner.src=FACE;arm()}}
+ corner.style.left=(r.right-96-6)+'px';corner.style.top=(r.bottom-sab-72)+'px'}
+function showCorner(on){const nav=$('#app nav.tab');if(!corner){if(nav)nav.classList.toggle('nocorner',!on);return}if(!on){corner.style.display='none';stopBlink();if(nav)nav.classList.add('nocorner');return}placeCorner();if(nav)nav.classList.remove('nocorner');const was=corner.style.display==='block';corner.style.display='block';if(!was){corner.src=FACE;arm()}}
 function curlRest(){const g=geo();if(open||anim)return;
- if(!g.nv||!g.nv.querySelector('.vt')){[fx,hit,corner].forEach(x=>{if(x)x.style.display='none'});stopBlink();return}
+ if(!g.nv||!g.nv.querySelector('.vt')){[fx,hit,corner].forEach(x=>{if(x)x.style.display='none'});stopBlink();if(g.nv)g.nv.classList.add('nocorner');return}
  fx.style.display='block';hit.style.display='block';
  fx.setAttribute('width',g.W);fx.setAttribute('height',g.H);
  flap.setAttribute('d','');rim.setAttribute('d','');shade.setAttribute('d','');g.nv.style.clipPath='';
