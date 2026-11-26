@@ -141,7 +141,7 @@ fieldset.box.mine>.kv{border-top:0}
 .tog:after{content:'';position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:.2s}
 .tog.on{background:var(--red)}.tog.on:after{left:22px}
 .hint{text-align:center;font-size:0.7647rem;color:var(--ph);margin-bottom:8px}
-.ph-head{text-align:center;margin-top:8px}
+.ph-head{text-align:center;margin-top:8px;position:relative;overflow:visible}
 .ph-head .av{position:relative;width:96px;height:96px;margin:0 auto}
 .ph-head .av img{width:96px;height:96px;object-fit:contain}
 .ph-head h1{font-size:1.2941rem;margin:12px 0 2px}
@@ -767,6 +767,7 @@ nav.tab button.vt:focus-visible{outline:2px solid #C9A96E;outline-offset:-4px;bo
 .n96-fly.flap-b .fr-a{visibility:hidden}
 .n96-fly.flap-b .fr-b{visibility:visible}
 .flydots{position:absolute;left:38px;top:-8px;width:7px;height:7px;pointer-events:none;z-index:4;background:url("art/fly_dots.svg") 0 0 / 7px 7px no-repeat;image-rendering:pixelated;image-rendering:crisp-edges}
+.n98-fly{position:absolute;left:0;top:0;width:20px;height:20px;pointer-events:none;z-index:4;image-rendering:pixelated;image-rendering:crisp-edges;background-repeat:no-repeat}
 @media (prefers-reduced-motion: reduce){
   .n96-fly{transition:none}
 }
