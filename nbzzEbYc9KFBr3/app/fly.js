@@ -1,4 +1,4 @@
-/* yjp-v182 상하기 직전 파리. 진열대는 12×8 8자, 사람 상세는 v9 시트, 냉장고는 CSS 점. */
+/* yjp-v183 상하기 직전 파리. 진열대·냉장고는 v10 시트 한 마리, 사람 상세는 v9 시트 두 마리. */
 (function(){
   const reduceMq=window.matchMedia('(prefers-reduced-motion: reduce)');
   let reduce=!!reduceMq.matches;
@@ -12,39 +12,42 @@
     R:[[179.91176471,87.49297597,1],[188.61176471,90.27948244,1],[192.96176471,91.50554529,0],[203.36764706,92.21146026,15],[207.71764706,90.72532348,15],[213.64558824,88.27319778,15],[219.57352941,85.82107209,0],[231.25882353,86.00683919,0],[238.33823529,86.4155268,0],[249.68235294,85.82107209,0],[255.65294118,84.74362292,14],[259.23529412,79.95083179,10],[256.59117647,77.09001848,10],[249.42647059,70.43955638,10],[244.30882353,65.68391867,9],[234.41470588,59.51645102,9],[225.97058824,55.65249538,9],[210.53235294,52.01146026,8],[198.59117647,51.78853974,7],[182.47058824,55.94972274,7],[174.02647059,60.77966728,4],[175.05,67.46728281,3],[177.01176471,74.11774492,3],[178.88823529,80.80536044,4]]
   };
 
-  function anchor(size){return {ax:size*8/12,ay:size*5/8}}
-  function elFly(size){
-    const d=document.createElement('div');
-    d.className='n96-fly'+(size>12?' is-lg':'');
-    d.setAttribute('aria-hidden','true');
-    const a=anchor(size);
-    d.style.width=size+'px';
-    d.style.height=Math.round(size*8/12)+'px';
-    d.style.transformOrigin=a.ax+'px '+a.ay+'px';
-    d.innerHTML='<img class="fr fr-a" alt="" src="art/fly_v2_a.svg"><img class="fr fr-b" alt="" src="art/fly_v2_b.svg">';
-    return d;
-  }
-  function place(node,x,y,size,flip,flapB){
-    const a=anchor(size);
-    node.style.width=size+'px';
-    node.style.height=Math.round(size*8/12)+'px';
-    node.style.transformOrigin=a.ax+'px '+a.ay+'px';
-    node.style.transform='translate('+(x-a.ax)+'px,'+(y-a.ay)+'px)'+(flip?' scaleX(-1)':'');
-    node.classList.toggle('flap-b',!!flapB);
-  }
-  function fig8(t,cx,cy,ax,ay){
-    return {x:cx+ax*Math.sin(t),y:cy+ay*Math.sin(t)*Math.cos(t),flip:ax*Math.cos(t)<0};
-  }
+  const FLY_V10={frameMs:50,cycle:24,n:96,flapEvery:3,cell:14,ax:7,ay:7,faceW:60,reduceCi:0,reducePose:1,
+    P:[[15,3,8],[14,3,7],[13,4,6],[12,5,5],[12,6,4],[12,7,3],[13,8,2],[14,9,1],[15,9,0],[18,9,0],[20,9,0],[22,9,0],[25,9,0],[26,9,15],[27,8,14],[28,7,13],[28,6,12],[28,5,11],[27,4,10],[26,3,9],[25,3,8],[22,3,8],[20,3,8],[18,3,8]]
+  };
   function easeOut(t){return 1-Math.pow(1-t,3)}
   function easeInOut(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
-  function flapAt(ms){return Math.floor(ms/500)%2===1}
-  function ensure(host,size){
+  function elV10(){
+    const d=document.createElement('div');
+    d.className='n98-fly10';
+    d.setAttribute('aria-hidden','true');
+    return d;
+  }
+  function ensureV10(host){
     let node=owned.get(host);
-    const parent=host.offsetParent||host.parentElement;
+    const parent=host.dataset.fly==='f'?host:(host.offsetParent||host.parentElement);
     if(!parent)return null;
-    if(!node){node=elFly(size);owned.set(host,node)}
+    if(!node){node=elV10();owned.set(host,node)}
     if(node.parentNode!==parent)parent.appendChild(node);
     return node;
+  }
+  function v10Hosts(){
+    const sheet=document.querySelector('#sheet-root');
+    const group=(kind,root)=>{
+      const all=[...document.querySelectorAll('[data-fly="'+kind+'"]')];
+      const list=root?all.filter(el=>root.contains(el)):all.filter(el=>!sheet||!sheet.contains(el));
+      return list.map((host,k)=>({host,kind,k}));
+    };
+    return group('s',null).concat(group('s',sheet)).concat(group('f',null)).concat(sheet?group('f',sheet):[]);
+  }
+  function placeV10(node,host,dx,dy,hi,pose){
+    const inside=host.dataset.fly==='f';
+    const ox=inside?0:host.offsetLeft, oy=inside?0:host.offsetTop;
+    const s=(host.offsetWidth||FLY_V10.faceW)/FLY_V10.faceW;
+    const x=Math.round(ox)+dx*s-FLY_V10.ax*s;
+    const y=Math.round(oy)+dy*s-FLY_V10.ay*s;
+    node.style.backgroundPosition=(-hi*FLY_V10.cell)+'px '+(-pose*FLY_V10.cell)+'px';
+    node.style.transform='translate('+x+'px,'+y+'px)'+(s!==1?' scale('+s+')':'');
   }
   function v9At(now){
     const fi=Math.floor(now/FLY_V9.frameMs)%FLY_V9.n;
@@ -99,25 +102,25 @@
     detail.returnUntil=now+2400;
   };
   function tick(now){
-    const shelf=[...document.querySelectorAll('[data-fly="s"]')];
-    const seen=new Set(shelf);
-    shelf.forEach(face=>{
-      const node=ensure(face,12);
+    const hosts=v10Hosts();
+    const seen=new Set(hosts.map(h=>h.host));
+    const fi=Math.floor(now/FLY_V10.frameMs)%FLY_V10.n;
+    hosts.forEach(({host,kind,k})=>{
+      const node=ensureV10(host);
       if(!node)return;
-      const w=face.offsetWidth||60;
-      const s=w/60;
-      const shift=face.dataset.flyShift==='1';
-      const ax=(shift?8:10)*s, ay=(shift?5:6)*s;
-      const cx=face.offsetLeft+w/2+(shift?16*s:0);
-      const cy=face.offsetTop-(shift?7:4)*s;
-      const phase=+face.dataset.flyPhase||0;
-      if(reduce){place(node,cx,cy+Math.min(2,ay*0.2),12*s,false,true);return}
-      const t=((now+phase)/12000)*Math.PI*2;
-      const p=fig8(t,cx,cy,ax,ay);
-      place(node,p.x,p.y,12*s,p.flip,flapAt(now+phase));
+      let ci,pose;
+      if(reduce){ci=FLY_V10.reduceCi;pose=FLY_V10.reducePose}
+      else{
+        const phase=kind==='f'?(k*8)%24:(k*6)%24;
+        const local=(fi+phase)%FLY_V10.n;
+        ci=local%FLY_V10.cycle;
+        pose=(Math.floor(local/FLY_V10.flapEvery)%2)===0?0:1;
+      }
+      const p=FLY_V10.P[ci];
+      placeV10(node,host,p[0],p[1],p[2],pose);
     });
     owned.forEach((node,host)=>{
-      if(seen.has(host)&&host.isConnected)return;
+      if(seen.has(host)&&host.isConnected&&host.getAttribute('data-fly'))return;
       node.remove();owned.delete(host);
     });
     const face=document.querySelector('[data-fly="d"]');
