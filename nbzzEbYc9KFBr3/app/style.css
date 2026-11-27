@@ -80,7 +80,7 @@ nav.tab button.on b{opacity:1;filter:none}
 .chip.c32.on:before{background:var(--ink)}
 .chip.sm{min-height:30px;font-size:0.7647rem;padding:0 10px}
 .box .chip.sm,.sheet .sbody .grp .chip.sm{height:30px;min-height:30px;padding:0 10px;font-size:13px;font-weight:400}
-.madd{box-sizing:border-box;height:30px;min-height:30px;width:56px;max-width:100%;flex:0 0 auto;margin:0;padding:0 10px;border:0;border-radius:20px;background:#fff;color:#1A1A1A;font:400 13px/30px P,-apple-system,sans-serif;box-shadow:inset 0 0 0 2px var(--sel,#1A1A1A);outline:none}
+.madd{box-sizing:border-box;height:30px;min-height:30px;width:76px;max-width:100%;flex:0 0 auto;margin:0;padding:0 10px;border:0;border-radius:20px;background:#fff;color:#1A1A1A;font:400 13px/30px P,-apple-system,sans-serif;box-shadow:inset 0 0 0 2px var(--sel,#1A1A1A);outline:none}
 .madd:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--sel,#1A1A1A)}
 .gaddrow{display:flex;align-items:center;justify-content:center;width:100%;height:44px;margin-top:10px;padding:0 12px;border:1.5px dashed #BDBDBD;border-radius:22px;background:#fff;color:#1A1A1A;font-size:13px;font-weight:400;box-sizing:border-box}
 .gadd{display:block;width:100%;height:44px;margin-top:10px;padding:0 12px;border:0;border-radius:22px;background:#fff;color:#1A1A1A;font:700 13px/44px P,-apple-system,sans-serif;box-shadow:0 0 0 2px var(--gadd,#EE8FC0);outline:none;box-sizing:border-box}
@@ -901,3 +901,23 @@ fieldset.box.mine > .chips.relone > .chip.c32.on:before{
   background:#F4F4F4;
   box-shadow:inset 0 0 0 2px #1A1A1A,2px 2px 0 #1A1A1A;
 }
+.enterwrap{position:relative}
+.enterbtn{position:absolute;z-index:2;width:44px;height:44px;margin:0;padding:0;border:0;background:transparent;display:flex;align-items:center;justify-content:center;color:#6B6B6B}
+.enterbtn:active{transform:none;filter:none}
+.enterdot{display:flex;align-items:center;justify-content:center;border-radius:50%;background:#EEEEEE;flex:none}
+.enterbtn.on{color:#fff}
+.enterbtn.on .enterdot{background:#D93A44}
+.enterbtn svg{display:block;width:16px;height:16px}
+label.inp .enterwrap{display:block;margin-top:6px}
+label.inp .enterwrap input{margin-top:0;padding-right:46px}
+label.inp .enterbtn{top:1px;right:1px}
+label.inp .enterdot{width:34px;height:34px}
+.gaddwrap{display:block;width:100%;margin-top:10px}
+.gaddwrap .gadd{margin-top:0;padding-right:44px}
+.gaddwrap .enterbtn{top:0;right:0}
+.gaddwrap .enterdot{width:32px;height:32px}
+.maddwrap{display:inline-flex;flex:0 0 auto;max-width:100%;vertical-align:top}
+.maddwrap .madd{padding-right:30px}
+.maddwrap .enterbtn{top:-7px;right:-7px}
+.maddwrap .enterdot{width:22px;height:22px}
+.maddwrap .enterbtn svg{width:12px;height:12px}
