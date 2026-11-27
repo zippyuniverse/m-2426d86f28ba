@@ -134,7 +134,7 @@ function render(dir){const v=nav[nav.length-1];if(v.v=='verdict'){$('#vlayer').i
  const f={shelf,fridge,tags,verdict,person,write,notifs,settings,tagPeople,pubVerdict,addContact,salt:saltPage}[v.v];h=f(v);
  const tabs=['shelf','fridge','tags','verdict'];
  if(tabs.includes(v.v))h+=navBar(v.v);
- app.innerHTML=h;const sc=app.querySelector('.scr');if(sc&&dir){sc.classList.add('enter');if(dir=='back')sc.classList.add('back');if(dir=='fade')sc.classList.add('fade')}
+ app.innerHTML=h;const sc=app.querySelector('.scr');if(sc&&dir&&dir!=='same'){sc.classList.add('enter');if(dir=='back')sc.classList.add('back');if(dir=='fade')sc.classList.add('fade')}
  if(dir&&dir!=='same')window.scrollTo(0,0);
  if(v.v=='shelf')fitStall();
  if(v.v=='fridge')fitFridge();
@@ -240,7 +240,7 @@ function pill(t,kind){const on=(ui.tagSel||[]).includes(t);const rep=kind==='rep
  const lock=ui.tagEdit&&rep;
  const cls=['tpill',on?'on':'',rep?'rep':'',neg?'neg':'',lock?'lock':''].filter(Boolean).join(' ');
  return `<button type="button" class="${cls}" style="--gc:${col};--a3:${a3(col)}" data-a="tsel" data-t="${esc(t)}" data-k="${rep?'rep':'memo'}" aria-pressed="${on}" ${lock?'disabled':''}>${esc(t)}</button>`}
-function hookHtml(){const strings=[54,122,193,273,336].map(x=>`<i class="thook-s" style="left:${x}px"></i>`).join('');return `<div class="thook" aria-hidden="true"><div class="thook-b1"></div><div class="thook-b2"></div>${strings}<img class="thook-meats" src="art/hook_meats.svg" alt=""></div>`}
+function hookHtml(){const strings=[54,122,193,273,336].map(x=>`<i class="thook-s" style="left:calc(100% * ${x} / 390)"></i>`).join('');return `<div class="thook" aria-hidden="true"><div class="thook-b1"></div><div class="thook-b2"></div>${strings}<img class="thook-meats" src="art/hook_meats.svg" alt=""></div>`}
 function onTagPage(){const v=nav[nav.length-1];return !!(v&&v.v==='tags')}
 function commitTagMadd(inp,cancel){if(!inp||inp._done)return;inp._done=1;const g=inp.dataset.g;ui.memoAdd=null;ui.memoAddFresh=null;const v=cancel?'':(inp.value||'').trim().slice(0,20);if(v&&g&&g!=='생년'&&!isRepTag(v)&&!groupOf(v)){S.tagGone=S.tagGone.filter(x=>x!==v);S.customTags[g]=S.customTags[g]||[];if(!S.customTags[g].includes(v))S.customTags[g].push(v);save()}render('same')}
 function commitTagGadd(inp,cancel){if(!inp||inp._done)return;const name=cancel?'':(inp.value||'').trim().slice(0,10);if(!name){inp._done=1;ui.gadd=null;render('same');return}if(memoGroupList().some(g=>g.name===name||g.key===name)){toast('이미 있는 그룹이에요');return}inp._done=1;ui.gadd=null;const color=nextMemoColor();S.tagGroups.push({name,color});S.customTags[name]=[];save();render('same')}
